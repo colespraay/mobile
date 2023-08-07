@@ -1,0 +1,156 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/reusable_widget.dart';
+import 'package:spraay/components/themes.dart';
+import 'package:spraay/navigations/SlideLeftRoute.dart';
+import 'package:spraay/navigations/SlideUpRoute.dart';
+import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/ui/authentication/create_account.dart';
+import 'package:spraay/ui/authentication/create_account_otp_page.dart';
+import 'package:spraay/ui/authentication/forgot_password_screen.dart';
+import 'package:spraay/ui/dashboard/dashboard_screen.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController phoneController=TextEditingController();
+  TextEditingController passwordController=TextEditingController();
+  final GlobalKey<FormState> _myKey = GlobalKey<FormState>();
+  bool _isObscure = true;
+
+  FocusNode? _textField1Focus;
+  FocusNode? _textField2Focus;
+  @override
+  void initState() {
+    setState(() {
+      _textField1Focus = FocusNode();
+      _textField2Focus = FocusNode();
+    });
+  }
+
+  String firstBtn="";
+  String secondBtn="";
+  @override
+  void dispose() {
+    _textField1Focus?.dispose();
+    _textField2Focus?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  Scaffold(
+        appBar: buildAppBar(context: context),
+        body: Form(
+          key: _myKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          child: ListView(
+            padding: horizontalPadding,
+            shrinkWrap: true,
+            children: [
+              height16,
+              Text("Login to your\nAccount",
+                  style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 48.sp, color: CustomColors.sGreyScaleColor50)),
+              height40,
+
+              CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.next,hintTxt: "7012345678",focusNode: _textField1Focus,
+                maxLength: 11,
+                prefixIcon: Padding(
+                  padding:  EdgeInsets.only(right: 8.w, left: 10.w),
+                  child: SvgPicture.asset("images/number.svg", height: 11.h,),
+                ) ,
+                inputFormat: [
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                onChanged:(value){
+                  setState(() {firstBtn=value;});
+                },
+              ),
+              height20,
+
+              CustomizedTextField(textEditingController:passwordController, keyboardType: TextInputType.visiblePassword,
+                textInputAction: TextInputAction.done,hintTxt: "Password", obsec: _isObscure, focusNode: _textField2Focus,
+                onChanged:(value){
+                  setState(() {secondBtn=value;});
+                },
+                surffixWidget: GestureDetector(
+                  onTap: (){setState(() {_isObscure = !_isObscure;});},
+                  child: Padding(
+                    padding:  EdgeInsets.only(right: 8.w),
+                    child: Icon(_isObscure ? Icons.visibility_off: Icons.visibility, color: Color(0xff9E9E9E),),
+                  ),
+                ),
+                prefixIcon: Padding(
+                  padding:  EdgeInsets.only(right: 8.w, left: 10.w),
+                  child: SvgPicture.asset("images/lock.svg"),
+                ),
+              ),
+              height20,
+              Center(child: buildCheckBox()),
+              height20,
+
+              CustomButton(
+                  onTap: () {
+                    if( firstBtn.isNotEmpty && secondBtn.isNotEmpty){
+
+
+                      MySharedPreference.setVisitingFlag();
+                      Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+
+                    }
+                  },
+                  buttonText: 'Sign in', borderRadius: 30.r,width: 380.w,
+                  buttonColor: ( firstBtn.isNotEmpty && secondBtn.isNotEmpty) ? CustomColors.sPrimaryColor500:
+                  CustomColors.sDisableButtonColor),
+              height22,
+              GestureDetector(
+                onTap:(){
+                  Navigator.push(context, SlideUpRoute(page: ForgotPasswordScreen()));
+                },
+                child: Text("Forgot the password?",
+                  style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 16.sp, color: CustomColors.sGreyScaleColor700 ),textAlign: TextAlign.center,),
+              ),
+
+              height34,
+
+              GestureDetector(
+                onTap:(){
+                  Navigator.push(context, SlideLeftRoute(page: CreateAccount()));
+                },
+                  child: buildTwoTextWidget(title: "Don’t have an account?", content: " Sign up")),
+              height34,
+
+
+            ],
+          ),
+        ));
+  }
+
+  bool checkedValue=false;
+  Widget buildCheckBox(){
+    return  CheckboxListTile(
+      contentPadding: EdgeInsets.only(left: 0.w),
+      checkColor: Colors.white,
+      activeColor: CustomColors.sPrimaryColor500,
+      title: Text("Remember me", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: Color(0xffF0F0F0)),),
+      // subtitle: Text("08:00  -  11:00 AM", style: kTxtLight.copyWith(fontSize: 10.sp, fontWeight: FontWeight.w300, color: Colors.black),),
+      value: checkedValue,
+      onChanged: (newValue) {
+        setState(() {
+          checkedValue = newValue!;
+        });
+      },
+      controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+    );
+  }
+}
