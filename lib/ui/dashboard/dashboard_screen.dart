@@ -1,8 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/ui/events/events.dart';
 import 'package:spraay/ui/home/home_screen.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
@@ -17,7 +19,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
 
   List<Widget> _widgetOption = [
     HomeScreen(),
-    Container(color: Colors.yellow,),
+    EventsScreen(),
     SizedBox.shrink(),//empty page between
     Container(color: Colors.pinkAccent,),
     Container(color: Colors.brown,),

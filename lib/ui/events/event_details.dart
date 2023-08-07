@@ -76,7 +76,11 @@ class _EventDetailsState extends State<EventDetails> {
             height22,
             CustomButton(
                 onTap: () {
-                  Navigator.push(context, FadeRoute(page: PaymentMethod()));
+                  if(index_pos==-1){
+                    cherryToastInfo(context, "Info!", "Please select ticket");
+                  }else{
+                    Navigator.push(context, FadeRoute(page: PaymentMethod()));
+                  }
 
                 },
                 buttonText: 'Get Ticket', borderRadius: 30.r,width: 380.w,

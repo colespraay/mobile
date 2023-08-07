@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/events/confirm_payment.dart';
 
@@ -20,7 +21,7 @@ class PaymentMethod extends StatelessWidget {
             height40,
             GestureDetector(
               onTap:(){
-                Navigator.push(context, FadeRoute(page: ConfirmPayment()));
+                Navigator.push(context, SlideLeftRoute(page: ConfirmPayment()));
 
               },
               child: Container(
@@ -35,7 +36,7 @@ class PaymentMethod extends StatelessWidget {
                   children: [
                     SvgPicture.asset("images/wallet_sml.svg"),
                     SizedBox(width: 16.w,),
-                    Expanded(child: Text("Wallet (₦200,000)", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w500) )),
+                    Expanded(child: Text("Wallet (N200,000)", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w500) )),
                     Icon(Icons.arrow_forward_ios_outlined, color: CustomColors.sWhiteColor, size: 20.r,)
                   ],
                 ),
