@@ -2,10 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/ui/events/google_map_location.dart';
 import 'package:spraay/ui/events/select_payment_method.dart';
 
 class EventDetails extends StatefulWidget {
@@ -54,8 +56,8 @@ class _EventDetailsState extends State<EventDetails> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("More Love, Less Ego Tour", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700) ),
-                        Text("Wizkid", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor400) ),
+                        Text("More Love, Less Ego Tour", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 22.sp, fontWeight: FontWeight.w700) ),
+                        Text("Invited by @ammie19", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor400) ),
                       ],
                     ),
                   ),
@@ -65,26 +67,54 @@ class _EventDetailsState extends State<EventDetails> {
               ],
             ),
             height22,
-            buildCard(),
+            GestureDetector(
+              onTap:(){
+                  Navigator.push(context, FadeRoute(page: GoogleMapLocationScreen()));
+              },
+                child: buildCard()),
             height22,
             Text("About this event", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
             height4,
-            Text("Wizkid is hitting the road, to promote his latest album, ”More Love, Less Ego”. Naming the tour after his album, the tourwill kick off on May 13, in Lagos, Nigeria. Other international shows include North America, Montreal and Toronto.\n\nGet your tickets with Spray App!",
+            Text("Join us as we celebrate the union between Amara Azubuike and Ikechukwu Dirichie on the 1st of June 2023.",
                 style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor50) ),
-            height4,
-            buildHorizontalTicket(),
+            // height4,
+            // buildHorizontalTicket(),
+            // height22,
             height22,
-            CustomButton(
-                onTap: () {
-                  if(index_pos==-1){
-                    cherryToastInfo(context, "Info!", "Please select ticket");
-                  }else{
-                    Navigator.push(context, FadeRoute(page: PaymentMethod()));
-                  }
+            Text("Will you be attending this event?", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
+            height4,
+            Text("(Don’t worry, the even organiser will not know)",
+                style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor50) ),
 
-                },
-                buttonText: 'Get Ticket', borderRadius: 30.r,width: 380.w,
-                buttonColor: CustomColors.sPrimaryColor500),
+            height22,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: CustomButton(
+                      onTap: () {
+                        // if(index_pos==-1){
+                        //   cherryToastInfo(context, "Info!", "Please select ticket");
+                        // }else{
+                        //   Navigator.push(context, FadeRoute(page: PaymentMethod()));
+                        // }
+
+                      },
+                      buttonText: 'Yes', borderRadius: 8.r,width: 380.w,
+                      buttonColor: CustomColors.sPrimaryColor500),
+                ),
+
+                SizedBox(width: 24.w,),
+                Expanded(
+                  child: CustomButton(
+                      onTap: () {
+
+                      },
+                      buttonText: 'No', borderRadius: 8.r,width: 380.w,
+                      buttonColor: CustomColors.sErrorColor),
+                ),
+              ],
+            ),
             height22
 
 

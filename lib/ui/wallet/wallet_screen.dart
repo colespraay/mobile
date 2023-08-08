@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
-import 'package:spraay/navigations/fade_route.dart';
-import 'package:spraay/ui/events/event_details.dart';
-import 'package:spraay/ui/events/my_events.dart';
-import 'package:spraay/ui/events/ongoing_event.dart';
+import 'package:spraay/ui/wallet/wallet_view.dart';
 
-class EventsScreen extends StatefulWidget {
-  const EventsScreen({Key? key}) : super(key: key);
+class WalletScreen extends StatefulWidget {
+  const WalletScreen({Key? key}) : super(key: key);
 
   @override
-  State<EventsScreen> createState() => _EventsScreenState();
+  State<WalletScreen> createState() => _WalletScreenState();
 }
 
-class _EventsScreenState extends State<EventsScreen> {
+class _WalletScreenState extends State<WalletScreen> {
 
   PageController ?_pageController;
   static const _kDuration = const Duration(milliseconds: 300);
@@ -48,7 +44,7 @@ class _EventsScreenState extends State<EventsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Text("Events", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700) )),
+              Center(child: Text("Transactions", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700) )),
               height26,
               _buildContainer(),
               height26,
@@ -58,8 +54,10 @@ class _EventsScreenState extends State<EventsScreen> {
                   onPageChanged: onChangedFunction,
                   physics: NeverScrollableScrollPhysics(),
                   children: [
-                    OngoingEvent(),
-                    MyEvents()
+                    WalletView(),
+                    Container(color: Colors.green,),
+                    // OngoingEvent(),
+                    // MyEvents()
                   ],),),
 
 
@@ -88,7 +86,7 @@ class _EventsScreenState extends State<EventsScreen> {
                     color:currentIndex==0? CustomColors.sGreenColor500: CustomColors.sDarkColor2,
                     borderRadius: BorderRadius.all(Radius.circular(8.r))
                 ),
-                child: Center(child: Text("Ongoing", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, color:currentIndex==0? CustomColors.sGreyScaleColor900: CustomColors.sGreyScaleColor500,
+                child: Center(child: Text("Wallet View", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, color:currentIndex==0? CustomColors.sGreyScaleColor900: CustomColors.sGreyScaleColor500,
                     fontWeight: FontWeight.w400),))),
           ),
         ),
@@ -106,7 +104,7 @@ class _EventsScreenState extends State<EventsScreen> {
                     color:currentIndex==1? CustomColors.sGreenColor500: CustomColors.sDarkColor2,
                     borderRadius: BorderRadius.all(Radius.circular(8.r))
                 ),
-                child: Center(child: Text("My Events", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp,
+                child: Center(child: Text("Chart View", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp,
                     color:currentIndex==1? CustomColors.sGreyScaleColor900: CustomColors.sGreyScaleColor500, fontWeight: FontWeight.w400),))),
           ),
         )
@@ -114,7 +112,4 @@ class _EventsScreenState extends State<EventsScreen> {
       ],
     );
   }
-
-
-
 }

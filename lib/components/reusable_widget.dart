@@ -1,9 +1,11 @@
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:cherry_toast/resources/arrays.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/themes.dart';
 
@@ -81,7 +83,7 @@ AppBar buildAppBar({required BuildContext context, String ?title,
     elevation: 0,
     systemOverlayStyle: SystemUiOverlayStyle(statusBarBrightness: statusBarBrightness??Brightness.dark, statusBarIconBrightness:statusBarIconBrightness?? Brightness.light,statusBarColor: Colors.transparent),
 
-    centerTitle: false,
+    centerTitle: true,
     leading: GestureDetector(
         onTap: (){Navigator.pop(context);},
         child:  Icon(Icons.arrow_back_outlined, color: arrowColor??Color(0xffFBFBFB),)),
@@ -263,4 +265,38 @@ void errorCherryToast(BuildContext context,String errordsc){
     animationDuration: Duration(milliseconds: 1000),
     autoDismiss: true,
   ).show(context);
+}
+
+Widget buildDottedBorder({required Widget child}){
+  return DottedBorder(
+    borderType: BorderType.RRect,
+    radius: Radius.circular(12.r),
+    padding: EdgeInsets.all(2.r),
+    color: CustomColors.sGreyScaleColor400,
+    strokeWidth: 1,
+    child: child,
+  );
+}
+
+class NumberTextInputFormatter extends TextInputFormatter {
+  static const defaultDecimalPlaces = 2;
+
+  final int decimalPlaces;
+
+  NumberTextInputFormatter({this.decimalPlaces = defaultDecimalPlaces});
+
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.selection.baseOffset == 0) {
+      return newValue;
+    }
+
+    double value = double.tryParse(newValue.text) ?? 0.0;
+    String newText = NumberFormat.decimalPattern().format(value);
+
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
 }

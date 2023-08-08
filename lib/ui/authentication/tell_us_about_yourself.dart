@@ -71,10 +71,6 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
 
   }
 
-
-
-
-
   Widget buildStep1Widget(){
     return ListView(
       padding: horizontalPadding,

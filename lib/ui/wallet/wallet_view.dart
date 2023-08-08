@@ -1,81 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:spraay/components/constant.dart';
-import 'package:spraay/components/fancy_fab.dart';
-import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/navigations/scale_transition.dart';
 import 'package:spraay/ui/home/event_slidder.dart';
 import 'package:spraay/ui/home/fund_wallet.dart';
-import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
+import 'package:spraay/ui/wallet/withdrawal/withdrawal.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class WalletView extends StatefulWidget {
+  const WalletView({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<WalletView> createState() => _WalletViewState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _WalletViewState extends State<WalletView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarSize(),
-        body:  Padding(
-          padding: horizontalPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // shrinkWrap: true,
-            children: [
-              buildTopRow(),
-              height22,
-              buildWalletContainer(),
-              height30,
-              Text("Events for you", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
-              height10,
-              EventSlidder(),
-              height26,
-              Expanded(child: buildTransactionList())
+        body:  Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          // shrinkWrap: true,
+          children: [
+            buildWalletContainer(),
+            height30,
+            buildHorizontalContainer(),
+            height40,
+            Expanded(child: buildTransactionList())
 
-            ],
-          ),
+          ],
         ));
   }
 
 
 
-  Widget buildTopRow(){
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SvgPicture.asset("images/avatar.svg"),
-
-        SizedBox(width: 12.w,),
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text("Hello", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
-              Text(" Uche Usman", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500) ),
-            ],
-          ),
-        ),
-
-        InkWell(
-          onTap: (){
-            showNotification(context);
-          },
-            child: SvgPicture.asset("images/note_bell.svg"))
-
-      ],
-    );
-  }
 
   bool _isObscure=false;
   String amount="200000";
@@ -103,15 +64,14 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text("Wallet Balance", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 10.sp, fontWeight: FontWeight.w700) ),
-                height16,
-                // Text("N200,000.00", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700) ),
+                height22,
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
                       child: Text(_isObscure?'N${amount.replaceAll(RegExp(r"."), "*")}':
                       "N${currrency.format(double.parse(amount))}" ,
-                        style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700)),
+                          style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700)),
                     ),
                     GestureDetector(
                         onTap: (){
@@ -122,15 +82,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
 
-                height18,
-                GestureDetector(
-                  onTap:(){
-                    Navigator.push(context, FadeRoute(page: FundWallet()));
-                  },
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                      child: SvgPicture.asset("images/top_up.svg")),
-                )
+                // height18,
+                // GestureDetector(
+                //   onTap:(){
+                //     // Navigator.push(context, FadeRoute(page: FundWallet()));
+                //   },
+                //   child: Align(
+                //       alignment: Alignment.bottomRight,
+                //       child: SvgPicture.asset("images/top_up.svg")),
+                // )
               ],
             ),
           ),
@@ -151,9 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Text("Transactions", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700)),
 
             GestureDetector(
-              onTap:(){
-                seeAllTransaction(context);
-              },
+                onTap:(){
+                  seeAllTransaction(context);
+                },
                 child: Text("See all", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400) )),
 
           ],
@@ -163,17 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(child: TransactionHistory())
       ],
     );
-  }
-
-  void showNotification(context) {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        backgroundColor: Color(0xff1A1A21),
-        shape: RoundedRectangleBorder(borderRadius:BorderRadius.only(topRight: Radius.circular(25.r), topLeft: Radius.circular(25.r)),),
-        context: context,
-        builder: (context) {
-          return NotificationScreen();
-        });
   }
 
   void seeAllTransaction(context) {
@@ -215,7 +164,61 @@ class _HomeScreenState extends State<HomeScreen> {
         });
   }
 
+  Widget buildHorizontalContainer(){
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap:(){
+              Navigator.push(context, FadeRoute(page: FundWallet()));
+
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 12.h),
+              decoration: BoxDecoration(
+                color: CustomColors.sDarkColor2,
+                borderRadius: BorderRadius.all(Radius.circular(20.r))
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SvgPicture.asset("images/fund_wallet.svg", width: 40.w, height: 40.h,),
+                  height4,
+                  Text("Fund Wallet", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700) ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        SizedBox(width: 16.w,),
+
+        Expanded(
+          child: GestureDetector(
+            onTap:(){
+              Navigator.push(context, FadeRoute(page: Withdrawal()));
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 12.h),
+              decoration: BoxDecoration(
+                  color: CustomColors.sDarkColor2,
+                  borderRadius: BorderRadius.all(Radius.circular(20.r))
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SvgPicture.asset("images/error_withdrawl.svg", width: 40.w, height: 40.h,),
+                  height4,
+                  Text("Withdraw", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700) ),
+                ],
+              ),
+            ),
+          ),
+        ),
 
 
-
+      ],
+    );
+  }
 }

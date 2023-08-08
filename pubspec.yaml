@@ -37,6 +37,8 @@ dependencies:
   pdf: ^3.10.4
   url_launcher: ^6.1.12
   whatsapp_unilink: ^2.1.0
+  dotted_border: ^2.0.0+3
+  image_picker: ^1.0.2
 
 dev_dependencies:
   flutter_test:

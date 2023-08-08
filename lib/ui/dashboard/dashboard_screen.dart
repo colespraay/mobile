@@ -1,11 +1,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/fancy_fab.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/ui/events/events.dart';
 import 'package:spraay/ui/home/home_screen.dart';
+import 'package:spraay/ui/wallet/wallet_screen.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
 class DasboardScreen extends StatefulWidget {
@@ -21,7 +25,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
     HomeScreen(),
     EventsScreen(),
     SizedBox.shrink(),//empty page between
-    Container(color: Colors.pinkAccent,),
+    WalletScreen(),
     Container(color: Colors.brown,),
 
   ];
@@ -34,17 +38,17 @@ class _DasboardScreenState extends State<DasboardScreen> {
           children: [
             _widgetOption.elementAt( Provider.of<AuthProvider>(context, listen: true).selectedIndex),
           ]),
-      floatingActionButton:  SizedBox(
+      floatingActionButton: SizedBox(
         width: 80.w,
         height: 80.h,
         child: FittedBox(
           child: FloatingActionButton(
             shape: RoundedRectangleBorder( borderRadius: BorderRadius.all(Radius.circular(40.r))),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            elevation: 10,
+            // elevation: 10,
             backgroundColor: Color(0xffD3F701),
             onPressed: () {
-              // _choseAnimalModal();
+              _choseFABModal();
             },
             child: SvgPicture.asset("images/add_icon.svg"),
           ),
@@ -140,4 +144,85 @@ class _DasboardScreenState extends State<DasboardScreen> {
           ) ,
     );
   }
+
+
+  Future<void> _choseFABModal(){
+    double heigth=MediaQuery.of(context).size.height;
+    return  showModalBottomSheet(
+        context: context,
+        backgroundColor: CustomColors.sDarkColor2,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(30.r), topRight: Radius.circular(30.r),),),
+        builder: (context)=> StatefulBuilder(
+            builder: (context, setState)=>
+                Container(
+                  width: double.infinity,
+                  child: Padding(
+                      padding:  EdgeInsets.symmetric(horizontal: 16.w),
+                      child: AnimationLimiter(
+                        child:Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: AnimationConfiguration.toStaggeredList(
+                            duration: const Duration(milliseconds: 500),
+                            childAnimationBuilder: (widget) => SlideAnimation(
+                              horizontalOffset: 0.0,
+                              verticalOffset: 60,
+                              child: FadeInAnimation(child: widget,),),
+                            children: [
+                              height45,
+
+                              buildModalChildren(img: "spray_sm_svg", title: "Spray"),
+                              height18,
+                              buildModalChildren(img: "s_calend", title: "New Event"),
+                              height18,
+                              buildModalChildren(img: "p_bill", title: "Pay Bills"),
+                              height18,
+                              buildModalChildren(img: "money_send", title: "Send Gift"),
+                              height30,
+                              Center(
+                                child: SizedBox(
+                                  width: 80.w,
+                                  height: 80.h,
+                                  child: FittedBox(
+                                    child: FloatingActionButton(
+                                      shape: RoundedRectangleBorder( borderRadius: BorderRadius.all(Radius.circular(40.r))),
+                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      elevation: 10,
+                                      backgroundColor: Color(0xffD3F701),
+                                      onPressed: () {
+                                       Navigator.pop(context);
+                                      },
+                                      child: SvgPicture.asset("images/cross.svg"),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+
+                              // height30,
+                            ],),
+                        ),
+                      )
+                  ),
+                )
+
+        ));
+  }
+
+  Widget buildModalChildren({required String img, required String title}){
+    return   Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SvgPicture.asset("images/$img.svg"),
+        SizedBox(width: 16.w,),
+        SizedBox(width: 112.w,
+            child: Text(title, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 18.sp,
+              fontWeight: FontWeight.w700,),)),
+      ],
+    );
+  }
+
 }
