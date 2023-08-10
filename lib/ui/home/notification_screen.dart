@@ -57,14 +57,14 @@ class NotificationScreen extends StatelessWidget {
                                             Text("Card successfully added", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400),),
                                             height4,
                                             Text("You can now top-up your wallet from your card",
-                                              style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
+                                              style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500)),
                                           ],
                                         ),
                                       ),
                                     ),
 
                                     Text("${DateFormat.yMMMd().format(DateTime.now())}",
-                                      style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
+                                      style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500)),
 
                                   ],
                                 );

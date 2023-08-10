@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/ui/wallet/chat_view.dart';
 import 'package:spraay/ui/wallet/wallet_view.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -35,6 +37,12 @@ class _WalletScreenState extends State<WalletScreen> {
     _pageController = PageController(initialPage: 0);
     super.initState();
   }
+
+  PopupMenuItem _buildPopupMenuItem(String title) {
+    return PopupMenuItem(
+      child:  Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400)),
+    );}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +52,23 @@ class _WalletScreenState extends State<WalletScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(child: Text("Transactions", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700) )),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(),
+                  Text("Transactions", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700) ),
+                  PopupMenuButton(
+                    color: CustomColors.sDarkColor2,
+                    elevation: 2,
+                    icon: SvgPicture.asset("images/hori_do.svg"),
+                    itemBuilder: (ctx) => [
+                      _buildPopupMenuItem('Download Statement'),
+                    ],
+                  )
+
+                ],
+              ),
               height26,
               _buildContainer(),
               height26,
@@ -55,9 +79,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   physics: NeverScrollableScrollPhysics(),
                   children: [
                     WalletView(),
-                    Container(color: Colors.green,),
-                    // OngoingEvent(),
-                    // MyEvents()
+                    ChatView()
                   ],),),
 
 

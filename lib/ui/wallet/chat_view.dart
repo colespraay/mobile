@@ -1,0 +1,193 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
+import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/themes.dart';
+import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/ui/home/transaction_detail.dart';
+import 'package:spraay/ui/home/transaction_history.dart';
+import 'package:spraay/ui/wallet/bar_graph/bar_graph.dart';
+
+class ChatView extends StatefulWidget {
+  const ChatView({Key? key}) : super(key: key);
+
+  @override
+  State<ChatView> createState() => _ChatViewState();
+}
+
+class _ChatViewState extends State<ChatView> {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      shrinkWrap: true,
+      // crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SprayBarGraph(),
+        height40,
+        buildContainer(),
+        height22,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(child: buildRowContainer(title: 'Income', content: '₦7,980,00', color: CustomColors.sSuccessColor)),
+            SizedBox(width: 25.w,),
+            Expanded(child: buildRowContainer(title: 'Expense', content: '₦7,980,00', color: CustomColors.sErrorColor))
+
+          ],
+        ),
+        height40,
+        Text("Transactions", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700)),
+        height18,
+        buildTransactionList(),
+
+
+      ],
+    );
+  }
+
+
+  Widget buildContainer(){
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      decoration: BoxDecoration(color: CustomColors.sDarkColor2, borderRadius: BorderRadius.all(Radius.circular(16.r))
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 160.w,
+              child: Text("N1,515,890", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700))),
+
+          SizedBox(width: 8.w,),
+          Expanded(child: buildGender())
+
+        ],
+      ),
+    );
+  }
+
+  Widget buildRowContainer({required String title,required String content,required Color color}){
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+      decoration: BoxDecoration(color: CustomColors.sDarkColor2, borderRadius: BorderRadius.all(Radius.circular(16.r))
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(title, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w700, color: color)),
+          height4,
+          Text(content, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700, fontFamily: "PlusJakartaSans")),
+
+        ],
+      ),
+    );
+  }
+
+
+  List<String> monthlist=["Last 6 Months", "Last 3 Months", "Last 30 Days","Last 7 Days"];
+  Widget buildGender(){
+    return DropdownButtonFormField<String>(
+      iconEnabledColor: CustomColors.sDisableButtonColor,
+      isDense: false,
+      dropdownColor: CustomColors.sDarkColor3,
+      items: monthlist.map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value, style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
+              fontSize: 14.sp, fontWeight: FontWeight.w500), ),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        // thirdVal=newValue??"";
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
+        hintText: "Filter",
+        isDense: true,
+        filled: true,
+        prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),
+        prefixIcon:Padding(
+          padding:  EdgeInsets.only(right: 8.w, left: 10.w),
+          child: SizedBox.shrink(),
+        ),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+        hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor100, fontSize: 14.sp, fontWeight: FontWeight.w400),
+
+        fillColor:CustomColors.sDarkColor3,
+        errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color:Colors.transparent, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),
+        focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:Colors.transparent, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),
+      ),
+    );
+  }
+
+  Widget buildTransactionList(){
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: 20,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder:(context, int position){
+          return InkWell(
+            onTap: (){
+              Navigator.push(context, FadeRoute(page: TransactionDetail()));
+
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 40.w,
+                      height: 40.h,
+                      decoration: BoxDecoration(color: Colors.grey, shape: BoxShape.circle,
+                        // image: DecorationImage(image: AssetImage("images/aa.png"), fit: BoxFit.fill,)
+                      ),
+                    ),
+
+                    SizedBox(width: 10.w,),
+
+                    Expanded(
+                      child: SizedBox(
+                        width: 175.w,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Spray activity at Quilox", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400),),
+                            height4,
+                            Text("${DateFormat.MMMd().format(DateTime.now())}, ${DateFormat.jm().format(DateTime.now())}",
+                              style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text("-N300,000", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700, color: CustomColors.sErrorColor)),
+
+                        Text("${DateFormat.jm().format(DateTime.now())}",
+                          style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
+
+                      ],
+                    ),
+                  ],
+                ),
+                height10,
+              ],
+            ),
+          );
+        });
+  }
+
+
+
+
+
+}

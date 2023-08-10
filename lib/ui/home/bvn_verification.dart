@@ -36,8 +36,9 @@ class _BvnVerificationState extends State<BvnVerification> {
         appBar: buildAppBar(context: context, title: "BVN Verification"),
         body:  Padding(
           padding: horizontalPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            shrinkWrap: true,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               height22,
               buildContainer(),

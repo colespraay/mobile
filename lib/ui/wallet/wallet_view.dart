@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/navigations/SlideUpRoute.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/navigations/scale_transition.dart';
 import 'package:spraay/ui/home/event_slidder.dart';
@@ -82,15 +83,6 @@ class _WalletViewState extends State<WalletView> {
                   ],
                 ),
 
-                // height18,
-                // GestureDetector(
-                //   onTap:(){
-                //     // Navigator.push(context, FadeRoute(page: FundWallet()));
-                //   },
-                //   child: Align(
-                //       alignment: Alignment.bottomRight,
-                //       child: SvgPicture.asset("images/top_up.svg")),
-                // )
               ],
             ),
           ),
@@ -171,7 +163,7 @@ class _WalletViewState extends State<WalletView> {
         Expanded(
           child: GestureDetector(
             onTap:(){
-              Navigator.push(context, FadeRoute(page: FundWallet()));
+              Navigator.push(context, SlideUpRoute(page: FundWallet()));
 
             },
             child: Container(
@@ -197,7 +189,7 @@ class _WalletViewState extends State<WalletView> {
         Expanded(
           child: GestureDetector(
             onTap:(){
-              Navigator.push(context, FadeRoute(page: Withdrawal()));
+              Navigator.push(context, SlideUpRoute(page: Withdrawal()));
             },
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 12.h),

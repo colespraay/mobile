@@ -300,3 +300,4 @@ class NumberTextInputFormatter extends TextInputFormatter {
     );
   }
 }
+

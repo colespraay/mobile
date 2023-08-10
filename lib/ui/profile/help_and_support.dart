@@ -118,7 +118,7 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
   List<String> horizList=["General", "Account", "Events", "Top-up", "Withdraw"];
   Widget buildHorizontalTicket(){
     return SizedBox(
-      height: 32.h,
+      height: 40.h,
       child: ListView.builder(
           shrinkWrap: true,
           itemCount: horizList.length,
@@ -132,7 +132,7 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
                 });
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                 margin: EdgeInsets.only(right: 16.w),
                 decoration: BoxDecoration(
                     color:index_pos==position? CustomColors.sPrimaryColor500: Color(0x40335EF7),

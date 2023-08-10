@@ -39,6 +39,7 @@ dependencies:
   whatsapp_unilink: ^2.1.0
   dotted_border: ^2.0.0+3
   image_picker: ^1.0.2
+  fl_chart: ^0.63.0
 
 dev_dependencies:
   flutter_test:
@@ -76,4 +77,8 @@ flutter:
      - family: SemiBold
        fonts:
          - asset: fonts/DMSans-SemiBold.ttf
+
+     - family: PlusJakartaSans
+       fonts:
+         - asset: fonts/PlusJakartaSans-Bold.ttf
 

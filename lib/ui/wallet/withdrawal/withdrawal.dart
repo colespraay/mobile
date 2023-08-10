@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/ui/wallet/withdrawal/to_bank_account.dart';
 
 class Withdrawal extends StatefulWidget {
   const Withdrawal({Key? key}) : super(key: key);
@@ -56,7 +58,10 @@ class _WithdrawalState extends State<Withdrawal> {
                 decoration: new InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 0),
 
-                prefixIcon: Padding(
+                  prefixIconConstraints: BoxConstraints(minWidth: 30.w, minHeight: 19.h,),
+
+
+                  prefixIcon: Padding(
                     padding:  EdgeInsets.only(right: 0.w, left: 2.w),
                     child: Text("N", style: CustomTextStyle.kTxtBold.copyWith(color: CustomColors.sGreyScaleColor100, fontSize: 40.sp, fontWeight: FontWeight.bold),),
                   ) ,
@@ -83,18 +88,21 @@ class _WithdrawalState extends State<Withdrawal> {
 
               CustomButton(
                   onTap: () {
-                    if(firstBtn.length==11){
-                      popupDialog(context: context, title: "Identity Verified", content: "Yaay!!! You can not enjoy all the features of Spray App!",
-                          buttonTxt: 'Let’s get started',
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          }, png_img: 'verified');
+                    if(firstBtn.isNotEmpty){
+                      Navigator.push(context, FadeRoute(page: ToBankAccount()));
+
+                      // popupDialog(context: context, title: "Identity Verified", content: "Yaay!!! You can not enjoy all the features of Spray App!",
+                      //     buttonTxt: 'Let’s get started',
+                      //     onTap: () {
+                      //       Navigator.pop(context);
+                      //       Navigator.pop(context);
+                      //     }, png_img: 'verified');
+
                     }
 
                   },
-                  buttonText: 'Withdraw', borderRadius: 30.r,width: 380.w,
-                  buttonColor: firstBtn.length==11  ? CustomColors.sPrimaryColor500:
+                  buttonText: 'Continue', borderRadius: 30.r,width: 380.w,
+                  buttonColor: firstBtn.isNotEmpty ? CustomColors.sPrimaryColor500:
                   CustomColors.sDisableButtonColor),
 
 

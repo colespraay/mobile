@@ -7,7 +7,9 @@ import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideDownRoute.dart';
 import 'package:spraay/navigations/SlideUpRoute.dart';
+import 'package:spraay/navigations/scale_transition.dart';
 import 'package:spraay/ui/authentication/create_account.dart';
+import 'package:spraay/ui/authentication/login_screen.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -48,14 +50,19 @@ class _WelcomePageState extends State<WelcomePage> {
                     padding:  EdgeInsets.symmetric(horizontal: 10.w),
                     child: CustomButton(
                         onTap: () {
-                          Navigator.push(context, SlideDownRoute(page: CreateAccount()));
+                          Navigator.push(context, SlideDownRoute(page: LoginScreen()));
                         },
                         buttonText: 'Continue with Phone Number', borderRadius: 30.r,width: 380.w,
                         buttonColor: CustomColors.sPrimaryColor500 ),
                   ),
                   height34,
 
-                  buildTwoTextWidget(title: "Don’t have an account?", content: " Sign up"),
+                  InkWell(
+                    onTap:(){
+                      Navigator.push(context, SlideUpRoute(page: CreateAccount()));
+
+                    },
+                      child: buildTwoTextWidget(title: "Don’t have an account?", content: " Sign up")),
 
                   height34,
 
