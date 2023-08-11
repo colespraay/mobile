@@ -26,9 +26,9 @@ class _ChatViewState extends State<ChatView> {
       // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SprayBarGraph(),
-        height40,
+        height30,
         buildContainer(),
-        height22,
+        height20,
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -39,7 +39,7 @@ class _ChatViewState extends State<ChatView> {
 
           ],
         ),
-        height40,
+        height34,
         Text("Transactions", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700)),
         height18,
         buildTransactionList(),
@@ -52,14 +52,14 @@ class _ChatViewState extends State<ChatView> {
 
   Widget buildContainer(){
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(color: CustomColors.sDarkColor2, borderRadius: BorderRadius.all(Radius.circular(16.r))
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            width: 160.w,
+            width: 180.w,
               child: Text("N1,515,890", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700))),
 
           SizedBox(width: 8.w,),

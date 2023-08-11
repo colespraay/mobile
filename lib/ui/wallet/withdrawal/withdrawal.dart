@@ -45,6 +45,7 @@ class _WithdrawalState extends State<Withdrawal> {
               height26,
               TextFormField(
                 controller: phoneController,
+                  keyboardType: TextInputType.number,
                 style: CustomTextStyle.kTxtBold.copyWith(color: CustomColors.sGreyScaleColor100, fontSize: 40.sp, fontWeight: FontWeight.bold),
                 onChanged:(value){
                   setState(() {firstBtn=value;});
@@ -56,14 +57,15 @@ class _WithdrawalState extends State<Withdrawal> {
                   NumberTextInputFormatter()
                 ],
                 decoration: new InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 0),
+                  contentPadding: EdgeInsets.symmetric(vertical: 0.1.h, horizontal: 0),
 
-                  prefixIconConstraints: BoxConstraints(minWidth: 30.w, minHeight: 19.h,),
+                  prefixIconConstraints: BoxConstraints(minWidth: 30.w, minHeight: 10.h,),
 
 
                   prefixIcon: Padding(
-                    padding:  EdgeInsets.only(right: 0.w, left: 2.w),
-                    child: Text("N", style: CustomTextStyle.kTxtBold.copyWith(color: CustomColors.sGreyScaleColor100, fontSize: 40.sp, fontWeight: FontWeight.bold),),
+                    padding:  EdgeInsets.only(right: 5.w, left: 2.w, top: 4.h),
+                    child: Text("N", style: CustomTextStyle.kTxtBold.copyWith(
+                        color: CustomColors.sGreyScaleColor100, fontSize: 38.sp, fontWeight: FontWeight.bold),),
                   ) ,
                 ),
 

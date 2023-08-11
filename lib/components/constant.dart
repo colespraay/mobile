@@ -94,6 +94,10 @@ extension StringExtension on String {
 Divider dividerWidget=Divider(color: CustomColors.sGreyScaleColor800,);
 
 
+String getInitials(String account_name) => account_name.isNotEmpty
+    ? account_name.trim().split(' ').map((l) => l[0]).take(2).join() : '';
+
+
 
 
 

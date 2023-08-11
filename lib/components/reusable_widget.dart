@@ -4,7 +4,9 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/themes.dart';
@@ -207,12 +209,14 @@ popupDialog({ required BuildContext context, required String title, required Str
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         height40,
                       Image.asset("images/$png_img.png",width: 140.w, height: 140.h),
                       // Container(width: 140.w, height: 140.h, color: Colors.yellow,),
                         height30,
-                        Text(title, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700, color: CustomColors.sPrimaryColor400),),
+                        Center(child: Text(title, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700, color: CustomColors.sPrimaryColor400),
+                        textAlign: TextAlign.center,)),
                         height16,
                         SizedBox(
                           width: 276.w,
@@ -301,3 +305,36 @@ class NumberTextInputFormatter extends TextInputFormatter {
   }
 }
 
+class SlideListAnimationWidget extends StatelessWidget {
+  final int position;
+  final Widget child;
+
+  SlideListAnimationWidget({Key? key,  required this.position,required this.child}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimationConfiguration.staggeredList(
+        position: position,
+        delay: Duration(milliseconds: 100),
+        child: SlideAnimation(
+            duration: Duration(milliseconds: 1500),
+            curve: Curves.fastLinearToSlowEaseIn,
+            child: FadeInAnimation(
+                curve: Curves.fastLinearToSlowEaseIn,
+                duration: Duration(milliseconds: 4000),
+                child: child)));
+  }
+}
+
+
+toastMessage(String titile){
+  Fluttertoast.showToast(
+      msg: titile,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Color(0x405B45FF),
+      textColor: Colors.white,
+      fontSize: 16.0
+  );
+}

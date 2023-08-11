@@ -12,7 +12,8 @@ import 'package:spraay/components/themes.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
 class EditEvent extends StatefulWidget {
-  const EditEvent({Key? key}) : super(key: key);
+  String fromPage;
+   EditEvent({required this.fromPage});
 
   @override
   State<EditEvent> createState() => _EditEventState();
@@ -85,9 +86,10 @@ class _EditEventState extends State<EditEvent> {
             decoration: BoxDecoration(color: CustomColors.sPrimaryColor500),
             child: Stack(
               children: [
-                Container(color: Colors.blue,),//replace this with image
+                ClipRRect(borderRadius: BorderRadius.circular(12.r),
+                    child: Container(color: Colors.blue,)),//replace this with image
                 // ClipRRect(
-                //   borderRadius: BorderRadius.circular(8.0),
+                //   borderRadius: BorderRadius.circular(12.r),
                 //   child: CachedNetworkImage(
                 //     fit: BoxFit.cover,
                 //     width:160.w,
@@ -131,9 +133,22 @@ class _EditEventState extends State<EditEvent> {
               popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
                   buttonTxt: 'Home',
                   onTap: () {
-                   Navigator.pop(context);
-                   Navigator.pop(context);
-                   Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+
+                if( widget.fromPage=="view_event"){
+                  //when routed through view_event page
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+                }else{
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+                }
+
+
                   }, png_img: 'verified');
             },
             buttonText: 'Confirm', borderRadius: 30.r,width: 380.w,

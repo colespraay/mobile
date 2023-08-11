@@ -21,7 +21,7 @@ class FundWallet extends StatelessWidget {
               Text("The account number provided is unique to your Spraay account. Copy the account details below and transfer your amount you want to fund. Your account will be funded instantly",
                   style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp, color: CustomColors.sGreyScaleColor50), textAlign: TextAlign.center,),
 
-              height16,
+              height26,
               Text("Account Number",
                 style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.w700, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
               height4,
@@ -40,14 +40,16 @@ class FundWallet extends StatelessWidget {
 
               Spacer(),
 
-              CustomButton(
-                  onTap: () {
-                    Clipboard.setData(ClipboardData(text: "12340494")).then((_){
-                      cherryToastInfo(context, "Account number copied", "Sending to this account will fund  your Spraay account automatically");
-                    });
-                  },
-                  buttonText: 'Copy', borderRadius: 30.r,width: 380.w,
-                  buttonColor:CustomColors.sPrimaryColor500),
+              Center(
+                child: CustomButton(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: "12340494")).then((_){
+                        cherryToastInfo(context, "Account number copied", "Sending to this account will fund  your Spraay account automatically");
+                      });
+                    },
+                    buttonText: 'Copy', borderRadius: 30.r,width: 380.w,
+                    buttonColor:CustomColors.sPrimaryColor500),
+              ),
 
 
               height40

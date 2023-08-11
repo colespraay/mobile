@@ -11,6 +11,7 @@ import 'package:spraay/navigations/scale_transition.dart';
 import 'package:spraay/ui/events/events.dart';
 import 'package:spraay/ui/events/new_event/new_event.dart';
 import 'package:spraay/ui/home/home_screen.dart';
+import 'package:spraay/ui/others/spray/join_event.dart';
 import 'package:spraay/ui/wallet/wallet_screen.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
@@ -175,7 +176,11 @@ class _DasboardScreenState extends State<DasboardScreen> {
                             children: [
                               height45,
 
-                              buildModalChildren(img: "spray_sm_svg", title: "Spray"),
+                              GestureDetector(
+                                onTap:(){
+                                  Navigator.pushReplacement(context, ScaleTransition1(page: JoinEvent()));
+                                },
+                                  child: buildModalChildren(img: "spray_sm_svg", title: "Spray")),
                               height18,
                               GestureDetector(
                                 onTap:(){

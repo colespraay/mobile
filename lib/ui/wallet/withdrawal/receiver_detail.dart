@@ -50,11 +50,7 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
               height18,
               CustomizedTextField(textEditingController:accNumberController, keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,hintTxt: "1234567890",focusNode: _textField1Focus,
-                maxLength: 10,
-                // prefixIcon: Padding(
-                //   padding:  EdgeInsets.only(right: 8.w, left: 10.w),
-                //   child: SvgPicture.asset("images/number.svg", height: 11.h,),
-                // ),
+                // maxLength: 10,
                 inputFormat: [
                   FilteringTextInputFormatter.digitsOnly
                 ],

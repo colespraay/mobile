@@ -60,7 +60,7 @@ class _MyEventsState extends State<MyEvents> {
                   height8,
                   GestureDetector(
                       onTap:(){
-                        Navigator.push(context, FadeRoute(page: EditEvent()));
+                        Navigator.push(context, FadeRoute(page: EditEvent(fromPage: "")));
                       },
                       child: buildStatus(title: "Edit Details", color:CustomColors.sPrimaryColor500, ))
 
