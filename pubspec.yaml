@@ -44,6 +44,9 @@ dependencies:
   fluttertoast: ^8.2.2
   contacts_service: ^0.6.3
   permission_handler: ^10.4.3
+  lottie: ^2.6.0
+  appinio_swiper: ^2.0.2
+  flutter_animate: ^4.2.0+1
 #  fluttercontactpicker: ^4.7.0
 
 dev_dependencies:
@@ -86,4 +89,8 @@ flutter:
      - family: PlusJakartaSans
        fonts:
          - asset: fonts/PlusJakartaSans-Bold.ttf
+     - family: SemiPlusJakartaSans
+       fonts:
+         - asset: fonts/PlusJakartaSans-SemiBold.ttf
+
 

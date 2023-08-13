@@ -181,6 +181,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
                                   Navigator.pushReplacement(context, ScaleTransition1(page: JoinEvent()));
                                 },
                                   child: buildModalChildren(img: "spray_sm_svg", title: "Spray")),
+
                               height18,
                               GestureDetector(
                                 onTap:(){

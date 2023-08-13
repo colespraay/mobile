@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/authentication/screen_direction.dart';
 import 'package:spraay/ui/onboarding/onboarding.dart';
 
@@ -69,6 +70,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void didChangeDependencies() {
+
+    // Timer(Duration(seconds: 4), ()=> Navigator.pushReplacement(context, FadeRoute(page: ScreenDirection())));
+
+
     Timer(Duration(seconds: 4), ()=> Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ScreenDirection())));
 
   }

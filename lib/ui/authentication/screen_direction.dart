@@ -18,7 +18,7 @@ class _ScreenDirectionState extends State<ScreenDirection> {
     return FutureBuilder<bool>(
       future: visitingflag,
       builder: (context, snapshot){
-        if(snapshot.data==false){
+        if( snapshot.data==null || snapshot.data==false){
           return OnboardingScreen() ;
         }
         else{

@@ -8,6 +8,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/themes.dart';
 
@@ -111,15 +112,18 @@ class CustomizedTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final void Function(String)? onChanged;
   final int? maxLength;
+  final String? prefixText;
+  final bool?autofocus;
 
 
   CustomizedTextField({this.textEditingController, this.keyboardType, this.textInputAction, this.labeltxt, this.hintTxt, this.obsec, this.surffixWidget,
-    this.inputFormat, this.readOnly,this.onTap, this.maxLines, this.prefixIcon, this.focusNode, this.onChanged, this.maxLength});
+    this.inputFormat, this.readOnly,this.onTap, this.maxLines, this.prefixIcon, this.focusNode, this.onChanged, this.maxLength,
+  this.prefixText, this.autofocus});
 //maxLines
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      autofocus: false,
+      autofocus:autofocus?? false,
       maxLength:maxLength,
       focusNode:focusNode,
       obscureText: obsec?? false,
@@ -142,6 +146,9 @@ class CustomizedTextField extends StatelessWidget {
       style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
           fontSize: 14.sp, fontWeight: FontWeight.w500),
       decoration:  InputDecoration(
+        prefixText: prefixText,
+        prefixStyle: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
+            fontSize: 14.sp, fontWeight: FontWeight.w500),
         labelText: labeltxt,
         hintText: hintTxt,
         isDense: true,
@@ -337,4 +344,72 @@ toastMessage(String titile){
       textColor: Colors.white,
       fontSize: 16.0
   );
+}
+
+
+
+class EmptyListLotie extends StatefulWidget {
+  String tittle;
+  EmptyListLotie(this.tittle);
+
+  @override
+  _EmptyListLotieState createState() => _EmptyListLotieState();
+}
+
+class _EmptyListLotieState extends State<EmptyListLotie> with SingleTickerProviderStateMixin{
+  AnimationController? _controller;
+  int cont = 0;
+  bool _isCompleted=false;
+  @override
+  void initState() {
+    _controller=AnimationController(vsync: this);
+
+    _controller?.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        print('Animation ${cont + 1} completed. ');
+        cont++;
+        if (cont < 2) {
+          _controller?.reset();
+          _controller?.forward();
+
+          setState(() {_isCompleted=false;});
+        }else{
+          setState(() {_isCompleted=true;});
+        }
+      }
+    });
+
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if(_isCompleted==true){
+      return SizedBox.shrink();
+    }
+    else{
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Lottie.asset('images/${widget.tittle}.json',
+              // width: 180.w,
+              // height: 155.h,
+              // fit: BoxFit.cover,
+              controller: _controller,
+              onLoaded: (composition){
+                _controller?..duration = composition.duration..forward();
+              }
+          ),
+          Center(child: Text("Swipe up to Spray", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w700,),)),
+        ],
+      );
+    }
+  }
 }

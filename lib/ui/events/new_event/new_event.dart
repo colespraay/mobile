@@ -140,14 +140,14 @@ class _NewEventState extends State<NewEvent> {
         CustomizedTextField(
           textEditingController:descriptionController, keyboardType: TextInputType.text,
           maxLength: 150,
-          maxLines: 5,
+          maxLines: 4,
           textInputAction: TextInputAction.done,hintTxt: "Event description (Not more than 150 words)",
           focusNode: _textField6Focus,
           onChanged:(value){
             setState(() {sixVal=value;});
           },
         ),
-        height16,
+        height8,
         buildImage(),
         height26,
         CustomButton(
@@ -210,8 +210,8 @@ class _NewEventState extends State<NewEvent> {
         hintText: "Category",
         isDense: true,
         filled: true,
-        prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),
-        prefixIcon:Padding(padding:  EdgeInsets.only(right: 8.w, left: 10.w), child: SizedBox.shrink(),),
+        // prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),
+        // prefixIcon:Padding(padding:  EdgeInsets.only(right: 8.w, left: 10.w), child: SizedBox.shrink(),),
         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
         hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
@@ -242,7 +242,7 @@ class _NewEventState extends State<NewEvent> {
 
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
-                child: Image.file(imageFile!, width: 178.w, height: 172.h,)),
+                child: Image.file(imageFile!, width: 178.w, height: 172.h, fit: BoxFit.cover,)),
 
 
             Positioned(

@@ -60,7 +60,16 @@ class _PhoneContactsState extends State<PhoneContacts> {
         body: Builder(
           builder: (context) {
             if(_isLoading==true){
-              return Center(child: SpinKitFadingCircle(size: 50.r,color:CustomColors.sPrimaryColor500));
+              return Center(child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SpinKitFadingCircle(size: 50.r,color:CustomColors.sPrimaryColor500),
+                  height4,
+                  Text("Loading...", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp,
+                      fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor),),
+                ],
+              ));
             }
 
            else{
@@ -90,7 +99,7 @@ class _PhoneContactsState extends State<PhoneContacts> {
                             });
 
 
-                            popupDialog(context: context, title: "Invites successfully sent!", content: "You have successfully sent Adam Smith and ${_myselectedContacts.length} others an invite to your event!",
+                            popupDialog(context: context, title: "Invites successfully sent!", content: "You have successfully sent ${_myselectedContacts[0].contact.displayName??""} and ${_myselectedContacts.length-1} others an invite to your event!",
                                 buttonTxt: 'Home',
                                 onTap: () {
                                   Navigator.pop(context);
@@ -133,7 +142,8 @@ class _PhoneContactsState extends State<PhoneContacts> {
         child: Text(getInitials(c.contact.displayName??""),
             style:  CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor)),),
 
-      title: Text(c.contact.displayName ?? "", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor),),
+      title: Text(c.contact.displayName ?? "", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp,
+          fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor),),
 
       // subtitle: list.length >= 1 && list[0].value != null ? Text(list[0].value??"") : Text(''),
 

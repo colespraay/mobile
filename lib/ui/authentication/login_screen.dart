@@ -43,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void dispose() {
     _textField1Focus?.dispose();
     _textField2Focus?.dispose();
+    phoneController.dispose();
     super.dispose();
   }
 
@@ -65,10 +66,12 @@ class _LoginScreenState extends State<LoginScreen> {
               CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,hintTxt: "7012345678",focusNode: _textField1Focus,
                 maxLength: 11,
-                prefixIcon: Padding(
-                  padding:  EdgeInsets.only(right: 8.w, left: 10.w),
-                  child: SvgPicture.asset("images/number.svg", height: 11.h,),
-                ) ,
+                autofocus: true,
+                prefixText: "+234 ",
+                // prefixIcon: Padding(
+                //   padding:  EdgeInsets.only(right: 8.w, left: 10.w),
+                //   child: SvgPicture.asset("images/number.svg", height: 11.h,),
+                // ) ,
                 inputFormat: [
                   FilteringTextInputFormatter.digitsOnly
                 ],
