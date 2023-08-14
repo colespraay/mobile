@@ -3,6 +3,7 @@ import 'package:cherry_toast/resources/arrays.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -219,7 +220,7 @@ popupDialog({ required BuildContext context, required String title, required Str
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         height40,
-                      Image.asset("images/$png_img.png",width: 140.w, height: 140.h),
+                      Image.asset("images/$png_img.png",width: 140.w, height: 140.h).animate().scale(),
                       // Container(width: 140.w, height: 140.h, color: Colors.yellow,),
                         height30,
                         Center(child: Text(title, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700, color: CustomColors.sPrimaryColor400),

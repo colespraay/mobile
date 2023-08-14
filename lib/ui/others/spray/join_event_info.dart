@@ -80,7 +80,11 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
         CustomButton(
             onTap: () {
               if( firstVal.isNotEmpty && index_sprayamt>=0){
-                Navigator.push(context, SlideUpRoute(page: SprayScreen()));
+
+                noteQuantity=totalAmount/amount;
+
+                Navigator.push(context, SlideUpRoute(page: SprayScreen(cash: cash, totalAmount: totalAmount, noteQuantity: noteQuantity.toInt(),
+                unitAmount: amount,)));
               }
             },
             buttonText: 'Confirm', borderRadius: 30.r,width: 380.w,
@@ -191,11 +195,17 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
   }
 
   int index_sprayamt=-1;
+  String cash="";
   List<CashSprayModel> sprayAmtList=[
-    CashSprayModel(amount: "200", amountImg: "two_hundrend"),
-    CashSprayModel(amount: "500", amountImg: "five_hundred"),
-    CashSprayModel(amount: "1000", amountImg: "one_thousand")
+    CashSprayModel(amount: "200", amountImg: "two_hundrend",cash: "big_two_hundrend"),
+    CashSprayModel(amount: "500", amountImg: "five_hundred", cash: "big_five_hundred"),
+    CashSprayModel(amount: "1000", amountImg: "one_thousand", cash: "big_one_thousand")
   ];
+
+  int totalAmount=10000;
+  double noteQuantity=0.0;
+  int amount=0;
+
   Widget buildHorizontalSprayAmt(){
     return   Wrap(
       alignment: WrapAlignment.center,
@@ -205,6 +215,8 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
           int position = e.key;//position
           setState(() {
             index_sprayamt=position;
+            cash=e.value.cash;
+            amount=int.parse(e.value.amount);
           });
         },
         child: Container(

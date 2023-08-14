@@ -100,6 +100,11 @@ Divider dividerWidget=Divider(color: CustomColors.sGreyScaleColor800,);
 String getInitials(String account_name) => account_name.isNotEmpty
     ? account_name.trim().split(RegExp(' +')).map((s) => s[0]).take(2).join() : '';
 
+NumberFormat formatNumberAndDecimal = NumberFormat.currency(
+ locale: 'en_us',
+ symbol: '',
+ decimalDigits: 2,
+);
 
 
 

@@ -183,8 +183,6 @@ class _TransactionDetailState extends State<TransactionDetail> {
 
   Future<void> _captureScreenshotAndSaveAsPdf() async {
 
-
-
     await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List ?image) async {
       if (image != null) {
         final directory = await getApplicationDocumentsDirectory();

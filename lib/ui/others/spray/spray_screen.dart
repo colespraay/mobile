@@ -6,22 +6,36 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/rate_experience.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/ui/others/payment_receipt.dart';
+import 'package:spraay/ui/others/spray/spray_detail.dart';
+import 'package:spraay/ui/others/spray/topup_spray.dart';
 
 class SprayScreen extends StatefulWidget {
-  const SprayScreen({Key? key}) : super(key: key);
+  String cash;
+  int totalAmount;
+  int noteQuantity;
+  int unitAmount;
+   SprayScreen({required this.cash, required this.totalAmount, required this.noteQuantity, required this.unitAmount});
 
   @override
   State<SprayScreen> createState() => _SprayScreenState();
 }
 
-class _SprayScreenState extends State<SprayScreen> {
+class _SprayScreenState extends State<SprayScreen>{
 
   final AppinioSwiperController controller = AppinioSwiperController();
   double amount=0.00;
 
-  List<String> candidates=["Hellop", "Daniel", "Frank", "How","Hellop", "Daniel", "Frank", "How"];
+
+  int? noteQuantity;
+  @override
+  void initState() {
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,20 +53,37 @@ class _SprayScreenState extends State<SprayScreen> {
                   padding:  EdgeInsets.only(top: 30.h),
                   child: CustomButton(
                       onTap: () {
+                        popupStopPayingDialog(context: context, title: "Are you sure?",
+                            content: "You are about to stop spraying",
+                            buttonTxt: "Yes Stop", onTap: (){
+                              // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+                              // Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+
+
+                              Navigator.pushReplacement(context, FadeRoute(page: SprayDetail()));
+
+                            }, png_img: "question");
+
                       },
                       buttonText: 'Stop spray', borderRadius: 30.r,width: 380.w,
                       buttonColor: CustomColors.sErrorColor),
                 ),
-              ): SizedBox.shrink(),
+              ).animate().fadeIn(duration: 1000.milliseconds, curve: Curves.easeIn): SizedBox.shrink(),
 
-              _isSprayEndReached==false? Spacer(): Expanded(child: _buildLimitReached()),
+              _isSprayEndReached==false? Spacer(): Expanded(child: _buildLimitReached().animate() // baseline=800ms
+                  .slide(
+                  duration: 800.milliseconds,curve: Curves.fastOutSlowIn,
+                  begin: Offset(0.0, 1.0),
+                  end: Offset.zero
+              )),
 
-              _isSprayEndReached==false?buildSprayWidget(): SizedBox.shrink()
 
-              //     .animate()
-              //     .slide(duration: 1000.ms).fadeOut()
-              // /* .then(delay: 1000.ms) // baseline=800ms
-              //         .fadeOut()*/
+              _isSprayEndReached==false?buildSprayWidget(): Center(
+                child: Image.asset("images/hand.png", height: 200.h, ).animate().slide(
+                    begin: Offset.zero,
+                    end: Offset(0.0, 1.0),
+                    duration: 800.milliseconds,curve: Curves.fastOutSlowIn),
+              )
 
             ],
           ),
@@ -64,7 +95,7 @@ class _SprayScreenState extends State<SprayScreen> {
 
   void _swipe(int index, AppinioSwiperDirection direction) {
     setState(() {
-      amount =amount+1000;
+      amount =amount+widget.unitAmount;
     });
     log("the card was swiped to the: " + direction.name);
   }
@@ -102,7 +133,7 @@ class _SprayScreenState extends State<SprayScreen> {
                   height4,
                   Text("Ikechukwu", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) ),
                   height8,
-                  buildDateAndLocContainer(title: "₦${amount}")
+                  buildDateAndLocContainer(title: "₦${formatNumberAndDecimal.format(amount)}")
 
                 ],
               ),
@@ -161,9 +192,9 @@ class _SprayScreenState extends State<SprayScreen> {
                   onSwipe: _swipe,
                   // padding:  EdgeInsets.only(left: 25.w, right: 25.w, top: 50.h, bottom: 40.h,),
                   onEnd: _onEnd,
-                  cardsCount: candidates.length,
+                  cardsCount: widget.noteQuantity,
                   cardsBuilder: (BuildContext context, int index) {
-                    return Image.asset("images/money.png", width: 128.w, height: 250.h,);
+                    return Image.asset("images/${widget.cash}.png", width: 128.w, height: 250.h,);
                   },
                 ),
               )),
@@ -175,8 +206,9 @@ class _SprayScreenState extends State<SprayScreen> {
   Widget _buildLimitReached(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        height40,
         Center(child: Text("Limit reached", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 28.sp, fontWeight: FontWeight.w800,),)),
 
         Row(
@@ -187,6 +219,7 @@ class _SprayScreenState extends State<SprayScreen> {
             Expanded(
               child: CustomButton(
                   onTap: () {
+                    rateAppPopup();
                   },
                   buttonText: 'I am done', borderRadius: 30.r,height: 45.h,
                   buttonColor: CustomColors.sErrorColor),
@@ -197,6 +230,7 @@ class _SprayScreenState extends State<SprayScreen> {
             Expanded(
               child: CustomButton(
                   onTap: () {
+                    Navigator.push(context, FadeRoute(page: TopUpSpray()));
                   },
                   buttonText: 'Top up', borderRadius: 30.r,height: 45.h,
                   buttonColor: CustomColors.sPrimaryColor500),
@@ -205,6 +239,75 @@ class _SprayScreenState extends State<SprayScreen> {
         ),
       ],
     );
+  }
+
+
+  popupStopPayingDialog({ required BuildContext context, required String title, required String content, required String buttonTxt,
+    required void Function() onTap, required String png_img}){
+    double height=MediaQuery.of(context).size.height;
+    double width=MediaQuery.of(context).size.width;
+    return showDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierColor: Colors.black54,
+        builder: (BuildContext context){
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState){
+                return Dialog(
+                  backgroundColor: CustomColors.sDarkColor2,
+                  insetPadding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.r),),
+                  child: Container(
+                    width: 340.w,
+                    decoration: BoxDecoration(
+                      color: CustomColors.sDarkColor2,
+                      borderRadius: BorderRadius.circular(40.r),
+                    ),
+                    child: Padding(
+                      padding:  EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h, bottom: 20.h),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          height40,
+                          Image.asset("images/$png_img.png",width: 140.w, height: 140.h),
+                          // Container(width: 140.w, height: 140.h, color: Colors.yellow,),
+                          height30,
+                          Text(title, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700, color: CustomColors.sPrimaryColor400),),
+                          height16,
+                          SizedBox(
+                              width: 276.w,
+                              child: Text(content, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor),
+                                textAlign: TextAlign.center,)),
+                          height30,
+                          CustomButton(
+                              onTap: onTap,
+                              buttonText: buttonTxt, borderRadius: 30.r,
+                              buttonColor:  CustomColors.sPrimaryColor500),
+                          height22,
+                          CustomButton(
+                              onTap:(){
+                                Navigator.pop(context);
+                              },
+                              buttonText: "Cancel", borderRadius: 30.r,
+                              buttonColor:  CustomColors.sDarkColor3),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              });
+        });
+  }
+
+  rateAppPopup(){
+    return showDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierColor: Colors.black54,
+        builder: (BuildContext context){
+          return RateExperience();
+        });
   }
 
 }
