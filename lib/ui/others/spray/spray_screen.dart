@@ -270,7 +270,7 @@ class _SprayScreenState extends State<SprayScreen>{
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           height40,
-                          Image.asset("images/$png_img.png",width: 140.w, height: 140.h),
+                          Image.asset("images/$png_img.png",width: 140.w, height: 140.h).animate().scale(),
                           // Container(width: 140.w, height: 140.h, color: Colors.yellow,),
                           height30,
                           Text(title, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700, color: CustomColors.sPrimaryColor400),),

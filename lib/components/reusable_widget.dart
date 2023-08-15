@@ -44,25 +44,28 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Container(
-      width: width??double.infinity,
-      height: height??58.h,
-      decoration: BoxDecoration(
-          color: buttonColor ?? Colors.white,
-          border: Border.all(color: borderColor ?? Colors.transparent),
-          borderRadius: BorderRadius.circular(borderRadius ?? 100.r)),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          child: Center(
-            child: Text(
-              buttonText,
-              style: TextStyle(
-                color: textColor??CustomColors.sWhiteColor,
-                fontWeight: FontWeight.w700,
-                fontSize: textfontSize??16.sp,
-                fontFamily: 'Bold',),
+    return Center(
+      child: Container(
+        width: width??double.infinity,
+        height: height??58.h,
+        decoration: BoxDecoration(
+            color: buttonColor ?? Colors.white,
+            border: Border.all(color: borderColor ?? Colors.transparent),
+            borderRadius: BorderRadius.circular(borderRadius ?? 100.r)),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            child: Center(
+              child: Text(
+                buttonText,
+                style: TextStyle(
+                  color: textColor??CustomColors.sWhiteColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: textfontSize??16.sp,
+                  fontFamily: 'Bold',),
+
+              ),
 
             ),
 
@@ -71,7 +74,6 @@ class CustomButton extends StatelessWidget {
         ),
 
       ),
-
     );
 
   }
@@ -149,7 +151,7 @@ class CustomizedTextField extends StatelessWidget {
       decoration:  InputDecoration(
         prefixText: prefixText,
         prefixStyle: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
-            fontSize: 14.sp, fontWeight: FontWeight.w500),
+            fontSize: 14.sp, fontWeight: FontWeight.w500, fontFamily: "SemiPlusJakartaSans"),
         labelText: labeltxt,
         hintText: hintTxt,
         isDense: true,
@@ -235,6 +237,62 @@ popupDialog({ required BuildContext context, required String title, required Str
                             onTap: onTap,
                             buttonText: buttonTxt, borderRadius: 30.r,
                             buttonColor:  CustomColors.sPrimaryColor500),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            });
+      });
+}
+
+popupWithTwoBtnDialog({ required BuildContext context, required String title, required String content, required String buttonTxt,
+  required void Function() onTap, required String png_img, required String btn2Txt,  required void Function() onTapBtn2}){
+  double height=MediaQuery.of(context).size.height;
+  double width=MediaQuery.of(context).size.width;
+  return showDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierColor: Colors.black54,
+      builder: (BuildContext context){
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState){
+              return Dialog(
+                backgroundColor: CustomColors.sDarkColor2,
+                insetPadding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.r),),
+                child: Container(
+                  width: 340.w,
+                  decoration: BoxDecoration(
+                    color: CustomColors.sDarkColor2,
+                    borderRadius: BorderRadius.circular(40.r),
+                  ),
+                  child: Padding(
+                    padding:  EdgeInsets.only(left: 20.w, right: 20.w, top: 20.h, bottom: 20.h),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        height40,
+                        Image.asset("images/$png_img.png",width: 140.w, height: 140.h).animate().scale(),
+                        // Container(width: 140.w, height: 140.h, color: Colors.yellow,),
+                        height30,
+                        Text(title, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700, color: CustomColors.sPrimaryColor400),),
+                        height16,
+                        SizedBox(
+                            width: 276.w,
+                            child: Text(content, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor),
+                              textAlign: TextAlign.center,)),
+                        height30,
+                        CustomButton(
+                            onTap: onTap,
+                            buttonText: buttonTxt, borderRadius: 30.r,
+                            buttonColor:  CustomColors.sPrimaryColor500),
+                        height22,
+                        CustomButton(
+                            onTap:onTapBtn2,
+                            buttonText: btn2Txt, borderRadius: 30.r,
+                            buttonColor:  CustomColors.sDarkColor3),
                       ],
                     ),
                   ),

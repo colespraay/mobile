@@ -34,9 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
             // shrinkWrap: true,
             children: [
               buildTopRow(),
-              height22,
+              height20,
               buildWalletContainer(),
-              height30,
+              height26,
               Text("Events for you", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
               height10,
               EventSlidder(),

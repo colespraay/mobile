@@ -7,11 +7,14 @@ import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/fancy_fab.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/navigations/scale_transition.dart';
 import 'package:spraay/ui/events/events.dart';
 import 'package:spraay/ui/events/new_event/new_event.dart';
 import 'package:spraay/ui/home/home_screen.dart';
+import 'package:spraay/ui/others/bill_payments/bill_payment_screen.dart';
 import 'package:spraay/ui/others/spray/join_event.dart';
+import 'package:spraay/ui/others/spray_gifting/spray_gifting.dart';
 import 'package:spraay/ui/wallet/wallet_screen.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
@@ -189,9 +192,17 @@ class _DasboardScreenState extends State<DasboardScreen> {
                                 },
                                   child: buildModalChildren(img: "s_calend", title: "New Event")),
                               height18,
-                              buildModalChildren(img: "p_bill", title: "Pay Bills"),
+                              GestureDetector(
+                                onTap:(){
+                                  Navigator.pushReplacement(context, ScaleTransition1(page: BillPaymentScreen()));
+                                },
+                                  child: buildModalChildren(img: "p_bill", title: "Pay Bills")),
                               height18,
-                              buildModalChildren(img: "money_send", title: "Send Gift"),
+                              GestureDetector(
+                                onTap:(){
+                                  Navigator.pushReplacement(context, FadeRoute(page: SprayGifting()));
+                                },
+                                  child: buildModalChildren(img: "money_send", title: "Send Gift")),
                               height30,
                               Center(
                                 child: SizedBox(
