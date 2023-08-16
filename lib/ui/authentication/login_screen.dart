@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
@@ -12,7 +13,9 @@ import 'package:spraay/ui/authentication/create_account.dart';
 import 'package:spraay/ui/authentication/create_account_otp_page.dart';
 import 'package:spraay/ui/authentication/forgot_password_screen.dart';
 import 'package:spraay/ui/dashboard/dashboard_screen.dart';
+import 'package:spraay/utils/local_authentication.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -101,11 +104,18 @@ class _LoginScreenState extends State<LoginScreen> {
               height20,
               Center(child: buildCheckBox()),
               height20,
+              Provider.of<AuthProvider>(context, listen: false).value==true?GestureDetector(
+                  onTap: ()async{
+                    local_auth();
+                  },
+                  child: Center(child: Padding(
+                    padding:  EdgeInsets.only(bottom: 20.h),
+                    child: Image.asset("images/biometric.png", color: CustomColors.sPrimaryColor500,),
+                  ))):SizedBox.shrink(),
 
               CustomButton(
                   onTap: () {
                     if( firstBtn.isNotEmpty && secondBtn.isNotEmpty){
-
 
                       MySharedPreference.setVisitingFlag();
                       Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
@@ -155,5 +165,19 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
     );
+  }
+
+  local_auth()async {
+    bool isAuthenticated = await Authentication.authenticateWithBiometrics();
+
+    if (isAuthenticated) {
+      //if authenticated, login
+      MySharedPreference.setVisitingFlag();
+      Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+
+    }
+    else {
+      toastMessage("Error authenticating using Biometrics.");
+    }
   }
 }

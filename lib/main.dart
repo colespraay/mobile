@@ -5,6 +5,7 @@ import 'package:spraay/components/themes.dart';
 import 'package:spraay/splash_screen.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
+import 'package:spraay/view_model/home_provider.dart';
 
 Future main()async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +14,7 @@ Future main()async {
       MultiProvider(
           providers: [
             ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+            ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
           ],
           child: const MyApp()));
 }

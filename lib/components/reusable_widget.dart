@@ -44,28 +44,25 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Center(
-      child: Container(
-        width: width??double.infinity,
-        height: height??58.h,
-        decoration: BoxDecoration(
-            color: buttonColor ?? Colors.white,
-            border: Border.all(color: borderColor ?? Colors.transparent),
-            borderRadius: BorderRadius.circular(borderRadius ?? 100.r)),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Center(
-              child: Text(
-                buttonText,
-                style: TextStyle(
-                  color: textColor??CustomColors.sWhiteColor,
-                  fontWeight: FontWeight.w700,
-                  fontSize: textfontSize??16.sp,
-                  fontFamily: 'Bold',),
-
-              ),
+    return Container(
+      width: width??double.infinity,
+      height: height??58.h,
+      decoration: BoxDecoration(
+          color: buttonColor ?? Colors.white,
+          border: Border.all(color: borderColor ?? Colors.transparent),
+          borderRadius: BorderRadius.circular(borderRadius ?? 100.r)),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          child: Center(
+            child: Text(
+              buttonText,
+              style: TextStyle(
+                color: textColor??CustomColors.sWhiteColor,
+                fontWeight: FontWeight.w700,
+                fontSize: textfontSize??16.sp,
+                fontFamily: 'Bold',),
 
             ),
 
@@ -74,6 +71,7 @@ class CustomButton extends StatelessWidget {
         ),
 
       ),
+
     );
 
   }
@@ -281,7 +279,7 @@ popupWithTwoBtnDialog({ required BuildContext context, required String title, re
                         height16,
                         SizedBox(
                             width: 276.w,
-                            child: Text(content, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor),
+                            child: Text(content, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor, fontFamily: "SemiPlusJakartaSans"),
                               textAlign: TextAlign.center,)),
                         height30,
                         CustomButton(

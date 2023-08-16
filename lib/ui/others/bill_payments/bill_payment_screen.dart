@@ -62,9 +62,9 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
 
           },
           child: Container(
-            width: 100.w,
+            width: 105.w,
             // height: 200.h,
-            margin: EdgeInsets.only(right: 16.w, bottom: 40.h),
+            margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

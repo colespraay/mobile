@@ -69,7 +69,6 @@ class _PayBilDetailState extends State<PayBilDetail> {
         height20,
         CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
           textInputAction: TextInputAction.next,hintTxt: widget.title=="Airtime Top-up"? "Enter Phone Number": "Meter Number" ,focusNode: _textField1Focus,
-
           inputFormat: [
             FilteringTextInputFormatter.digitsOnly
           ],
@@ -82,7 +81,10 @@ class _PayBilDetailState extends State<PayBilDetail> {
               final PhoneContact contact = await FlutterContactPicker.pickPhoneContact();
               setState(() {
                 phoneController.text = contact.phoneNumber?.number?.trim().replaceAll("+234", "0").replaceAll(" ", "").replaceAll("-", "")??"";
+                firstBtn=phoneController.text;
               });
+
+
 
             },
             child: Padding(
@@ -150,7 +152,7 @@ class _PayBilDetailState extends State<PayBilDetail> {
                 border: Border.all(color:airtimePosition==e.key?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
                 // borderRadius: BorderRadius.all(Radius.circular(8.r))
             ),
-            child: SvgPicture.asset("images/${e.value}.svg", width: 80.w, height: 80.h,),
+            child: SvgPicture.asset("images/${e.value}.svg", width: 70.w, height: 70.h,),
 
           ),
         ) ).toList(),

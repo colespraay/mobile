@@ -104,7 +104,7 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
             // height16,
             dividerWidget,
             height26,
-            buildRow(title: "Transaction Amount:", content: "N${widget.amount}"),
+            buildRow(title: "Transaction Amount:", content: "${widget.amount}"),
             height12,
             buildRow(title: "Transaction Type:", content: widget.type),
             height12,
@@ -128,11 +128,11 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(width: 130.w,
-            child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) )),
+        SizedBox(width: 140.w,
+            child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 13.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) )),
         Spacer(),
 
-        Text(content, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w700) ),
+        Text(content, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w700, fontFamily: "SemiPlusJakartaSans") ),
       ],
     );
   }

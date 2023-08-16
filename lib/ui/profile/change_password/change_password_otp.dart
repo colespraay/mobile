@@ -4,24 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
-import 'package:spraay/ui/dashboard/dashboard_screen.dart';
-import 'package:spraay/ui/others/payment_receipt.dart';
-import 'package:spraay/view_model/auth_provider.dart';
+import 'package:spraay/ui/profile/change_password/change_password.dart';
 
-class SprayGiftOtp extends StatefulWidget {
- final String? phoneNumber;
-  const SprayGiftOtp({Key? key, this.phoneNumber}) : super(key: key);
+class ChangePasswordOtp extends StatefulWidget {
+  const ChangePasswordOtp({super.key});
 
   @override
-  State<SprayGiftOtp> createState() => _SprayGiftOtpState();
+  State<ChangePasswordOtp> createState() => _ChangePasswordOtpState();
 }
 
-class _SprayGiftOtpState extends State<SprayGiftOtp> {
+class _ChangePasswordOtpState extends State<ChangePasswordOtp> {
   final GlobalKey<FormState> _myKey = GlobalKey<FormState>();
   StreamController<ErrorAnimationType>? errorController;
   String requiredNumber="";
@@ -30,17 +26,19 @@ class _SprayGiftOtpState extends State<SprayGiftOtp> {
   @override
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
+    startTimer();
   }
   @override
   void dispose() {
     errorController!.close();
+    _timer.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-        appBar: buildAppBar(context: context, title: "Gift"),
+        appBar: buildAppBar(context: context, title: "Change Password"),
         body: Form(
           key: _myKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -48,40 +46,39 @@ class _SprayGiftOtpState extends State<SprayGiftOtp> {
             padding: horizontalPadding,
             shrinkWrap: true,
             children: [
-
-              height20,
-              Text("You are about to gift ₦20,000 to your friend Adam Smith",
-                  style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp, color: CustomColors.sGreyScaleColor50,
-                      fontFamily: "PlusJakartaSans")),
-              height16,
-              Text("Enter PIN to confirm this transaction", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
-
+              height26,
+              Text("Code has been send to +234 1234 ******90", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
               height45,
               pincodeTextfield(context),
+              height20,
+              _start !=0? buildCountWidget(title: "Resend OTP in ", content: " ${_start}", content2: "s"):
+              InkWell(
+                onTap:(){
+                  setState(() {_start=60;});
+                  startTimer();
+                },
+                child: Text("Resend Code",
+                  style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp, color: CustomColors.sGreyScaleColor50 ),textAlign: TextAlign.center,),
+              ),
 
-              height26,
+
+              height70,
               CustomButton(
                   onTap: () {
                     if(requiredNumber.length==4){
 
-                      popupWithTwoBtnDialog(context: context, title: "Transaction successful",
-                          content: "You have successfully gifted Adam Smith N20,000.",
-                          buttonTxt: "Great! Take me Home", onTap: (){
-                            Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
-                            Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
-                          }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: "spray_circle", type:"Spray Gift", date: '17 April, 2:30 PM', amount: '₦500.00', meterNumber: '+2346123456', transactionRef: 'SPA-71eas908', transStatus: 'Successful',)));
-                          });
+                      Navigator.pushReplacement(context, FadeRoute(page: Changepassword()));
+
                     }
                   },
-                  buttonText:  'Continue', borderRadius: 30.r,width: 380.w,
+                  buttonText: 'Verify', borderRadius: 30.r,width: 380.w,
                   buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
                   CustomColors.sDisableButtonColor),
               height34,
+
+
+
             ],
           ),
         ));
@@ -130,6 +127,44 @@ class _SprayGiftOtpState extends State<SprayGiftOtp> {
             }}, // Pass it here
         ),
       ),
+    );
+  }
+
+  Widget buildCountWidget({required String title,required String content, required String content2}){
+    return  Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(title,
+          style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp, color: CustomColors.sGreyScaleColor50 ),textAlign: TextAlign.center,),
+        Text(content,
+          style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp, color: CustomColors.sPrimaryColor500 ),textAlign: TextAlign.center,),
+        Text(content2,
+          style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp, color: CustomColors.sGreyScaleColor50 ),textAlign: TextAlign.center,),
+
+      ],
+    );
+  }
+
+  late Timer _timer;
+  int _start = 60;
+  bool isLoading = false;
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+          (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            timer.cancel();
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
     );
   }
 }

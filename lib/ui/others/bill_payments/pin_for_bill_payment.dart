@@ -53,7 +53,7 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
               Center(child: SvgPicture.asset("images/${widget.image}.svg", width: 80.w, height: 80.h,)),
               height20,
               Text("You are buying ₦500 airtime on +234816123456789",
-                  style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 20.sp, color: CustomColors.sGreyScaleColor50,
+                  style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 21.sp, color: CustomColors.sGreyScaleColor50,
               fontFamily: "PlusJakartaSans")),
               height16,
               Text("Enter PIN to confirm this transaction", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
@@ -67,7 +67,7 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
                     if(requiredNumber.length==4){
 
                       popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
-                          content: "+234816123456789 has been credited with N500 ",
+                          content: "+234816123456789 has been credited with ₦500 ",
                           buttonTxt: "Okay", onTap: (){
                             Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
                             Provider.of<AuthProvider>(context, listen: false).onItemTap(0);

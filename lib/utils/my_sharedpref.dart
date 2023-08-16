@@ -23,6 +23,12 @@ class MySharedPreference{
   static Future saveWallet(String wallet_bal) async {_preferences?.setString('wallet_bal', wallet_bal);}
   static String getWalletr()  {return _preferences?.getString('wallet_bal')??"0";}
 
+  //Switch for activating or enabling face/touch ID
+  static Future<bool?> saveSwitchState(bool value) async {return _preferences?.setBool("switchStateTouchID", value);}
+  static bool? getSwitchValuesForTouchID()  {return _preferences?.getBool("switchStateTouchID");}
+
+  //hide and show wallet balance
+  static bool? getSwitchValuesForWalletBalance()  {return _preferences?.getBool("switchState");}
 
 
 

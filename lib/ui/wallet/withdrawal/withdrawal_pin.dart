@@ -49,7 +49,8 @@ class _WithdrawalOtpState extends State<WithdrawalOtp> {
             shrinkWrap: true,
             children: [
               height16,
-              Text("You are about to withdraw  N200,000 from your wallet to Uche Usman 1234567890 (Access Bank)", style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
+              Text("You are about to withdraw  ₦200,000 from your wallet to Uche Usman 1234567890 (Access Bank)", style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold,
+                  fontSize: 22.sp, color: CustomColors.sGreyScaleColor50, fontFamily: "PlusJakartaSans")),
               height8,
               Text("Enter PIN to confirm this transaction", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
 

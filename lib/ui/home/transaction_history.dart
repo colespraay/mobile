@@ -59,7 +59,8 @@ class TransactionHistory extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text("-N300,000", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700, color: CustomColors.sErrorColor)),
+                            Text("-₦300,000", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700,
+                                color: CustomColors.sErrorColor, fontFamily: "PlusJakartaSans")),
 
                             Text("${DateFormat.jm().format(DateTime.now())}",
                               style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),

@@ -48,6 +48,7 @@ dependencies:
   appinio_swiper: ^2.0.2
   flutter_animate: ^4.2.0+1
   fluttercontactpicker: ^4.7.0
+  local_auth: ^2.1.6
 
 dev_dependencies:
   flutter_test:

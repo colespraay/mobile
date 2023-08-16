@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/fancy_fab.dart';
@@ -14,6 +15,7 @@ import 'package:spraay/ui/home/event_slidder.dart';
 import 'package:spraay/ui/home/fund_wallet.dart';
 import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
+import 'package:spraay/view_model/home_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,6 +25,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  bool _isObscure=false;
+  String amount="200000";
+  @override
+  void initState() {
+    _isObscure=Provider.of<HomeProvider>(context, listen: false).hideWalletvalue??false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,8 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ));
   }
-
-
 
   Widget buildTopRow(){
     return Row(
@@ -77,8 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  bool _isObscure=false;
-  String amount="200000";
+
   Widget buildWalletContainer(){
     // pattern.png
     return ClipRRect(
@@ -110,8 +117,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: Text(_isObscure?'N${amount.replaceAll(RegExp(r"."), "*")}':
-                      "N${currrency.format(double.parse(amount))}" ,
-                        style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700)),
+                      "₦${currrency.format(double.parse(amount))}" ,
+                        style: CustomTextStyle.kTxtBold.copyWith(fontSize: 30.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans")),
                     ),
                     GestureDetector(
                         onTap: (){
@@ -214,8 +221,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         });
   }
-
-
 
 
 }

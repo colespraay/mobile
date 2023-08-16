@@ -15,6 +15,7 @@ import 'package:spraay/ui/home/home_screen.dart';
 import 'package:spraay/ui/others/bill_payments/bill_payment_screen.dart';
 import 'package:spraay/ui/others/spray/join_event.dart';
 import 'package:spraay/ui/others/spray_gifting/spray_gifting.dart';
+import 'package:spraay/ui/profile/profile_ui.dart';
 import 'package:spraay/ui/wallet/wallet_screen.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
@@ -32,8 +33,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
     EventsScreen(),
     SizedBox.shrink(),//empty page between
     WalletScreen(),
-    Container(color: Colors.brown,),
-
+    ProfileUi()
   ];
 
   @override
@@ -77,8 +77,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
             buildButomNav(img: "selected_home", title: "Home"),
             buildButomNav(img: "selected_event", title: "Events"),
 
-            BottomNavigationBarItem(activeIcon: SizedBox(width: 24.w,),
-                icon:SizedBox(width: 24.w,), label: ""),
+            BottomNavigationBarItem(activeIcon: SizedBox(width: 24.w,), icon:SizedBox(width: 24.w,), label: ""),
 
             buildButomNav(img: "selected_wallet", title: "Wallet"),
             buildButomNav(img: "selected_profile", title: "Profile"),
