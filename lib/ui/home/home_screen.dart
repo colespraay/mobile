@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Text(_isObscure?'N${amount.replaceAll(RegExp(r"."), "*")}':
+                      child: Text(_isObscure?'${amount.replaceAll(RegExp(r"."), "*")}':
                       "₦${currrency.format(double.parse(amount))}" ,
                         style: CustomTextStyle.kTxtBold.copyWith(fontSize: 30.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans")),
                     ),
