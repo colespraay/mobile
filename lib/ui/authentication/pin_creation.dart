@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/dashboard/dashboard_screen.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/auth_provider.dart';
 
 class PinCreation extends StatefulWidget {
   const PinCreation({Key? key}) : super(key: key);
@@ -33,39 +36,49 @@ class _PinCreationState extends State<PinCreation> {
     super.dispose();
   }
 
+  AuthProvider? credentialsProvider;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    credentialsProvider=context.watch<AuthProvider>();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: ListView(
-            padding: horizontalPadding,
-            shrinkWrap: true,
-            children: [
-              height16,
-              Text("Create your unique 4-digit PIN", style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
-             height8,
-              Text("Please remember this PIN. It will be used to perform transactions", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
+    return  LoadingOverlayWidget(
+      loading: credentialsProvider!.loading,
+      child: Scaffold(
+          appBar: buildAppBar(context: context),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: ListView(
+              padding: horizontalPadding,
+              shrinkWrap: true,
+              children: [
+                height16,
+                Text("Create your unique 4-digit PIN", style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
+               height8,
+                Text("Please remember this PIN. It will be used to perform transactions", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
 
-              height45,
-              pincodeTextfield(context),
+                height45,
+                pincodeTextfield(context),
 
-              height26,
-              CustomButton(
-                  onTap: () {
-                    if(requiredNumber.length==4){
-                      Navigator.pushReplacement(context, FadeRoute(page: DasboardScreen()));
-                    }
-                  },
-                  buttonText: 'Continue', borderRadius: 30.r,width: 380.w,
-                  buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
-                  CustomColors.sDisableButtonColor),
-              height34,
-            ],
-          ),
-        ));
+                height26,
+                CustomButton(
+                    onTap: () {
+                      if(requiredNumber.length==4){
+                        Provider.of<AuthProvider>(context,listen: true).createTransactionPinEndpoint(context, requiredNumber, MySharedPreference.getUId());
+                      }
+                    },
+                    buttonText: 'Continue', borderRadius: 30.r,width: 380.w,
+                    buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
+                    CustomColors.sDisableButtonColor),
+                height34,
+              ],
+            ),
+          )),
+    );
   }
 
   Widget pincodeTextfield(BuildContext context){

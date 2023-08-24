@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/authentication/tell_us_about_yourself.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/auth_provider.dart';
 
 class CreateAccountOtpPage extends StatefulWidget {
   const CreateAccountOtpPage({Key? key}) : super(key: key);
@@ -35,58 +38,66 @@ class _CreateAccountOtpPageState extends State<CreateAccountOtpPage> {
     super.dispose();
   }
 
+  AuthProvider? credentialsProvider;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    credentialsProvider=context.watch<AuthProvider>();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: ListView(
-            padding: horizontalPadding,
-            shrinkWrap: true,
-            children: [
-              height16,
-              SizedBox(
-                width: 240.w,
-                child: Text("Enter OTP sent to\n+2341234567890",
-                    style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
-              ),
-              height45,
-              pincodeTextfield(context),
-              height20,
-              _start !=0? buildCountWidget(title: "Resend OTP in ", content: " ${_start}", content2: "s"):
-              InkWell(
-                onTap:(){
-                  setState(() {_start=60;});
-                  startTimer();
-                },
-                child: Text("Resend Code",
-                  style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp, color: CustomColors.sGreyScaleColor50 ),textAlign: TextAlign.center,),
-              ),
+    return  LoadingOverlayWidget(
+      loading: credentialsProvider!.loading,
+      child: Scaffold(
+          appBar: buildAppBar(context: context),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: ListView(
+              padding: horizontalPadding,
+              shrinkWrap: true,
+              children: [
+                height16,
+                SizedBox(
+                  width: 240.w,
+                  child: Text("Enter OTP sent to\n${MySharedPreference.getPhoneNumber()}",
+                      style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
+                ),
+                height45,
+                pincodeTextfield(context),
+                height20,
+                _start !=0? buildCountWidget(title: "Resend OTP in ", content: " ${_start}", content2: "s"):
+                InkWell(
+                  onTap:(){
+                    Provider.of<AuthProvider>(context, listen: false).resendOTPCodeEndpoint(context,MySharedPreference.getUId());
 
-
-              height26,
-              CustomButton(
-                  onTap: () {
-                    if(requiredNumber.length==4){
-                      popupDialog(context: context, title: "Registration Successful", content: "You have successfully registered your account. Now let’s know you.",
-                      buttonTxt: 'Continue',
-                          onTap: () {
-                            Navigator.pushReplacement(context, FadeRoute(page: TellUsAboutYourself()));
-                          }, png_img: 'verified');
-                    }
+                    setState(() {_start=60;});
+                    startTimer();
                   },
-                  buttonText: 'Continue', borderRadius: 30.r,width: 380.w,
-                  buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
-                  CustomColors.sDisableButtonColor),
-              height34,
+                  child: Text("Resend Code",
+                    style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp, color: CustomColors.sGreyScaleColor50 ),textAlign: TextAlign.center,),
+                ),
+
+
+                height26,
+                CustomButton(
+                    onTap: () {
+                      if(requiredNumber.length==4){
+                        Provider.of<AuthProvider>(context, listen: false).registerVerifyCodeEndpoint(context, requiredNumber);
+                      }
+                    },
+                    buttonText: 'Continue', borderRadius: 30.r,width: 380.w,
+                    buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
+                    CustomColors.sDisableButtonColor),
+                height34,
 
 
 
-            ],
-          ),
-        ));
+              ],
+            ),
+          )),
+    );
   }
 
   Widget pincodeTextfield(BuildContext context){

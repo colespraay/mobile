@@ -20,7 +20,6 @@ import 'package:spraay/view_model/auth_provider.dart';
 
 class ProfileUi extends StatefulWidget {
   const ProfileUi({super.key});
-
   @override
   State<ProfileUi> createState() => _ProfileUiState();
 }

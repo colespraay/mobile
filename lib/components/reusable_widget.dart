@@ -9,6 +9,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:lottie/lottie.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/themes.dart';
@@ -335,6 +336,18 @@ void errorCherryToast(BuildContext context,String errordsc){
   ).show(context);
 }
 
+void successCherryToast(BuildContext context,String errordsc){
+  return CherryToast.success(
+    title: Text(''),
+    enableIconAnimation: false,
+    displayTitle: false,
+    description: Text(errordsc),
+    animationType: AnimationType.fromRight,
+    animationDuration: Duration(milliseconds: 1000),
+    autoDismiss: true,
+  ).show(context);
+}
+
 Widget buildDottedBorder({required Widget child}){
   return DottedBorder(
     borderType: BorderType.RRect,
@@ -470,3 +483,31 @@ class _EmptyListLotieState extends State<EmptyListLotie> with SingleTickerProvid
     }
   }
 }
+
+
+class LoadingOverlayWidget extends StatelessWidget {
+  final bool loading;
+  final Widget child;
+  LoadingOverlayWidget({required this.loading, required this.child});
+  @override
+  Widget build(BuildContext context) {
+    return LoadingOverlay(
+      isLoading: loading,
+      opacity: 0.63,
+      color: Colors.black,
+      progressIndicator: Material(
+        borderRadius: BorderRadius.circular(10.r),
+        child: Padding(
+          padding:  EdgeInsets.all(20.r),
+          child: Stack(
+            children: [
+              SvgPicture.asset('images/app_logo.svg', width: 40.w, height: 40.h,).animate( onPlay: (controller) => controller.repeat()).rotate(duration: 800.milliseconds)
+               ],
+          ),
+        ),
+      ),//Change this loading overlay
+      child: child,
+    );
+  }
+}
+

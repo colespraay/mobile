@@ -32,6 +32,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   FocusNode? _textField1Focus;
   FocusNode? _textField2Focus;
+
+
+  AuthProvider? credentialsProvider;
+
+
+  @override
+  void didChangeDependencies() {
+    credentialsProvider=context.watch<AuthProvider>();
+  }
+
   @override
   void initState() {
     setState(() {
@@ -50,103 +60,109 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  bool _loading=false;
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: ListView(
-            padding: horizontalPadding,
-            shrinkWrap: true,
-            children: [
-              height16,
-              Text("Login to your\nAccount",
-                  style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 48.sp, color: CustomColors.sGreyScaleColor50)),
-              height40,
+    return  LoadingOverlayWidget(
+      loading: credentialsProvider!.loading,
+      child: Scaffold(
+          appBar: buildAppBar(context: context),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: ListView(
+              padding: horizontalPadding,
+              shrinkWrap: true,
+              children: [
+                height16,
+                Text("Login to your\nAccount",
+                    style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 48.sp, color: CustomColors.sGreyScaleColor50)),
+                height40,
 
-              CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
-                textInputAction: TextInputAction.next,hintTxt: "7012345678",focusNode: _textField1Focus,
-                maxLength: 11,
-                autofocus: true,
-                prefixText: "+234 ",
-                // prefixIcon: Padding(
-                //   padding:  EdgeInsets.only(right: 8.w, left: 10.w),
-                //   child: SvgPicture.asset("images/number.svg", height: 11.h,),
-                // ) ,
-                inputFormat: [
-                  FilteringTextInputFormatter.digitsOnly
-                ],
-                onChanged:(value){
-                  setState(() {firstBtn=value;});
-                },
-              ),
-              height20,
+                CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.next,hintTxt: "7012345678",focusNode: _textField1Focus,
+                  maxLength: 10,
+                  autofocus: true,
+                  prefixText: "+234 ",
+                  // prefixIcon: Padding(
+                  //   padding:  EdgeInsets.only(right: 8.w, left: 10.w),
+                  //   child: SvgPicture.asset("images/number.svg", height: 11.h,),
+                  // ) ,
+                  inputFormat: [
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  onChanged:(value){
+                    setState(() {firstBtn=value;});
+                  },
+                ),
+                height20,
 
-              CustomizedTextField(textEditingController:passwordController, keyboardType: TextInputType.visiblePassword,
-                textInputAction: TextInputAction.done,hintTxt: "Password", obsec: _isObscure, focusNode: _textField2Focus,
-                onChanged:(value){
-                  setState(() {secondBtn=value;});
-                },
-                surffixWidget: GestureDetector(
-                  onTap: (){setState(() {_isObscure = !_isObscure;});},
-                  child: Padding(
-                    padding:  EdgeInsets.only(right: 8.w),
-                    child: Icon(_isObscure ? Icons.visibility_off: Icons.visibility, color: Color(0xff9E9E9E),),
+                CustomizedTextField(textEditingController:passwordController, keyboardType: TextInputType.visiblePassword,
+                  textInputAction: TextInputAction.done,hintTxt: "Password", obsec: _isObscure, focusNode: _textField2Focus,
+                  onChanged:(value){
+                    setState(() {secondBtn=value;});
+                  },
+                  surffixWidget: GestureDetector(
+                    onTap: (){setState(() {_isObscure = !_isObscure;});},
+                    child: Padding(
+                      padding:  EdgeInsets.only(right: 8.w),
+                      child: Icon(_isObscure ? Icons.visibility_off: Icons.visibility, color: Color(0xff9E9E9E),),
+                    ),
+                  ),
+                  prefixIcon: Padding(
+                    padding:  EdgeInsets.only(right: 8.w, left: 10.w),
+                    child: SvgPicture.asset("images/lock.svg"),
                   ),
                 ),
-                prefixIcon: Padding(
-                  padding:  EdgeInsets.only(right: 8.w, left: 10.w),
-                  child: SvgPicture.asset("images/lock.svg"),
+                height20,
+                Center(child: buildCheckBox()),
+                height20,
+                Provider.of<AuthProvider>(context, listen: false).value==true?GestureDetector(
+                    onTap: ()async{
+                      local_auth();
+                    },
+                    child: Center(child: Padding(
+                      padding:  EdgeInsets.only(bottom: 20.h),
+                      child: Image.asset("images/biometric.png", color: CustomColors.sPrimaryColor500,),
+                    ))):SizedBox.shrink(),
+
+                CustomButton(
+                    onTap: () {
+                      if( firstBtn.isNotEmpty && secondBtn.isNotEmpty){
+                        setState(() {
+                          _loading=true;
+                        });
+
+                        Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context, passwordController.text, "0${phoneController.text}");
+
+                      }
+                    },
+                    buttonText: 'Sign in', borderRadius: 30.r,width: 380.w,
+                    buttonColor: ( firstBtn.isNotEmpty && secondBtn.isNotEmpty) ? CustomColors.sPrimaryColor500:
+                    CustomColors.sDisableButtonColor),
+                height22,
+                GestureDetector(
+                  onTap:(){
+                    Navigator.push(context, SlideUpRoute(page: ForgotPasswordScreen()));
+                  },
+                  child: Text("Forgot the password?",
+                    style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 16.sp, color: CustomColors.sGreyScaleColor700 ),textAlign: TextAlign.center,),
                 ),
-              ),
-              height20,
-              Center(child: buildCheckBox()),
-              height20,
-              Provider.of<AuthProvider>(context, listen: false).value==true?GestureDetector(
-                  onTap: ()async{
-                    local_auth();
+
+                height34,
+
+                GestureDetector(
+                  onTap:(){
+                    Navigator.push(context, SlideLeftRoute(page: CreateAccount()));
                   },
-                  child: Center(child: Padding(
-                    padding:  EdgeInsets.only(bottom: 20.h),
-                    child: Image.asset("images/biometric.png", color: CustomColors.sPrimaryColor500,),
-                  ))):SizedBox.shrink(),
-
-              CustomButton(
-                  onTap: () {
-                    if( firstBtn.isNotEmpty && secondBtn.isNotEmpty){
-
-                      MySharedPreference.setVisitingFlag();
-                      Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
-
-                    }
-                  },
-                  buttonText: 'Sign in', borderRadius: 30.r,width: 380.w,
-                  buttonColor: ( firstBtn.isNotEmpty && secondBtn.isNotEmpty) ? CustomColors.sPrimaryColor500:
-                  CustomColors.sDisableButtonColor),
-              height22,
-              GestureDetector(
-                onTap:(){
-                  Navigator.push(context, SlideUpRoute(page: ForgotPasswordScreen()));
-                },
-                child: Text("Forgot the password?",
-                  style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 16.sp, color: CustomColors.sGreyScaleColor700 ),textAlign: TextAlign.center,),
-              ),
-
-              height34,
-
-              GestureDetector(
-                onTap:(){
-                  Navigator.push(context, SlideLeftRoute(page: CreateAccount()));
-                },
-                  child: buildTwoTextWidget(title: "Don’t have an account?", content: " Sign up")),
-              height34,
+                    child: buildTwoTextWidget(title: "Don’t have an account?", content: " Sign up")),
+                height34,
 
 
-            ],
-          ),
-        ));
+              ],
+            ),
+          )),
+    );
   }
 
   bool checkedValue=false;

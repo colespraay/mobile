@@ -49,6 +49,10 @@ dependencies:
   flutter_animate: ^4.2.0+1
   fluttercontactpicker: ^4.7.0
   local_auth: ^2.1.6
+  loading_overlay: ^0.3.0
+  http: ^1.1.0
+  flutter_udid: ^2.0.1
+#  overlay_loader_with_app_icon: ^0.0.3
 
 dev_dependencies:
   flutter_test:

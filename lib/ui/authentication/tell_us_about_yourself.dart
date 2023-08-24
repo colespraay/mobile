@@ -3,11 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/authentication/pin_creation.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/auth_provider.dart';
 
 class TellUsAboutYourself extends StatefulWidget {
   const TellUsAboutYourself({Key? key}) : super(key: key);
@@ -19,6 +22,8 @@ class TellUsAboutYourself extends StatefulWidget {
 class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
 
   TextEditingController fullNameController=TextEditingController();
+  TextEditingController lastNameController=TextEditingController();
+
   TextEditingController emailController=TextEditingController();
   TextEditingController genderController=TextEditingController();
   TextEditingController dobController=TextEditingController();
@@ -32,6 +37,7 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
   FocusNode? _textField3Focus;
   FocusNode? _textField4Focus;
   FocusNode? _textTagFocus;
+  FocusNode? _txtLastNFocus;
   @override
   void initState() {
     setState(() {
@@ -40,14 +46,22 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
       _textField3Focus = FocusNode();
       _textField4Focus = FocusNode();
       _textTagFocus=FocusNode();
+      _txtLastNFocus=FocusNode();
     });
   }
 
+  AuthProvider? credentialsProvider;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    credentialsProvider=context.watch<AuthProvider>();
+  }
   String firstVal="";
   String secondVal="";
   String thirdVal="";
   String forthVal="";
   String tagVal="";
+  String lastNVal="";
   @override
   void dispose() {
     _textField1Focus?.dispose();
@@ -55,19 +69,23 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
     _textField3Focus?.dispose();
     _textField4Focus?.dispose();
     _textTagFocus?.dispose();
+    _txtLastNFocus?.dispose();
     super.dispose();
   }
 
-  int step=1;
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context, title:"Tell Us About Yourself" ),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: step==1? buildStep1Widget(): buildStep2Widget(),
-        ));
+    return  LoadingOverlayWidget(
+      loading: credentialsProvider!.loading,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title:"Tell Us About Yourself"),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: credentialsProvider?.step==1? buildStep1Widget(): buildStep2Widget(),
+          )),
+    );
 
   }
 
@@ -91,13 +109,25 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
         height40,
 
         CustomizedTextField(textEditingController:fullNameController, keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.next,hintTxt: "Full name",focusNode: _textField1Focus,
+          textInputAction: TextInputAction.next,hintTxt: "First name",focusNode: _textField1Focus,
           prefixIcon: Padding(
             padding:  EdgeInsets.only(right: 8.w, left: 10.w),
             child: SvgPicture.asset("images/profile.svg", color: CustomColors.sDisableButtonColor,),
           ),
           onChanged:(value){
             setState(() {firstVal=value;});
+          },
+        ),
+        height16,
+
+        CustomizedTextField(textEditingController:lastNameController, keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,hintTxt: "Last name",focusNode: _txtLastNFocus,
+          prefixIcon: Padding(
+            padding:  EdgeInsets.only(right: 8.w, left: 10.w),
+            child: SvgPicture.asset("images/profile.svg", color: CustomColors.sDisableButtonColor,),
+          ),
+          onChanged:(value){
+            setState(() {lastNVal=value;});
           },
         ),
 
@@ -139,13 +169,15 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
         height26,
         CustomButton(
             onTap: () {
-              if( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty){
-                setState(() {step=2;});
-                // Navigator.push(context, SlideLeftRoute(page: CreateAccountOtpPage()));
+              if( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty && lastNVal.isNotEmpty){
+                // setState(() {step=2;});
+                Provider.of<AuthProvider>(context, listen: false).tellUsAboutYourselfEndpoint(context, emailController.text, MySharedPreference.getUId(),
+                    fullNameController.text, lastNameController.text, genderController.text, dobController.text);
+
               }
             },
             buttonText: 'Continue', borderRadius: 30.r,width: 380.w,
-            buttonColor: ( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty) ? CustomColors.sPrimaryColor500:
+            buttonColor: ( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty && lastNVal.isNotEmpty) ? CustomColors.sPrimaryColor500:
             CustomColors.sDisableButtonColor),
         height34,
 
@@ -183,15 +215,15 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
             setState(() {tagVal=value;});
           },
         ),
-        height18,
-        Text("Spraay tag available ✅", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 12.sp, color: CustomColors.sWhiteColor)),
+        // height18,
+        // Text("Spraay tag available ✅", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 12.sp, color: CustomColors.sWhiteColor)),
 
 
         height90,
         CustomButton(
             onTap: () {
               if( tagVal.isNotEmpty){
-                Navigator.pushReplacement(context, FadeRoute(page: PinCreation()));
+                Provider.of<AuthProvider>(context, listen: false).tellUsAboutYourselfTagEndpoint(context, sprayTagController.text, MySharedPreference.getUId());
               }
             },
             buttonText: 'Continue', borderRadius: 30.r,width: 380.w,

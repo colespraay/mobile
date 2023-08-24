@@ -4,9 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/services/api_services.dart';
 
 
 bool isLoading=false;
+String url="https://spraay-api-577f3dc0a0fe.herokuapp.com";
+ApiServices apiResponse=ApiServices();
+
+
 // String url="https:";
 // ApiServices apiResponse=ApiServices();
 String onbTitle1="Create and Share Memorable Events";
