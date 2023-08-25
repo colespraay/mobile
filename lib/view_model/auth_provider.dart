@@ -4,6 +4,9 @@ import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/authentication/create_account_otp_page.dart';
+import 'package:spraay/ui/authentication/create_new_password.dart';
+import 'package:spraay/ui/authentication/forgot_password_otp_verif.dart';
+import 'package:spraay/ui/authentication/login_screen.dart';
 import 'package:spraay/ui/authentication/pin_creation.dart';
 import 'package:spraay/ui/authentication/tell_us_about_yourself.dart';
 import 'package:spraay/ui/dashboard/dashboard_screen.dart';
@@ -87,6 +90,53 @@ class AuthProvider extends ChangeNotifier{
     else {
       successCherryToast(context, result["message"]);
       Navigator.pushReplacement(context, FadeRoute(page: PinCreation()));
+    }
+    setloading(false);
+  }
+
+
+  initiateForgotPasswordEmailEndpoint(context,String emailAddress) async{
+    setloading(true);
+    var result = await apiResponse.initiateForgotPasswordEmail(emailAddress);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      Navigator.push(context, SlideLeftRoute(page: ForgotPassOtp(emailAddress)));
+
+      // successCherryToast(context, result["message"]);
+      // Navigator.pushReplacement(context, FadeRoute(page: PinCreation()));
+    }
+    setloading(false);
+  }
+
+
+  verifyOtpEndpoint(context,String uniqueVerificationCode) async{
+    setloading(true);
+    var result = await apiResponse.verifyOtp(uniqueVerificationCode);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      Navigator.pushReplacement(context, SlideLeftRoute(page: CreateNewPassword(uniqueVerificationCode)));
+    }
+    setloading(false);
+  }
+
+
+  changeForgotPasswordEndpoint(context,String uniqueVerificationCode, String newPassword) async{
+    setloading(true);
+    var result = await apiResponse.changeForgotPassword(uniqueVerificationCode, newPassword);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      popupDialog(context: context, title: "Password Changed", content: "You now have access to your account.",
+          buttonTxt: 'Access Account',
+          onTap: () {
+            Navigator.pushAndRemoveUntil(context, FadeRoute(page: LoginScreen()),(Route<dynamic> route) => false);
+          }, png_img: 'verified');
+      // Navigator.pushReplacement(context, SlideLeftRoute(page: CreateNewPassword(uniqueVerificationCode)));
     }
     setloading(false);
   }

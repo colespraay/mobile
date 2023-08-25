@@ -326,23 +326,31 @@ void cherryToastInfo(BuildContext context,String titlemsg, String dsc){
 
 void errorCherryToast(BuildContext context,String errordsc){
   return CherryToast.error(
-    title: Text(''),
-    enableIconAnimation: false,
-    displayTitle: false,
-    description: Text(errordsc),
-    animationType: AnimationType.fromRight,
+    title: Text('Info!', style:  CustomTextStyle.kTxtBold.copyWith(fontSize: 14.sp),),
+    backgroundColor: CustomColors.sPrimaryColor500,
+    shadowColor: Colors.transparent,
+    borderRadius: 8,
+    enableIconAnimation: true,
+    displayTitle: true,
+    description: Text(errordsc, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp),),
+    animationType: AnimationType.fromTop,
     animationDuration: Duration(milliseconds: 1000),
     autoDismiss: true,
+
+    // layout: ToastLayout.ltr,
   ).show(context);
 }
 
 void successCherryToast(BuildContext context,String errordsc){
   return CherryToast.success(
-    title: Text(''),
-    enableIconAnimation: false,
-    displayTitle: false,
-    description: Text(errordsc),
-    animationType: AnimationType.fromRight,
+    title: Text('Info!', style:  CustomTextStyle.kTxtBold.copyWith(fontSize: 14.sp),),
+    backgroundColor: CustomColors.sPrimaryColor500,
+    shadowColor: Colors.transparent,
+    borderRadius: 8,
+    enableIconAnimation: true,
+    displayTitle: true,
+    description: Text(errordsc, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp),),
+    animationType: AnimationType.fromTop,
     animationDuration: Duration(milliseconds: 1000),
     autoDismiss: true,
   ).show(context);

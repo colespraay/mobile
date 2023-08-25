@@ -5,6 +5,7 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
+import 'package:spraay/ui/authentication/email_forgot_password.dart';
 import 'package:spraay/ui/authentication/forgot_password_otp_verif.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -34,11 +35,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
 
               height20,
-              buildContainer(title: "via SMS:", content:"+234 1234 ******90", img: 'sms_svg', borderColor: click==1?CustomColors.sPrimaryColor500: borderColor, onTap: () {
+              buildContainer(title: "via SMS:", content:"+234 0 *******90", img: 'sms_svg', borderColor: click==1?CustomColors.sPrimaryColor500: borderColor, onTap: () {
                 setState(() {click=1;});
               }),
               height26,
-              buildContainer(title: 'via Email:', content: 'uch***an@yourdomain.com', img: 'email_big', borderColor: click==2?CustomColors.sPrimaryColor500: borderColor, onTap: () {
+              buildContainer(title: 'via Email:', content: '*******@gmail.com', img: 'email_big', borderColor: click==2?CustomColors.sPrimaryColor500: borderColor, onTap: () {
                 setState(() {click=2;});
               }),
 
@@ -50,7 +51,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               CustomButton(
                   onTap: () {
                     if(click>0){
-                      Navigator.pushReplacement(context, SlideLeftRoute(page: ForgotPassOtp()));
+
+
+                      Navigator.push(context,
+                          SlideLeftRoute(page: EmailForgotPassword(title:click==1? 'phone number': "email address",))
+                      );
+
+
 
                     }
                   },

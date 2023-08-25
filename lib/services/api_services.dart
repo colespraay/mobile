@@ -220,6 +220,81 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode)as
     return result;
   }
 
+  Future<Map<String, dynamic>> initiateForgotPasswordEmail(String emailAddress)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("$url/user/verification/initiate-forgot-password-flow/$emailAddress"),
+          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+  Future<Map<String, dynamic>> verifyOtp(String uniqueVerificationCode)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("$url/user/verification/verify-otp/$uniqueVerificationCode"),
+          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+  Future<Map<String, dynamic>> changeForgotPassword(String uniqueVerificationCode, String newPassword)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/user/verification/change-password"),
+          body: {"uniqueVerificationCode": uniqueVerificationCode, "newPassword": newPassword},
+          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
 
 
 
