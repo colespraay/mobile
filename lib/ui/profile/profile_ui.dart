@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +27,8 @@ class ProfileUi extends StatefulWidget {
 }
 
 class _ProfileUiState extends State<ProfileUi> {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,18 +58,27 @@ class _ProfileUiState extends State<ProfileUi> {
       children: [
         Text("Profile", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700) ),
         height40,
-        Container(
+        // Container(
+        //   width: 120.w,
+        //   height: 120.h,
+        //   decoration: BoxDecoration(
+        //     color: Colors.grey,
+        //     shape: BoxShape.circle
+        //   ),
+        // ),
+
+        CachedNetworkImage(
           width: 120.w,
           height: 120.h,
-          decoration: BoxDecoration(
-            color: Colors.grey,
-            shape: BoxShape.circle
-          ),
+          imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
+          placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+          errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
         ),
+
         height16,
-        Text("Uche Usman", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
+        Text("${credentialsProvider?.dataResponse?.firstName??""} ${credentialsProvider?.dataResponse?.lastName??""}", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
         height4,
-        Text("@uche911", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w400) ),
+        Text("${credentialsProvider?.dataResponse?.userTag}", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w400) ),
       ],
     );
   }
@@ -134,4 +147,16 @@ class _ProfileUiState extends State<ProfileUi> {
         ));
   }
 
+
+  AuthProvider? credentialsProvider;
+  @override
+  void didChangeDependencies() {
+    credentialsProvider=context.watch<AuthProvider>();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+  }
 }

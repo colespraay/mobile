@@ -35,7 +35,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
 
               height20,
-              buildContainer(title: "via SMS:", content:"+234 0 *******90", img: 'sms_svg', borderColor: click==1?CustomColors.sPrimaryColor500: borderColor, onTap: () {
+              buildContainer(title: "via SMS:", content:"+234 ***********", img: 'sms_svg', borderColor: click==1?CustomColors.sPrimaryColor500: borderColor, onTap: () {
                 setState(() {click=1;});
               }),
               height26,

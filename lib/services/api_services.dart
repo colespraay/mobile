@@ -7,13 +7,15 @@ import 'dart:convert' as convert;
 
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/models/login_response.dart';
+import 'package:spraay/models/user_profile.dart';
+import 'package:spraay/services/api_response.dart';
 class ApiServices{
 
 
-  Future<Map<String, dynamic>> logIn(String email, String password)async{
+  Future<Map<String, dynamic>> logIn(String phoneNumber, String password)async{
     Map<String, dynamic> result = {};
     try{
-      var response=await http.post(Uri.parse("$url/auth/login"), body:{"email":email, "password":password},
+      var response=await http.post(Uri.parse("$url/auth/login/phone-number"), body:{"phoneNumber":phoneNumber, "password":password},
           headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
       // int statusCode = response.statusCode;
       // log("ResbodyMM==${response.body}");
@@ -91,11 +93,11 @@ class ApiServices{
   return result;
 }
 
-Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode)async{
+Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, String token)async{
   Map<String, dynamic> result = {};
   try{
     var response=await http.get(Uri.parse("$url/user/verification/verify-signup-code/$uniqueVerificationCode"),
-        headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+        headers: {"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(Duration(seconds: 30));
     int statusCode = response.statusCode;
     if (statusCode == 200 || statusCode==201) {
       var jsonResponse=convert.jsonDecode(response.body);
@@ -245,6 +247,34 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode)as
     return result;
   }
 
+  Future<Map<String, dynamic>> initiateForgotPasswordPhoneNumber(String phoneNumber)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("$url/user/verification/resend-otp-code/phone/$phoneNumber"),
+          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("messageresponse=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
+
   Future<Map<String, dynamic>> verifyOtp(String uniqueVerificationCode)async{
     Map<String, dynamic> result = {};
     try{
@@ -296,6 +326,25 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode)as
     return result;
   }
 
+
+  Future<ApiResponse<UserResponse>> userDetailApi(String mytoken, String uid){
+    return http.get(Uri.parse("$url/user/$uid"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+
+      print("token==$mytoken, uid==$uid");
+      print("Paidcategory_reponse==${response.body}");
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=UserResponse.fromJson(jsonDecode(response.body));
+        return ApiResponse<UserResponse>(data: note1);
+      }else{
+        return ApiResponse<UserResponse>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      return ApiResponse<UserResponse>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+    });
+  }
 
 
 }

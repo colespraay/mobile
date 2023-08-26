@@ -14,8 +14,8 @@ import 'package:spraay/view_model/auth_provider.dart';
 
 class ForgotPassOtp extends StatefulWidget {
 
-  final String title;
-   ForgotPassOtp(this.title);
+  final String title, statusValue;
+   ForgotPassOtp(this.title, this.statusValue);
 
   @override
   State<ForgotPassOtp> createState() => _ForgotPassOtpState();
@@ -71,8 +71,18 @@ class _ForgotPassOtpState extends State<ForgotPassOtp> {
                 _start !=0? buildCountWidget(title: "Resend OTP in ", content: " ${_start}", content2: "s"):
                 InkWell(
                   onTap:(){
-                    setState(() {_start=60;});
-                    startTimer();
+                    if(widget.statusValue=="email address"){
+                      Provider.of<AuthProvider>(context,listen: false).initiateResendForgotPasswordEmailEndpoint(context, widget.title);
+                      setState(() {_start=60;});
+                      startTimer();
+                    }else{
+                      //phone number
+                      Provider.of<AuthProvider>(context,listen: false).initiateResendForgotPasswordPhoneEndpoint(context, widget.title);
+
+                      setState(() {_start=60;});
+                      startTimer();
+                    }
+
                   },
                   child: Text("Resend Code",
                     style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sGreyScaleColor50 ),textAlign: TextAlign.center,),

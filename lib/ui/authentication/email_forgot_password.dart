@@ -110,9 +110,11 @@ class _EmailForgotPasswordState extends State<EmailForgotPassword> {
 
                 if( widget.title=="email address"){
                   //email address credentialsProvider
-                  Provider.of<AuthProvider>(context,listen: false).initiateForgotPasswordEmailEndpoint(context, textEditingController.text);
+                  Provider.of<AuthProvider>(context,listen: false).initiateForgotPasswordEmailEndpoint(context, textEditingController.text, widget.title);
                 }else{
-                  Navigator.push(context, SlideLeftRoute(page: ForgotPassOtp(textEditingController.text)));
+
+                  Provider.of<AuthProvider>(context,listen: false).initiateForgotPasswordPhoneEndpoint(context, textEditingController.text, widget.title);
+                  // Navigator.push(context, SlideLeftRoute(page: ForgotPassOtp(textEditingController.text)));
 
                 }
 

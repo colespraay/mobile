@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
+import 'package:spraay/models/user_profile.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/authentication/create_account_otp_page.dart';
 import 'package:spraay/ui/authentication/create_new_password.dart';
 import 'package:spraay/ui/authentication/forgot_password_otp_verif.dart';
@@ -25,6 +27,10 @@ class AuthProvider extends ChangeNotifier{
   setloading(bool loading) async{
     isLoading = loading;
     notifyListeners();
+  }
+
+  setloadingNoNotif(bool loading) async{
+    isLoading = loading;
   }
 
 
@@ -95,17 +101,61 @@ class AuthProvider extends ChangeNotifier{
   }
 
 
-  initiateForgotPasswordEmailEndpoint(context,String emailAddress) async{
+  initiateForgotPasswordEmailEndpoint(context,String emailAddress, String statusValue) async{
     setloading(true);
     var result = await apiResponse.initiateForgotPasswordEmail(emailAddress);
     if (result['error'] == true) {
       errorCherryToast(context, result['message']);
     }
     else {
-      Navigator.push(context, SlideLeftRoute(page: ForgotPassOtp(emailAddress)));
+      Navigator.push(context, SlideLeftRoute(page: ForgotPassOtp(emailAddress, statusValue)));
 
       // successCherryToast(context, result["message"]);
       // Navigator.pushReplacement(context, FadeRoute(page: PinCreation()));
+    }
+    setloading(false);
+  }
+
+
+  initiateForgotPasswordPhoneEndpoint(context,String phoneNumber, String statusValue) async{
+    setloading(true);
+    var result = await apiResponse.initiateForgotPasswordPhoneNumber(phoneNumber);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      Navigator.push(context, SlideLeftRoute(page: ForgotPassOtp(phoneNumber, statusValue)));
+
+      // successCherryToast(context, result["message"]);
+      // Navigator.pushReplacement(context, FadeRoute(page: PinCreation()));
+    }
+    setloading(false);
+  }
+
+
+  initiateResendForgotPasswordPhoneEndpoint(context,String phoneNumber) async{
+    setloading(true);
+    var result = await apiResponse.initiateForgotPasswordPhoneNumber(phoneNumber);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      // Navigator.push(context, SlideLeftRoute(page: ForgotPassOtp(phoneNumber, statusValue)));
+
+      successCherryToast(context, result["message"]);
+      // Navigator.pushReplacement(context, FadeRoute(page: PinCreation()));
+    }
+    setloading(false);
+  }
+
+  initiateResendForgotPasswordEmailEndpoint(context,String emailAddress) async{
+    setloading(true);
+    var result = await apiResponse.initiateForgotPasswordEmail(emailAddress);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      successCherryToast(context, result["message"]);
     }
     setloading(false);
   }
@@ -182,7 +232,7 @@ class AuthProvider extends ChangeNotifier{
 
   registerVerifyCodeEndpoint(context,String uniqueVerificationCode) async{
     setloading(true);
-    var result = await apiResponse.registerVerifyCode(uniqueVerificationCode);
+    var result = await apiResponse.registerVerifyCode(uniqueVerificationCode, MySharedPreference.getToken());
     if (result['error'] == true) {
       errorCherryToast(context, result['message']);
     }
@@ -198,9 +248,9 @@ class AuthProvider extends ChangeNotifier{
   }
 
 
-  fetchLoginEndpoint(context,String password,String email) async{
+  fetchLoginEndpoint(context,String password,String phoneNumber) async{
     setloading(true);
-    var result = await apiResponse.logIn(email, password);
+    var result = await apiResponse.logIn(phoneNumber, password);
     if (result['error'] == true) {
       errorCherryToast(context, result['message']);
     }
@@ -232,6 +282,21 @@ class AuthProvider extends ChangeNotifier{
 
     }
     setloading(false);
+  }
+
+  ApiServices service=ApiServices();
+  String mytoken=MySharedPreference.getToken();
+  DataResponse? dataResponse;
+  fetchUserDetailApi(BuildContext context) async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.userDetailApi(mytoken, MySharedPreference.getUId());
+    if(apiResponse.error==true){
+      errorCherryToast(context, apiResponse.errorMessage??"");
+    }else{
+      dataResponse= apiResponse.data?.data;
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
   }
 
 }

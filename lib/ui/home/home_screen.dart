@@ -15,6 +15,7 @@ import 'package:spraay/ui/home/event_slidder.dart';
 import 'package:spraay/ui/home/fund_wallet.dart';
 import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/home_provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -70,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("Hello", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
-              Text(" Uche Usman", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500) ),
+              Text(" ${MySharedPreference.getFname()}", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500) ),
             ],
           ),
         ),
