@@ -38,9 +38,16 @@ class _ProfileUiState extends State<ProfileUi> {
           children: [
             _buildProfile(),
             height50,
-            _buildListTile(svg_img: 'profile_avat', title: 'Edit Profile', onTap: ()=> Navigator.push(context,SlideLeftRoute(page: EditProfile()))),
+            _buildListTile(svg_img: 'profile_avat', title: 'Edit Profile', onTap: (){
+              if(credentialsProvider?.dataResponse==null){
+                toastMessage("Click again in few seconds time");
+              }else{
+                Navigator.push(context,SlideLeftRoute(page: EditProfile(credentialsProvider?.dataResponse)));
+              }
+            }),
             _buildListTile(svg_img: 'lock_outline', title: 'Account Security', onTap: ()=>Navigator.push(context,SlideLeftRoute(page: AccountSecurity())) ),
-            _buildListTile(svg_img: 'bell', title: 'Notification', onTap: ()=>Navigator.push(context,SlideLeftRoute(page: ProfileNotification()))),
+            _buildListTile(svg_img: 'bell', title: 'Notification', onTap: ()=>Navigator.push(context,SlideLeftRoute(page: ProfileNotification())).then((value) => Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context))
+            ),
             _buildListTile(svg_img: 'Info_Square', title: 'Support and Help Center', onTap: ()=> Navigator.push(context,SlideLeftRoute(page: HelpAndSupportScreen())) ),
             _buildListTile(svg_img: 'dload', title: 'Download Account Statement', onTap: ()=>Navigator.push(context,SlideLeftRoute(page: DownloadAccountUi())) ),
             _buildListTile(svg_img: 'privacy', title: 'Privacy Policy', onTap: ()=>Navigator.push(context,SlideLeftRoute(page: PrivacyPolicy()))),
@@ -67,12 +74,15 @@ class _ProfileUiState extends State<ProfileUi> {
         //   ),
         // ),
 
-        CachedNetworkImage(
-          width: 120.w,
-          height: 120.h,
-          imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
-          placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-          errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+        CircleAvatar(
+          radius: 70.r,
+          child: CachedNetworkImage(
+            width: 100.w,
+            height: 100.h,
+            imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
+            placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+            errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+          ),
         ),
 
         height16,

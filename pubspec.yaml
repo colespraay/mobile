@@ -52,6 +52,7 @@ dependencies:
   loading_overlay: ^0.3.0
   http: ^1.1.0
   flutter_udid: ^2.0.1
+  circular_profile_avatar: ^2.0.5
 #  overlay_loader_with_app_icon: ^0.0.3
 
 dev_dependencies:

@@ -7,6 +7,8 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
+import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/ui/profile/change_password/change_password.dart';
 import 'package:spraay/ui/profile/change_password/change_password_otp.dart';
 import 'package:spraay/ui/profile/reset_trans_pin/reset_transaction_pin.dart';
 import 'package:spraay/view_model/auth_provider.dart';
@@ -35,7 +37,12 @@ class _AccountSecurityState extends State<AccountSecurity> {
           shrinkWrap: true,
           children: [
             height18,
-            _buildListTile(svg_img: "profile_avat", title: "Change Password", subTitle: "Update your password", onTap: ()=>Navigator.push(context,SlideLeftRoute(page: ChangePasswordOtp())) ),
+            _buildListTile(svg_img: "profile_avat", title: "Change Password", subTitle: "Update your password", onTap: (){
+                // Navigator.push(context,SlideLeftRoute(page: ChangePasswordOtp())) ;
+              Navigator.pushReplacement(context, FadeRoute(page: Changepassword()));
+
+            }
+            ),
             _buildListTile(svg_img: "bell", title: "Reset Transaction PIN", subTitle: "Change your transaction password", onTap: ()=>Navigator.push(context,SlideLeftRoute(page: ResetTransactionPin())) ),
             _buildListSwitchTile(svg_img: "scanner", title: "Biometric", subTitle: "Enable or deactivate Face ID", switcghwidget: SizedBox(
               width: 52.w,

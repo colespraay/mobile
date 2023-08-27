@@ -1,15 +1,22 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/models/user_profile.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/auth_provider.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+  DataResponse? dataResponse;
+   EditProfile(this.dataResponse);
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -23,6 +30,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController genderController=TextEditingController();
   TextEditingController dobController=TextEditingController();
   TextEditingController sprayTagController=TextEditingController();
+  TextEditingController lastNameController=TextEditingController();
 
   final GlobalKey<FormState> _myKey = GlobalKey<FormState>();
   bool _isObscure = true;
@@ -31,17 +39,28 @@ class _EditProfileState extends State<EditProfile> {
   FocusNode? _textField2Focus;
   FocusNode? _textField3Focus;
   FocusNode? _textField4Focus;
+  FocusNode? _textFieldLastFocus;
+  AuthProvider? credentialsProvider;
+  @override
+  void didChangeDependencies() {
+    credentialsProvider=context.watch<AuthProvider>();
+    super.didChangeDependencies();
+  }
   @override
   void initState() {
-    fullNameController.text="Daniel Esiv";
-    emailController.text="nsnsjsjs@gmail.com";
-    genderController.text="Male";
 
     setState(() {
+
+      fullNameController.text=widget.dataResponse?.firstName??"";
+      emailController.text=widget.dataResponse?.email??"";
+      genderController.text=widget.dataResponse?.gender??"";
+      lastNameController.text=widget.dataResponse?.lastName??"";
+
       _textField1Focus = FocusNode();
       _textField2Focus = FocusNode();
       _textField3Focus = FocusNode();
       _textField4Focus = FocusNode();
+      _textFieldLastFocus=FocusNode();
     });
   }
 
@@ -49,32 +68,37 @@ class _EditProfileState extends State<EditProfile> {
   String secondVal="";
   String thirdVal="";
   String forthVal="";
+  String lastVal="";
   @override
   void dispose() {
     _textField1Focus?.dispose();
     _textField2Focus?.dispose();
     _textField3Focus?.dispose();
     _textField4Focus?.dispose();
+    _textFieldLastFocus?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: buildAppBar(context: context, title: "Edit Profile"),
-        body:  ListView(
-          padding: horizontalPadding,
-          children: [
-            height18,
-            _buildProfile(),
-            height16,
-            buildStep1Widget(),
+    return LoadingOverlayWidget(
+      loading: credentialsProvider?.loading??false,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title: "Edit Profile"),
+          body:  ListView(
+            padding: horizontalPadding,
+            children: [
+              height18,
+              _buildProfile(),
+              height16,
+              buildStep1Widget(),
 
-            height22
+              height22
 
 
-          ],
-        ));
+            ],
+          )),
+    );
   }
 
   Widget _buildProfile(){
@@ -89,12 +113,13 @@ class _EditProfileState extends State<EditProfile> {
             children: [
 
               CircleAvatar(
-                radius: 100.r,
-                backgroundColor: Colors.grey,
-                child: SizedBox(
-                  width: 120.w,
-                  height: 120.h,
-                  child:imageFile==null? SvgPicture.asset("images/profile.svg"):  Center(child: Image.file(imageFile!)) ,
+                radius: 70.r,
+                child: CachedNetworkImage(
+                  width: 100.w,
+                  height: 100.h,
+                  imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
+                  placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                  errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                 ),
               ),
 
@@ -111,9 +136,9 @@ class _EditProfileState extends State<EditProfile> {
           ),
         ),
         height16,
-        Text("Uche Usman", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
+        Text(credentialsProvider?.dataResponse?.firstName+" "+ credentialsProvider?.dataResponse?.lastName, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
         height4,
-        Text("@uche911", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w400) ),
+        Text(credentialsProvider?.dataResponse?.userTag??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w400) ),
       ],
     );
   }
@@ -151,6 +176,19 @@ class _EditProfileState extends State<EditProfile> {
         ),
 
         height16,
+        CustomizedTextField(textEditingController:lastNameController, keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,hintTxt: "Last name",focusNode: _textFieldLastFocus,
+          prefixIcon: Padding(
+            padding:  EdgeInsets.only(right: 8.w, left: 10.w),
+            child: SvgPicture.asset("images/profile.svg", ),
+          ),
+          onChanged:(value){
+            setState(() {lastVal=value;});
+          },
+        ),
+
+        height16,
+
         CustomizedTextField(textEditingController:emailController, keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,hintTxt: "Email",focusNode: _textField2Focus,
           prefixIcon: Padding(
@@ -168,22 +206,15 @@ class _EditProfileState extends State<EditProfile> {
         height60,
         CustomButton(
             onTap: () {
-              if( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty){
+              // if( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty){
 
-                popupDialog(context: context, title: "Profile updated",
-                    content: "You have successfully update your profile",
-                    buttonTxt: "Great!", onTap: (){
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-
-
-                    }, png_img: "verified");
+                credentialsProvider?.updateProfileEndpoint(context, emailController.text, MySharedPreference.getUId(),
+                    fullNameController.text, lastNameController.text, genderController.text);
                 // Navigator.push(context, SlideLeftRoute(page: CreateAccountOtpPage()));
-              }
+             // }
             },
             buttonText: 'Update', borderRadius: 30.r,width: 380.w,
-            buttonColor: ( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty) ? CustomColors.sPrimaryColor500:
-            CustomColors.sDisableButtonColor),
+            buttonColor: CustomColors.sPrimaryColor500),
         height34,
 
 
@@ -192,7 +223,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  List<String> genderlist=["Male", "Female"];
+  List<String> genderlist=["MALE", "FEMALE"];
   Widget buildGender(){
     return DropdownButtonFormField<String>(
       iconEnabledColor: CustomColors.sDisableButtonColor,
@@ -212,7 +243,7 @@ class _EditProfileState extends State<EditProfile> {
       },
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
-        hintText: "Gender",
+        hintText: credentialsProvider?.dataResponse?.gender??"",
         isDense: true,
         filled: true,
         prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),

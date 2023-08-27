@@ -68,7 +68,7 @@ class _PinCreationState extends State<PinCreation> {
                 CustomButton(
                     onTap: () {
                       if(requiredNumber.length==4){
-                        Provider.of<AuthProvider>(context,listen: true).createTransactionPinEndpoint(context, requiredNumber, MySharedPreference.getUId());
+                        Provider.of<AuthProvider>(context,listen: false).createTransactionPinEndpoint(context, requiredNumber, MySharedPreference.getUId());
                       }
                     },
                     buttonText: 'Continue', borderRadius: 30.r,width: 380.w,

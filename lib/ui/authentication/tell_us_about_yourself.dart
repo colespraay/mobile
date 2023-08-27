@@ -252,7 +252,7 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
     }
   }
 
-  List<String> genderlist=["Male", "Female"];
+  List<String> genderlist=["MALE", "FEMALE"];
   Widget buildGender(){
     return DropdownButtonFormField<String>(
       iconEnabledColor: CustomColors.sDisableButtonColor,

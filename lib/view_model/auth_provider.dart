@@ -12,6 +12,7 @@ import 'package:spraay/ui/authentication/login_screen.dart';
 import 'package:spraay/ui/authentication/pin_creation.dart';
 import 'package:spraay/ui/authentication/tell_us_about_yourself.dart';
 import 'package:spraay/ui/dashboard/dashboard_screen.dart';
+import 'package:spraay/ui/profile/reset_trans_pin/change_transaction_pin.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 
 class AuthProvider extends ChangeNotifier{
@@ -85,6 +86,8 @@ class AuthProvider extends ChangeNotifier{
     }
     setloading(false);
   }
+
+
 
 
   tellUsAboutYourselfTagEndpoint(context,String userTag, String userId) async{
@@ -192,6 +195,24 @@ class AuthProvider extends ChangeNotifier{
   }
 
 
+  changePasswordEndpoint(context,String token,String currentPassword, String newPassword) async{
+    setloading(true);
+    var result = await apiResponse.changePassword(token, currentPassword, newPassword);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      popupDialog(context: context, title: "Password Changed", content: "You have successfully changed your password.",
+          buttonTxt: 'Great!',
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+
+          }, png_img: 'verified');
+    }
+    setloading(false);
+  }
+
   createTransactionPinEndpoint(context,String transactionPin, String userId) async{
     setloading(true);
     var result = await apiResponse.createTransactionPin(transactionPin, userId);
@@ -200,35 +221,36 @@ class AuthProvider extends ChangeNotifier{
     }
     else {
 
-      //Save some info before moving them to home page
-
-      // await MySharedPreference.saveEmail(result["email"]);
-      // await MySharedPreference.saveToken(result["token"]);
-      // await MySharedPreference.saveUId(result["id"]);
-      // await MySharedPreference.saveFname(result["firstname"]);
-      // await MySharedPreference.saveLastname(result["lastname"]);
-      // await MySharedPreference.savePhoneNumber(result["phone"]);
-      // await MySharedPreference.saveProfilePicture(result["profileImageUrl"]);
-
-
-      // result["deviceId"]=loginResponse.data?.user?.deviceId??"";
-      // result["virtualAccountName"]=loginResponse.data?.user?.virtualAccountName??"";
-      // result["virtualAccountNumber"]=loginResponse.data?.user?.virtualAccountNumber??"";
-      // result["bankName"]=loginResponse.data?.user?.bankName??"";
-      // result["gender"]=loginResponse.data?.user?.gender??"";
-      // result["dob"]=loginResponse.data?.user?.dob??"";
-      // result["userTag"]=loginResponse.data?.user?.userTag??"";
-      // result["allowPushNotifications"]=loginResponse.data?.user?.allowPushNotifications??false;
-      // result["allowSmsNotifications"]=loginResponse.data?.user?.allowSmsNotifications??false;
-      // result["allowEmailNotifications"]=loginResponse.data?.user?.allowEmailNotifications??false;
-      // result["displayWalletBalance"]=loginResponse.data?.user?.displayWalletBalance??false;
-      // result["enableFaceId"]=loginResponse.data?.user?.enableFaceId??false;
 
       MySharedPreference.setVisitingFlag();
       Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
     }
     setloading(false);
   }
+
+  changeTransactionPinEndpoint(context,String transactionPin, String userId) async{
+    setloading(true);
+    var result = await apiResponse.createTransactionPin(transactionPin, userId);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      popupDialog(context: context, title: "PIN changed successfully", content: "You have successfully changed your transaction PIN.",
+          buttonTxt: 'Great!',
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }, png_img: 'verified');
+
+      // MySharedPreference.setVisitingFlag();
+      // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+    }
+    setloading(false);
+  }
+
+
+
 
   registerVerifyCodeEndpoint(context,String uniqueVerificationCode) async{
     setloading(true);
@@ -262,20 +284,7 @@ class AuthProvider extends ChangeNotifier{
       await MySharedPreference.saveLastname(result["lastname"]);
       await MySharedPreference.savePhoneNumber(result["phone"]);
       await MySharedPreference.saveProfilePicture(result["profileImageUrl"]);
-
-
-      // result["deviceId"]=loginResponse.data?.user?.deviceId??"";
-      // result["virtualAccountName"]=loginResponse.data?.user?.virtualAccountName??"";
-      // result["virtualAccountNumber"]=loginResponse.data?.user?.virtualAccountNumber??"";
-      // result["bankName"]=loginResponse.data?.user?.bankName??"";
-      // result["gender"]=loginResponse.data?.user?.gender??"";
-      // result["dob"]=loginResponse.data?.user?.dob??"";
-      // result["userTag"]=loginResponse.data?.user?.userTag??"";
-      // result["allowPushNotifications"]=loginResponse.data?.user?.allowPushNotifications??false;
-      // result["allowSmsNotifications"]=loginResponse.data?.user?.allowSmsNotifications??false;
-      // result["allowEmailNotifications"]=loginResponse.data?.user?.allowEmailNotifications??false;
-      // result["displayWalletBalance"]=loginResponse.data?.user?.displayWalletBalance??false;
-      // result["enableFaceId"]=loginResponse.data?.user?.enableFaceId??false;
+      await MySharedPreference.savePass(password);
 
       MySharedPreference.setVisitingFlag();
       Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
@@ -283,6 +292,31 @@ class AuthProvider extends ChangeNotifier{
     }
     setloading(false);
   }
+
+  fetchConfLoginEndpoint(context,String password,String phoneNumber) async{
+    setloading(true);
+    var result = await apiResponse.logIn(phoneNumber, password);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      await MySharedPreference.saveEmail(result["email"]);
+      await MySharedPreference.saveToken(result["token"]);
+      await MySharedPreference.saveUId(result["id"]);
+      await MySharedPreference.saveFname(result["firstname"]);
+      await MySharedPreference.saveLastname(result["lastname"]);
+      await MySharedPreference.savePhoneNumber(result["phone"]);
+      await MySharedPreference.saveProfilePicture(result["profileImageUrl"]);
+
+      Navigator.push(context, FadeRoute(page: ChangeTransactionPin()));
+
+      // MySharedPreference.setVisitingFlag();
+      // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+
+    }
+    setloading(false);
+  }
+
 
   ApiServices service=ApiServices();
   String mytoken=MySharedPreference.getToken();
@@ -298,5 +332,27 @@ class AuthProvider extends ChangeNotifier{
     setloadingNoNotif(false);
     notifyListeners();
   }
+
+  updateProfileEndpoint(context,String email, String userId, String firstName, String lastName, String gender) async{
+    setloading(true);
+    var result = await apiResponse.updateProfile(email, userId, firstName, lastName, gender);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      popupDialog(context: context, title: "Profile updated",
+          content: "You have successfully update your profile",
+          buttonTxt: "Great!", onTap: (){
+            fetchUserDetailApi(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+
+
+          }, png_img: "verified");
+    }
+    setloading(false);
+  }
+
+
 
 }

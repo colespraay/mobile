@@ -70,6 +70,7 @@ class ApiServices{
     var response=await http.post(Uri.parse("$url/user/sign-up/phone-number"), body: {"password":password, "phoneNumber":phoneNumber,"deviceId":deviceId},
         headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
     int statusCode = response.statusCode;
+    log("registerresponse==${response.body}");
     if (statusCode == 200 || statusCode == 201) {
       var jsonResponse=convert.jsonDecode(response.body);
       result["message"] =jsonResponse["message"];
@@ -326,6 +327,32 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     return result;
   }
 
+  Future<Map<String, dynamic>> changePassword(String token ,String currentPassword, String newPassword)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/user/change-account-password"),
+          body: {"currentPassword": currentPassword, "newPassword": newPassword},
+          headers:{"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
 
   Future<ApiResponse<UserResponse>> userDetailApi(String mytoken, String uid){
     return http.get(Uri.parse("$url/user/$uid"),
@@ -344,6 +371,85 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     }).catchError((e){
       return ApiResponse<UserResponse>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
     });
+  }
+
+  Future<Map<String, dynamic>> updateProfile(String email, String userId, String firstName, String lastName, String gender)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.patch(Uri.parse("$url/user"),
+          body: {"email": email, "userId": userId, "firstName": firstName, "lastName": lastName, "gender": gender},
+          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+  Future<Map<String, dynamic>> notificationSettingsApi( String userId,String title, bool boolValue)async{
+    Map<String, dynamic> result = {};
+    try{
+
+      // Map<String, bool> _filters = {
+      //   'gluten': false,
+      //   'lactose': false,
+      //   'vegan': false,
+      //   'vegetarian': false,
+      // };
+
+      Map<String, dynamic>  data = {
+        "userId": userId,
+      };
+
+      if (title=="push") {
+        data["allowPushNotifications"] = boolValue;
+      }
+      if (title=="sms") {
+        data["allowSmsNotifications"] = boolValue;
+      }
+      if (title=="email") {
+        data["allowEmailNotifications"] = boolValue;
+      }
+
+      log("datadata=${data}");
+
+      var response=await http.patch(Uri.parse("$url/user"),
+          body: jsonEncode(data),
+          headers: {"Accept":"application/json",'Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("errror=${e.toString()}");
+      result["message"] = "Something went wrong";
+      result['error'] = true;}
+    return result;
   }
 
 

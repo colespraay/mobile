@@ -108,12 +108,12 @@ class _CreateAccountOtpPageState extends State<CreateAccountOtpPage> {
           appContext: context,
           autoFocus: true,
           length: 4,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly
-          ],
+          // inputFormatters: [
+          //   FilteringTextInputFormatter.digitsOnly
+          // ],
           textStyle: CustomTextStyle.kTxtRegular.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w400),
           obscureText: false,
-          keyboardType: TextInputType.phone,
+          keyboardType: TextInputType.text,
           animationType: AnimationType.fade,
           errorAnimationController: errorController,
           pinTheme: PinTheme(

@@ -45,6 +45,10 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     setState(() {
+      checkedValue= MySharedPreference.getRemember()==1?true:false;
+
+      phoneController.text=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1):"";
+      firstBtn=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1):"";
       _textField1Focus = FocusNode();
       _textField2Focus = FocusNode();
     });
@@ -178,6 +182,14 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           checkedValue = newValue!;
         });
+
+        if(checkedValue==true){
+          MySharedPreference.saveRemember(1);
+        }else{
+          MySharedPreference.saveRemember(0);
+        }
+
+        // print("checkedValue=$checkedValue");
       },
       controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
     );
@@ -188,8 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (isAuthenticated) {
       //if authenticated, login
-      MySharedPreference.setVisitingFlag();
-      Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+      Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context, MySharedPreference.getPass(), MySharedPreference.getPhoneNumber());
 
     }
     else {

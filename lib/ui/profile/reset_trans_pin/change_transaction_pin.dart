@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/profile/reset_trans_pin/confirm_change_pin.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/auth_provider.dart';
 
 class ChangeTransactionPin extends StatefulWidget {
   const ChangeTransactionPin({super.key});
@@ -22,6 +25,12 @@ class _ChangeTransactionPinState extends State<ChangeTransactionPin> {
   StreamController<ErrorAnimationType>? errorController;
   String requiredNumber="";
 
+  AuthProvider? credentialsProvider;
+  @override
+  void didChangeDependencies() {
+    credentialsProvider=context.watch<AuthProvider>();
+    super.didChangeDependencies();
+  }
 
   @override
   void initState() {
@@ -35,40 +44,44 @@ class _ChangeTransactionPinState extends State<ChangeTransactionPin> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context, title: "Change Transaction PIN"),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: ListView(
-            padding: horizontalPadding,
-            shrinkWrap: true,
-            children: [
-              height45,
-              Center(child: Text("Enter new transaction PIN", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50))),
-              height45,
-              pincodeTextfield(context),
-              height20,
+    return  LoadingOverlayWidget(
+      loading: credentialsProvider?.loading??false,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title: "Change Transaction PIN"),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: ListView(
+              padding: horizontalPadding,
+              shrinkWrap: true,
+              children: [
+                height45,
+                Center(child: Text("Enter new transaction PIN", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50))),
+                height45,
+                pincodeTextfield(context),
+                height20,
 
-              height70,
-              CustomButton(
-                  onTap: () {
-                    if(requiredNumber.length==4){
+                height70,
+                CustomButton(
+                    onTap: () {
+                      if(requiredNumber.length==4){
+                        Provider.of<AuthProvider>(context, listen:  false).changeTransactionPinEndpoint(context, requiredNumber, MySharedPreference.getUId());
 
-                      Navigator.push(context, FadeRoute(page: ConfirmChangePin()));
+                        // Navigator.push(context, FadeRoute(page: ConfirmChangePin()));
 
-                    }
-                  },
-                  buttonText: 'Verify', borderRadius: 30.r,width: 380.w,
-                  buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
-                  CustomColors.sDisableButtonColor),
-              height34,
+                      }
+                    },
+                    buttonText: 'Verify', borderRadius: 30.r,width: 380.w,
+                    buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
+                    CustomColors.sDisableButtonColor),
+                height34,
 
 
 
-            ],
-          ),
-        ));
+              ],
+            ),
+          )),
+    );
   }
 
   Widget pincodeTextfield(BuildContext context){

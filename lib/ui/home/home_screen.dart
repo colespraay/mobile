@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -16,6 +18,7 @@ import 'package:spraay/ui/home/fund_wallet.dart';
 import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/auth_provider.dart';
 import 'package:spraay/view_model/home_provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     _isObscure=Provider.of<HomeProvider>(context, listen: false).hideWalletvalue??false;
+    Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+
   }
+
+  AuthProvider? credentialsProvider;
+  @override
+  void didChangeDependencies() {
+    credentialsProvider=context.watch<AuthProvider>();
+    super.didChangeDependencies();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +76,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SvgPicture.asset("images/avatar.svg"),
+        // SvgPicture.asset("images/avatar.svg"),
+        CircleAvatar(
+          radius: 26.r,
+          child: CachedNetworkImage(
+            width: 38.w,
+            height: 38.h,
+            imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
+            placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+            errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+          ),
+        ),
 
         SizedBox(width: 12.w,),
         Expanded(
@@ -71,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("Hello", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
-              Text(" ${MySharedPreference.getFname()}", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500) ),
+              Text(" ${credentialsProvider?.dataResponse?.firstName??""}", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500) ),
             ],
           ),
         ),
