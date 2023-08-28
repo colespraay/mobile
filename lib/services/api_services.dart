@@ -7,6 +7,7 @@ import 'dart:convert' as convert;
 import 'package:http_parser/http_parser.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/models/category_list_model.dart';
+import 'package:spraay/models/events_models.dart';
 import 'package:spraay/models/login_response.dart';
 import 'package:spraay/models/registered_user_model.dart';
 import 'package:spraay/models/user_profile.dart';
@@ -612,6 +613,52 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     return result;
   }
 
+  Future<Map<String, dynamic>> editEvent(String mytoken ,String eventName, String eventDescription, String venue, String eventDate, String time, String category,
+      String eventCoverImage, String eventId)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.patch(Uri.parse("$url/event"),
+          body: jsonEncode({"eventName": eventName, "eventDescription": eventDescription, "venue": venue, "eventDate": eventDate,
+            "time": time, "category": category,"eventCoverImage":eventCoverImage, "eventId": eventId,"status": true}),
+          headers: {"Accept":"application/json", 'Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("errrr=${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
+  Future<ApiResponse<EventsModel>> eventsList(String mytoken, String userId){
+    return http.get(Uri.parse("$url/event?userId=$userId"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=EventsModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<EventsModel>(data: note1);
+      }else{
+        return ApiResponse<EventsModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      return ApiResponse<EventsModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+    });
+  }
 
 
 

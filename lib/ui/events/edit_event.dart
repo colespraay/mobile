@@ -52,14 +52,21 @@ class _EditEventState extends State<EditEvent> {
     Provider.of<EventProvider>(context, listen: false).fetchCategoryListApi(context);
 
     setState(() {
+      fullNameController.text=Provider.of<EventProvider>(context, listen: false).eventname??"";
+      dateController.text=Provider.of<EventProvider>(context, listen: false).event_date??"";
+      timeController.text=Provider.of<EventProvider>(context, listen: false).eventTime??"";
+      venueController.text=Provider.of<EventProvider>(context, listen: false).eventVenue??"";
+      categoryController.text=Provider.of<EventProvider>(context, listen: false).eventCategory??"";
+      descriptionController.text=Provider.of<EventProvider>(context, listen: false).eventdescription??"";
+
       _textField1Focus = FocusNode();
       _textField2Focus = FocusNode();
       _textField3Focus = FocusNode();
       _textField4Focus = FocusNode();
       _textField5Focus=FocusNode();
       _textField6Focus=FocusNode();
-
     });
+
   }
 
   String firstVal="";
@@ -84,15 +91,6 @@ class _EditEventState extends State<EditEvent> {
   @override
   void didChangeDependencies() {
     eventProvider=context.watch<EventProvider>();
-    setState(() {
-      fullNameController.text=eventProvider?.eventname??"";
-      dateController.text=eventProvider?.event_date??"";
-      timeController.text=eventProvider?.eventTime??"";
-      venueController.text=eventProvider?.eventVenue??"";
-      categoryController.text=eventProvider?.eventCategory??"";
-      descriptionController.text=eventProvider?.eventdescription??"";
-
-    });
     super.didChangeDependencies();
   }
 
@@ -101,13 +99,16 @@ class _EditEventState extends State<EditEvent> {
   int step=1;
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context, title:"Edit Event" ),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child:  buildStep1Widget(),
-        ));
+    return  LoadingOverlayWidget(
+      loading: eventProvider?.loading??false,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title:"Edit Event" ),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child:  buildStep1Widget(),
+          )),
+    );
 
   }
 
@@ -116,9 +117,7 @@ class _EditEventState extends State<EditEvent> {
       padding: horizontalPadding,
       shrinkWrap: true,
       children: [
-
         height20,
-
         CustomizedTextField(textEditingController:fullNameController, keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,hintTxt: "Event name",focusNode: _textField1Focus,
           onChanged:(value){
@@ -146,9 +145,12 @@ class _EditEventState extends State<EditEvent> {
             TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context, initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
             setState(() {
               _openPickupTime = newSelectedTime == null ? TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))) : newSelectedTime;
-              timeController.text=_openPickupTime?.format(context)??"";
               secondVal=_openPickupTime?.format(context)??"";
-            });},
+            });
+
+            timeController.text=_openPickupTime?.format(context)??"";
+
+          },
         ),
 
 
@@ -182,30 +184,26 @@ class _EditEventState extends State<EditEvent> {
 
         CustomButton(
             onTap: () {
-              popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
-                  buttonTxt: 'Home',
-                  onTap: () {
 
-                if( widget.fromPage=="view_event"){
-                  //when routed through view_event page edit event
+              if( widget.fromPage=="view_event"){
+                //when routed through view_event page edit event
 
-                  //url image pass to api
-                  file_url
+                //url image pass to api
+                eventProvider?.editEventApi(context, fullNameController.text, descriptionController.text, venueController.text,
+                    dateController.text, timeController.text, categoryController.text, eventProvider?.file_url??"", eventProvider?.eventId??"");
 
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
-                }else{
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
-                }
+              }else{
+                popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
+                    buttonTxt: 'Home',
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+
+                    }, png_img: 'verified');
+              }
 
 
-                  }, png_img: 'verified');
             },
             buttonText: 'Confirm', borderRadius: 30.r,width: 380.w,
             buttonColor: CustomColors.sPrimaryColor500),
@@ -254,14 +252,6 @@ class _EditEventState extends State<EditEvent> {
 
 
   Widget buildImage(){
-    // if(imageFile ==null){
-    //   return GestureDetector(
-    //       onTap:(){
-    //         _getFromGallery();
-    //       },
-    //       child: Center(child: SvgPicture.asset("images/img_avtar.svg",  width: 180.w,
-    //         height: 174.h,)));
-    // }
     return Center(
       child: buildDottedBorder(child: Container(
         width: 180.w,

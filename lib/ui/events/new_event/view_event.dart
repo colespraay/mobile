@@ -63,7 +63,7 @@ class _ViewEventState extends State<ViewEvent> {
                     child: CachedNetworkImage(
                       width: double.infinity,
                       height: 455.h,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                       imageUrl:eventProvider?.event_CoverImage??"",
                       placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
                       errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),

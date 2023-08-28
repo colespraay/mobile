@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/registered_user_model.dart';
@@ -8,6 +9,7 @@ import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/events/new_event/confirmation_page.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/auth_provider.dart';
 
 class EventProvider extends ChangeNotifier{
   bool get loading => isLoading;
@@ -126,6 +128,32 @@ class EventProvider extends ChangeNotifier{
             Navigator.pop(context);
             Navigator.pop(context);
           }, png_img: 'verified');
+      // userInformationList= apiResponse.data?.data??[];
+    }
+    setloading(false);
+  }
+
+
+  editEventApi(BuildContext context ,String eventName, String eventDescription, String venue, String eventDate, String time, String category,
+      String eventCoverImage, String eventId) async{
+    setloading(true);
+    var result=await service.editEvent(mytoken, eventName, eventDescription, venue, eventDate, time, category, eventCoverImage, eventId);
+    if(result['error'] == true){
+      errorCherryToast(context, result['message']);
+    }else{
+
+      popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
+          buttonTxt: 'Home',
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+          }, png_img: 'verified');
+
+
       // userInformationList= apiResponse.data?.data??[];
     }
     setloading(false);
