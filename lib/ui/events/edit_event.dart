@@ -4,12 +4,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/view_model/auth_provider.dart';
+import 'package:spraay/view_model/event_provider.dart';
+import 'package:path/path.dart' as baseImg;
+
 
 class EditEvent extends StatefulWidget {
   String fromPage;
@@ -25,26 +30,73 @@ class _EditEventState extends State<EditEvent> {
   TextEditingController dateController=TextEditingController();
   TextEditingController timeController=TextEditingController();
 
-  TextEditingController genderController=TextEditingController();
+  TextEditingController venueController=TextEditingController();
+  TextEditingController descriptionController=TextEditingController();
   TextEditingController categoryController=TextEditingController();
 
   final GlobalKey<FormState> _myKey = GlobalKey<FormState>();
   bool _isObscure = true;
 
+
+
+  FocusNode? _textField1Focus;
+  FocusNode? _textField2Focus;
+  FocusNode? _textField3Focus;
   FocusNode? _textField4Focus;
-  FocusNode? _textTagFocus;
+  FocusNode? _textField5Focus;
+  FocusNode? _textField6Focus;
+  TimeOfDay ?_openPickupTime;
+
   @override
   void initState() {
+    Provider.of<EventProvider>(context, listen: false).fetchCategoryListApi(context);
 
+    setState(() {
+      _textField1Focus = FocusNode();
+      _textField2Focus = FocusNode();
+      _textField3Focus = FocusNode();
+      _textField4Focus = FocusNode();
+      _textField5Focus=FocusNode();
+      _textField6Focus=FocusNode();
 
+    });
   }
+
+  String firstVal="";
+  String secondVal="";
+  String thirdVal="";
+  String forthVal="";
+  String fiveVal="";
+  String sixVal="";
 
   @override
   void dispose() {
+    _textField1Focus?.dispose();
+    _textField2Focus?.dispose();
+    _textField3Focus?.dispose();
     _textField4Focus?.dispose();
-    _textTagFocus?.dispose();
+    _textField5Focus?.dispose();
+    _textField6Focus?.dispose();
     super.dispose();
   }
+
+  EventProvider? eventProvider;
+  @override
+  void didChangeDependencies() {
+    eventProvider=context.watch<EventProvider>();
+    setState(() {
+      fullNameController.text=eventProvider?.eventname??"";
+      dateController.text=eventProvider?.event_date??"";
+      timeController.text=eventProvider?.eventTime??"";
+      venueController.text=eventProvider?.eventVenue??"";
+      categoryController.text=eventProvider?.eventCategory??"";
+      descriptionController.text=eventProvider?.eventdescription??"";
+
+    });
+    super.didChangeDependencies();
+  }
+
+
 
   int step=1;
   @override
@@ -64,68 +116,68 @@ class _EditEventState extends State<EditEvent> {
       padding: horizontalPadding,
       shrinkWrap: true,
       children: [
+
         height20,
 
-        buildChildrenContentWidget(content: "Amara weds Ikechukwu"),
-
-        height16,
-        buildChildrenContentWidget(content: "15/06/2023"),
-        height16,
-        buildChildrenContentWidget(content: "11:00 AM"),
-        height16,
-        _buildEvents(),
-        height16,
-        _buildCategories(),
-        height16,
-        buildContWidget(content: "Join us as we celebrate the union between Amara Azubuike and Ikechukwu Dirichie on the 1st of June 2023."),
-        height8,
-        Center(
-          child: buildDottedBorder(child: Container(
-            width: 180.w,
-            height: 174.h,
-            decoration: BoxDecoration(color: CustomColors.sPrimaryColor500),
-            child: Stack(
-              children: [
-                ClipRRect(borderRadius: BorderRadius.circular(12.r),
-                    child: Container(color: Colors.blue,)),//replace this with image
-                // ClipRRect(
-                //   borderRadius: BorderRadius.circular(12.r),
-                //   child: CachedNetworkImage(
-                //     fit: BoxFit.cover,
-                //     width:160.w,
-                //     height: 150.h,
-                //     imageUrl: MySharedPreference.getProfilePic(),
-                //     placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-                //     errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-                //   ),
-                // ),
-
-
-                Positioned(
-                  left: 8.w,
-                  right: 8.w,
-                  bottom: 28.h,
-                  child: GestureDetector(
-                    onTap:(){
-                      _getFromGallery();
-                    },
-                    child: Container(
-                      width: 170.w,
-                      height: 40.h,
-                      decoration: BoxDecoration(color: CustomColors.sGreenColor500, borderRadius: BorderRadius.all(Radius.circular(4.r))),
-                      child: Center(
-                        child: Text("Change cover image", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp,
-                          fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor900),),
-                      ),
-                    ),
-                  ),
-                )
-
-              ],
-            ),
-          )),
+        CustomizedTextField(textEditingController:fullNameController, keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,hintTxt: "Event name",focusNode: _textField1Focus,
+          onChanged:(value){
+            setState(() {firstVal=value;});
+          },
         ),
-        height34,
+        height16,
+        CustomizedTextField(textEditingController:dateController, keyboardType: TextInputType.datetime,
+          textInputAction: TextInputAction.next,hintTxt: "Event Date",focusNode: _textField4Focus,
+          onChanged:(value){
+            setState(() {forthVal=value;});
+          },
+          readOnly: true,
+          onTap:(){
+            _selectDate(context);
+          },
+        ),
+        height16,
+        CustomizedTextField(textEditingController:timeController, keyboardType:TextInputType.datetime, textInputAction: TextInputAction.next,focusNode: _textField2Focus,
+          hintTxt: "Time", readOnly: true,
+          onChanged:(value){
+            setState(() {secondVal=value;});
+          },
+          onTap: ()async {
+            TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context, initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
+            setState(() {
+              _openPickupTime = newSelectedTime == null ? TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))) : newSelectedTime;
+              timeController.text=_openPickupTime?.format(context)??"";
+              secondVal=_openPickupTime?.format(context)??"";
+            });},
+        ),
+
+
+        height16,
+        CustomizedTextField(
+          textEditingController:venueController, keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,hintTxt: "Venue",focusNode: _textField5Focus,
+          onChanged:(value){
+            setState(() {fiveVal=value;});
+          },
+        ),
+
+        height16,
+        buildCategory(),
+
+        height16,
+        CustomizedTextField(
+          textEditingController:descriptionController, keyboardType: TextInputType.text,
+          maxLength: 150,
+          maxLines: 4,
+          textInputAction: TextInputAction.done,hintTxt: "Event description (Not more than 150 words)",
+          focusNode: _textField6Focus,
+          onChanged:(value){
+            setState(() {sixVal=value;});
+          },
+        ),
+        height8,
+        buildImage(),
+        height26,
 
 
         CustomButton(
@@ -135,7 +187,11 @@ class _EditEventState extends State<EditEvent> {
                   onTap: () {
 
                 if( widget.fromPage=="view_event"){
-                  //when routed through view_event page
+                  //when routed through view_event page edit event
+
+                  //url image pass to api
+                  file_url
+
                   Navigator.pop(context);
                   Navigator.pop(context);
                   Navigator.pop(context);
@@ -160,6 +216,103 @@ class _EditEventState extends State<EditEvent> {
   }
 
 
+
+
+  Widget buildCategory(){
+    return DropdownButtonFormField<String>(
+      iconEnabledColor: CustomColors.sDisableButtonColor,
+      isDense: false,
+      dropdownColor: Color(0xff212121),
+      focusNode: _textField3Focus,
+      items: eventProvider?.dataList.map((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value, style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
+              fontSize: 14.sp, fontWeight: FontWeight.w500), ),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        categoryController.text=newValue??"";
+        thirdVal=newValue??"";
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
+        hintText: categoryController.text.isEmpty? "Category": categoryController.text,
+        isDense: true,
+        filled: true,
+        // prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),
+        // prefixIcon:Padding(padding:  EdgeInsets.only(right: 8.w, left: 10.w), child: SizedBox.shrink(),),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+        hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
+        fillColor:_textField3Focus!.hasFocus? CustomColors.sTransparentPurplecolor : CustomColors.sDarkColor2,
+        errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),
+        focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:Colors.transparent, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),
+      ),
+    );
+  }
+
+
+  Widget buildImage(){
+    // if(imageFile ==null){
+    //   return GestureDetector(
+    //       onTap:(){
+    //         _getFromGallery();
+    //       },
+    //       child: Center(child: SvgPicture.asset("images/img_avtar.svg",  width: 180.w,
+    //         height: 174.h,)));
+    // }
+    return Center(
+      child: buildDottedBorder(child: Container(
+        width: 180.w,
+        height: 174.h,
+        decoration: BoxDecoration(color: CustomColors.sDarkColor3),
+        child: Stack(
+          children: [
+
+
+
+            imageFile ==null?  ClipRRect(
+              borderRadius: BorderRadius.circular(12.r),
+              child: CachedNetworkImage(
+                width:178.w,
+                height: 172.h,
+                fit: BoxFit.contain,
+                imageUrl:eventProvider?.event_CoverImage??"",
+                placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+              ),
+            ):
+          ClipRRect(
+          borderRadius: BorderRadius.circular(12.r),
+        child: Image.file(imageFile!, width: 178.w, height: 172.h, fit: BoxFit.cover,)),
+
+            Positioned(
+              left: 8.w,
+              right: 8.w,
+              bottom: 20.h,
+              child: GestureDetector(
+                onTap:(){
+                  _getFromGallery();
+                },
+                child: Container(
+                  width: 170.w,
+                  height: 40.h,
+                  decoration: BoxDecoration(color: CustomColors.sGreenColor500, borderRadius: BorderRadius.all(Radius.circular(4.r))),
+                  child: Center(
+                    child: Text("Change cover image", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp,
+                        fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor900),),
+                  ),
+                ),
+              ),
+            )
+
+          ],
+        ),
+      )),
+    );
+  }
+
   final ImagePicker _picker = ImagePicker();
   File? imageFile;
   _getFromGallery() async {
@@ -168,83 +321,9 @@ class _EditEventState extends State<EditEvent> {
       setState(() {
         imageFile = File(image.path);
       });
-      //api
-      // fetchuploadPicEndpoint(context: context, mytoken: MySharedPreference.getToken(), imageFile: imageFile, imageFileName: baseImg.basename(imageFile?.path??""));
+
+      eventProvider?.fetchUploadFile(context, imageFile!, baseImg.basename(imageFile?.path??""));
     }
-  }
-
-  //hdhhdd
-  List<String> categorylist=["John abuja", "John Evans"];
-
-  Widget _buildCategories(){
-    return DropdownButtonFormField<String>(
-      iconEnabledColor: CustomColors.sDisableButtonColor,
-      isDense: false,
-      dropdownColor: Color(0xff212121),
-      items: categorylist.map((String value) {
-        return DropdownMenuItem<String>(value: value,
-          child: Text(value, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400,), ),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        categoryController.text=newValue??"";
-      },
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
-        hintText: "Category",
-        isDense: true,
-        filled: true,
-        prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),
-        prefixIcon:Padding(
-          padding:  EdgeInsets.only(right: 8.w, left: 10.w),
-          child: SizedBox.shrink(),
-        ),
-        fillColor: CustomColors.sDarkColor2,
-        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
-        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
-        hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w400),
-
-        errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),
-        focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:Colors.transparent, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),
-      ),
-    );
-  }
-
-  List<String> eventlist=["John Evans Event Center abuja", "John Evans Event center lagos"];
-
-  Widget _buildEvents(){
-    return DropdownButtonFormField<String>(
-      iconEnabledColor: CustomColors.sDisableButtonColor,
-      isDense: false,
-      dropdownColor: Color(0xff212121),
-      items: eventlist.map((String value) {
-        return DropdownMenuItem<String>(value: value,
-          child: Text(value, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400,), ),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        genderController.text=newValue??"";
-        // thirdVal=newValue??"";
-      },
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
-        hintText: "Event",
-        isDense: true,
-        filled: true,
-        prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),
-        prefixIcon:Padding(
-          padding:  EdgeInsets.only(right: 8.w, left: 10.w),
-          child: SizedBox.shrink(),
-        ),
-        fillColor: CustomColors.sDarkColor2,
-        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
-        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
-        hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w400),
-
-        errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),
-        focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:Colors.transparent, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),
-      ),
-    );
   }
 
   Widget buildChildrenContentWidget({required String content}){
@@ -273,6 +352,24 @@ class _EditEventState extends State<EditEvent> {
             alignment: Alignment.centerLeft,
             child: Text(content, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp,
               fontWeight: FontWeight.w400,),)));
+  }
+
+
+  DateTime selectedDate = DateTime.now();
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(1800, 8),
+        lastDate: DateTime(3000,12));
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        forthVal="value";
+      });
+      dateController.text=  DateFormat('yyyy-MM-dd').format(selectedDate);
+      // print("selectedDate==${selectedDate}");
+    }
   }
 
 

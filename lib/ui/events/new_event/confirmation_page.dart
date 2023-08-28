@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
@@ -8,6 +10,7 @@ import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/ui/events/new_event/contacts/phone_contacts.dart';
 import 'package:spraay/ui/events/new_event/view_event.dart';
+import 'package:spraay/view_model/event_provider.dart';
 
 class EventConfirmationPage extends StatefulWidget {
   const EventConfirmationPage({Key? key}) : super(key: key);
@@ -19,6 +22,13 @@ class EventConfirmationPage extends StatefulWidget {
 class _EventConfirmationPageState extends State<EventConfirmationPage> {
 
   TextEditingController phoneController=TextEditingController();
+
+  EventProvider? eventProvider;
+  @override
+  void didChangeDependencies() {
+    eventProvider=context.watch<EventProvider>();
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +48,7 @@ class _EventConfirmationPageState extends State<EventConfirmationPage> {
               height22,
               Center(
                 child: QrImageView(
-                  data: '1234567890',
+                  data: eventProvider?.eventCode??"",
                   backgroundColor: CustomColors.sWhiteColor,
                   version: QrVersions.auto,
                   size: 220.r,
@@ -92,10 +102,14 @@ class _EventConfirmationPageState extends State<EventConfirmationPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("xyzrdsa", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w500),),
+            Text(eventProvider?.eventCode??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w500),),
             GestureDetector(
               onTap:(){
-                toastMessage("copied!");
+
+                Clipboard.setData( ClipboardData(text: eventProvider?.eventCode??"")).then((_) {
+                  toastMessage("copied!");
+                });
+
               },
                 child: SvgPicture.asset("images/copy.svg"))
           ],

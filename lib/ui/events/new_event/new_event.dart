@@ -5,11 +5,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/ui/events/new_event/confirmation_page.dart';
+import 'package:spraay/view_model/event_provider.dart';
+import 'package:path/path.dart' as baseImg;
+
 
 class NewEvent extends StatefulWidget {
   const NewEvent({Key? key}) : super(key: key);
@@ -39,9 +43,18 @@ class _NewEventState extends State<NewEvent> {
   FocusNode? _textField5Focus;
   FocusNode? _textField6Focus;
 
+  EventProvider? eventProvider;
+  @override
+  void didChangeDependencies() {
+    eventProvider=context.watch<EventProvider>();
+    super.didChangeDependencies();
+  }
+
 
   @override
   void initState() {
+    Provider.of<EventProvider>(context, listen: false).fetchCategoryListApi(context);
+
     setState(() {
       _textField1Focus = FocusNode();
       _textField2Focus = FocusNode();
@@ -71,16 +84,21 @@ class _NewEventState extends State<NewEvent> {
     super.dispose();
   }
 
+
+
   int step=1;
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context, title:"New Event" ),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child:  buildStep1Widget(),
-        ));
+    return  LoadingOverlayWidget(
+      loading: eventProvider?.loading??false,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title:"New Event" ),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child:  buildStep1Widget(),
+          )),
+    );
 
   }
 
@@ -152,13 +170,19 @@ class _NewEventState extends State<NewEvent> {
         height26,
         CustomButton(
             onTap: () {
-              if( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty && fiveVal.isNotEmpty && sixVal.isNotEmpty && imageFile!=null){
-                Navigator.push(context, SlideLeftRoute(page: EventConfirmationPage()));
+              if( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty && fiveVal.isNotEmpty
+                  && sixVal.isNotEmpty && eventProvider!.file_url.isNotEmpty){
+
+                eventProvider?.fetchCreateEventApi(
+                    context, fullNameController.text, descriptionController.text, venueController.text,
+                    dobController.text, timeController.text, categoryController.text, eventProvider!.file_url);
+                // Navigator.push(context, SlideLeftRoute(page: EventConfirmationPage()));
+
               }
             },
             buttonText: 'Continue', borderRadius: 30.r,width: 380.w,
             buttonColor: (firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty&& fiveVal.isNotEmpty && sixVal.isNotEmpty
-                && imageFile !=null) ? CustomColors.sPrimaryColor500:
+                && eventProvider!.file_url.isNotEmpty) ? CustomColors.sPrimaryColor500:
             CustomColors.sDisableButtonColor),
         height34,
 
@@ -176,7 +200,7 @@ class _NewEventState extends State<NewEvent> {
         context: context,
         initialDate: selectedDate,
         firstDate: DateTime(1800, 8),
-        lastDate: DateTime.now());
+        lastDate: DateTime(3000,12));
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
@@ -194,7 +218,7 @@ class _NewEventState extends State<NewEvent> {
       isDense: false,
       dropdownColor: Color(0xff212121),
       focusNode: _textField3Focus,
-      items: categorylist.map((String value) {
+      items: eventProvider?.dataList.map((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value, style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
@@ -279,8 +303,8 @@ class _NewEventState extends State<NewEvent> {
       setState(() {
         imageFile = File(image.path);
       });
-      //api
-      // fetchuploadPicEndpoint(context: context, mytoken: MySharedPreference.getToken(), imageFile: imageFile, imageFileName: baseImg.basename(imageFile?.path??""));
+
+      eventProvider?.fetchUploadFile(context, imageFile!, baseImg.basename(imageFile?.path??""));
     }
   }
 }

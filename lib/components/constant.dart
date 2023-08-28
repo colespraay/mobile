@@ -111,6 +111,18 @@ NumberFormat formatNumberAndDecimal = NumberFormat.currency(
  decimalDigits: 2,
 );
 
+String dayString(String date){
+ final DateTime dateTime = DateTime.parse(date);
+ final DateFormat formatter = DateFormat('d');
+ return formatter.format(dateTime);
+}
+
+String monthString(String date){
+ final DateTime dateTime = DateTime.parse(date);
+ final DateFormat formatter = DateFormat('MMM');
+ return formatter.format(dateTime);
+}
+
 
 
 

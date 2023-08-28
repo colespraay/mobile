@@ -13,6 +13,8 @@ import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/user_profile.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
+import 'package:path/path.dart' as baseImg;
+
 
 class EditProfile extends StatefulWidget {
   DataResponse? dataResponse;
@@ -107,13 +109,13 @@ class _EditProfileState extends State<EditProfile> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 130.w,
-          height: 130.h,
+          width: 150.w,
+          height: 150.h,
           child: Stack(
             children: [
 
               CircleAvatar(
-                radius: 70.r,
+                radius: 80.r,
                 child: CachedNetworkImage(
                   width: 100.w,
                   height: 100.h,
@@ -151,6 +153,8 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         imageFile = File(image.path);
       });
+
+      credentialsProvider?.fetchUploadFile(context, imageFile!, baseImg.basename(imageFile?.path??""));
       //api
       // fetchuploadPicEndpoint(context: context, mytoken: MySharedPreference.getToken(), imageFile: imageFile, imageFileName: baseImg.basename(imageFile?.path??""));
     }

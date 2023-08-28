@@ -5,6 +5,7 @@ import 'package:spraay/components/themes.dart';
 import 'package:spraay/splash_screen.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
+import 'package:spraay/view_model/event_provider.dart';
 import 'package:spraay/view_model/home_provider.dart';
 
 Future main()async {
@@ -15,6 +16,7 @@ Future main()async {
           providers: [
             ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
             ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
+            ChangeNotifierProvider<EventProvider>(create: (_) => EventProvider()),
           ],
           child: const MyApp()));
 }

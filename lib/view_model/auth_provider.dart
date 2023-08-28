@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
@@ -349,6 +351,31 @@ class AuthProvider extends ChangeNotifier{
 
 
           }, png_img: "verified");
+    }
+    setloading(false);
+  }
+
+
+  fetchuploadImageUrl(context,String profileImageUrl, String userId) async{
+    setloading(true);
+    var result = await apiResponse.uploadImageUrl(profileImageUrl, userId);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      fetchUserDetailApi(context);
+    }
+    setloading(false);
+  }
+
+  fetchUploadFile(context,File image, String filename) async{
+    setloading(true);
+    var result = await apiResponse.uploadFile(image, filename);
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      fetchuploadImageUrl(context, result['file_url'], MySharedPreference.getUId());
     }
     setloading(false);
   }

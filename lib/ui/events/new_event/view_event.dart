@@ -1,6 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
@@ -10,6 +14,7 @@ import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/events/edit_event.dart';
 import 'package:spraay/ui/events/google_map_location.dart';
 import 'package:spraay/ui/events/new_event/contacts/phone_contacts.dart';
+import 'package:spraay/view_model/event_provider.dart';
 
 class ViewEvent extends StatefulWidget {
   const ViewEvent({Key? key}) : super(key: key);
@@ -19,6 +24,14 @@ class ViewEvent extends StatefulWidget {
 }
 
 class _ViewEventState extends State<ViewEvent> {
+
+  EventProvider? eventProvider;
+  @override
+  void didChangeDependencies() {
+    eventProvider=context.watch<EventProvider>();
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,14 +51,22 @@ class _ViewEventState extends State<ViewEvent> {
             height12,
             Stack(
               children: [
-                Align(
-                  alignment: Alignment.center,
+
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(14.r)),
                   child: Container(
                     width: double.infinity,
                     height: 455.h,
                     decoration: BoxDecoration(
-                        color: CustomColors.sPrimaryColor500,
-                        borderRadius: BorderRadius.all(Radius.circular(14.r))
+                      color: CustomColors.sPrimaryColor500,
+                    ),
+                    child: CachedNetworkImage(
+                      width: double.infinity,
+                      height: 455.h,
+                      fit: BoxFit.contain,
+                      imageUrl:eventProvider?.event_CoverImage??"",
+                      placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                      errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                     ),
                   ),
                 ),
@@ -63,8 +84,8 @@ class _ViewEventState extends State<ViewEvent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("More Love, Less Ego Tour", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 22.sp, fontWeight: FontWeight.w700) ),
-                        Text("Invited by @ammie19", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor400) ),
+                        Text(eventProvider?.eventname??"", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 22.sp, fontWeight: FontWeight.w700) ),
+                        Text("Invited by", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor400) ),
                       ],
                     ),
                   ),
@@ -82,7 +103,7 @@ class _ViewEventState extends State<ViewEvent> {
             height22,
             Text("About this event", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
             height4,
-            Text("Join us as we celebrate the union between Amara Azubuike and Ikechukwu Dirichie on the 1st of June 2023.",
+            Text(eventProvider?.eventdescription??"",
                 style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor50) ),
 
             height30,
@@ -125,8 +146,8 @@ class _ViewEventState extends State<ViewEvent> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("13", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500) ),
-                    Text("May", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0x99E0E9F4)) ),
+                    Text(dayString(eventProvider?.event_date??""), style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500) ),
+                    Text(monthString(eventProvider?.event_date??""), style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0x99E0E9F4)) ),
                   ],
                 ),
                 SizedBox(width: 16.w,),
@@ -137,8 +158,8 @@ class _ViewEventState extends State<ViewEvent> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Landmark Beach", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500) ),
-                      Text("Victoria Island, Lagos", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0x99FFFFFF)) ),
+                      Text(eventProvider?.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500) ),
+                      Text(eventProvider?.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0x99FFFFFF)) ),
                     ],
                   ),
                 ),
@@ -168,10 +189,13 @@ class _ViewEventState extends State<ViewEvent> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("xyzrdsa", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w500),),
-            GestureDetector(
+            Text(eventProvider?.eventCode??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w500),),
+            InkWell(
                 onTap:(){
-                  toastMessage("copied!");
+                  Clipboard.setData( ClipboardData(text: eventProvider?.eventCode??"")).then((_) {
+                    toastMessage("copied!");
+                  });
+
                 },
                 child: SvgPicture.asset("images/copy.svg"))
           ],
