@@ -17,8 +17,10 @@ import 'package:path/path.dart' as baseImg;
 
 
 class EditEvent extends StatefulWidget {
-  String fromPage;
-   EditEvent({required this.fromPage});
+
+  String fromPage,eventname,event_date,eventTime,eventVenue,eventCategory, eventdescription, event_CoverImage,eventId;
+   EditEvent({required this.fromPage, required this.eventname, required this.event_date, required this.eventTime, required this.eventVenue,
+     required this.eventCategory, required this.eventdescription, required this.event_CoverImage, required this.eventId});
 
   @override
   State<EditEvent> createState() => _EditEventState();
@@ -47,17 +49,21 @@ class _EditEventState extends State<EditEvent> {
   FocusNode? _textField6Focus;
   TimeOfDay ?_openPickupTime;
 
+  String coverImage="";
+  String eventId="";
   @override
   void initState() {
     Provider.of<EventProvider>(context, listen: false).fetchCategoryListApi(context);
 
     setState(() {
-      fullNameController.text=Provider.of<EventProvider>(context, listen: false).eventname??"";
-      dateController.text=Provider.of<EventProvider>(context, listen: false).event_date??"";
-      timeController.text=Provider.of<EventProvider>(context, listen: false).eventTime??"";
-      venueController.text=Provider.of<EventProvider>(context, listen: false).eventVenue??"";
-      categoryController.text=Provider.of<EventProvider>(context, listen: false).eventCategory??"";
-      descriptionController.text=Provider.of<EventProvider>(context, listen: false).eventdescription??"";
+      fullNameController.text=widget.eventname;
+      dateController.text=widget.event_date;
+      timeController.text=widget.eventTime;
+      venueController.text=widget.eventVenue;
+      categoryController.text=widget.eventCategory;
+      descriptionController.text=widget.eventdescription;
+      coverImage=widget.event_CoverImage;
+      eventId=widget.eventId;
 
       _textField1Focus = FocusNode();
       _textField2Focus = FocusNode();
@@ -190,17 +196,13 @@ class _EditEventState extends State<EditEvent> {
 
                 //url image pass to api
                 eventProvider?.editEventApi(context, fullNameController.text, descriptionController.text, venueController.text,
-                    dateController.text, timeController.text, categoryController.text, eventProvider?.file_url??"", eventProvider?.eventId??"");
+                    dateController.text, timeController.text, categoryController.text, eventProvider?.file_url??"", eventId, "view_event");
 
               }else{
-                popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
-                    buttonTxt: 'Home',
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
-                    }, png_img: 'verified');
+                eventProvider?.editEventApi(context, fullNameController.text, descriptionController.text, venueController.text,
+                    dateController.text, timeController.text, categoryController.text, eventProvider?.file_url??"", eventId, "");
+
               }
 
 
@@ -268,7 +270,7 @@ class _EditEventState extends State<EditEvent> {
                 width:178.w,
                 height: 172.h,
                 fit: BoxFit.contain,
-                imageUrl:eventProvider?.event_CoverImage??"",
+                imageUrl:coverImage,
                 placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
                 errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
               ),

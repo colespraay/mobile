@@ -135,23 +135,36 @@ class EventProvider extends ChangeNotifier{
 
 
   editEventApi(BuildContext context ,String eventName, String eventDescription, String venue, String eventDate, String time, String category,
-      String eventCoverImage, String eventId) async{
+      String eventCoverImage, String eventId, String fromPage) async{
     setloading(true);
     var result=await service.editEvent(mytoken, eventName, eventDescription, venue, eventDate, time, category, eventCoverImage, eventId);
     if(result['error'] == true){
       errorCherryToast(context, result['message']);
     }else{
+      if(fromPage=="view_event"){
+        popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
+            buttonTxt: 'Home',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+            }, png_img: 'verified');
+      }else{
+        popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
+            buttonTxt: 'Home',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
-      popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
-          buttonTxt: 'Home',
-          onTap: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
-          }, png_img: 'verified');
+            }, png_img: 'verified');
+
+      }
+
+
 
 
       // userInformationList= apiResponse.data?.data??[];

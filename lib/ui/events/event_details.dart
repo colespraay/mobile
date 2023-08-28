@@ -21,10 +21,10 @@ class _EventDetailsState extends State<EventDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBar(context: context, title: "Details", action: [Padding(
+        appBar: buildAppBar(context: context, title: "Details", /*action: [Padding(
           padding:  EdgeInsets.only(right: 18.w),
           child: SvgPicture.asset("images/arrow_svg.svg"),
-        )]),
+        )]*/),
         body:  ListView(
           padding: horizontalPadding,
           children: [

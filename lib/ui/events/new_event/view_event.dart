@@ -38,7 +38,10 @@ class _ViewEventState extends State<ViewEvent> {
         appBar: buildAppBar(context: context, title: "Details", action: [
           GestureDetector(
             onTap: (){
-              Navigator.push(context, SlideUpRoute(page: EditEvent(fromPage: 'view_event')));
+              Navigator.push(context, SlideUpRoute(page:  EditEvent(fromPage: 'view_event', eventname:eventProvider?.eventname??"", event_date:eventProvider?.event_date??"",
+                  eventTime: eventProvider?.eventTime??"",
+                  eventVenue: eventProvider?.eventVenue??"", eventCategory: eventProvider?.eventCategory??"",
+                  eventdescription: eventProvider?.eventdescription??"",event_CoverImage: eventProvider?.event_CoverImage??"", eventId: eventProvider?.eventId??"",)));
             },
               child: Padding(padding:  EdgeInsets.only(right: 18.w), child: SvgPicture.asset("images/edit.svg"),)),
 
@@ -112,7 +115,11 @@ class _ViewEventState extends State<ViewEvent> {
             height26,
             CustomButton(
                 onTap: () {
-                  Navigator.push(context, SlideUpRoute(page: EditEvent(fromPage: 'view_event',)));
+                  Navigator.push(context, SlideUpRoute(page: EditEvent(fromPage: 'view_event', eventname:eventProvider?.eventname??"", event_date:eventProvider?.event_date??"",
+                    eventTime: eventProvider?.eventTime??"",
+                    eventVenue: eventProvider?.eventVenue??"", eventCategory: eventProvider?.eventCategory??"",
+                    eventdescription: eventProvider?.eventdescription??"",event_CoverImage: eventProvider?.event_CoverImage??"",
+                  eventId: eventProvider?.eventId??"")));
                 },
                 buttonText: "Edit this Event", borderRadius: 30.r,width: 380.w,
                 buttonColor:  CustomColors.sPrimaryColor500),

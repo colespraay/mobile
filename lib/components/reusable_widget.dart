@@ -11,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/themes.dart';
 
@@ -515,6 +516,75 @@ class LoadingOverlayWidget extends StatelessWidget {
         ),
       ),//Change this loading overlay
       child: child,
+    );
+  }
+}
+
+
+class ShimmerCustomeGrid extends StatelessWidget {
+  // Widget widget;
+
+  // ShimmerCustomeGrid({required this.widget});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+        baseColor: CustomColors.sPrimaryColor500,
+        highlightColor: Colors.grey,
+
+        child:ListView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 25.h),
+            itemBuilder: (_,int position){
+              return  Container(
+                width: double.infinity,
+                height: 140,
+                margin: EdgeInsets.only(bottom: 8.h),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container( width: 90.w, height: 120.h,
+                        decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(18.r)))),
+                    SizedBox(width: 8.w,),
+
+                    Expanded(
+                      child: Padding(
+                        padding:  EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width:140.w, height: 10.h,
+                              padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
+                            height10,
+                            Container(
+                              width:100.w, height: 8.h,
+                              padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
+                            height18,
+
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width:100.w, height: 20.h,
+                                  padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(6.r))),),
+                                SizedBox(width: 10.w,),
+                                Container(
+                                  width:80.w, height: 20.h,
+                                  padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(6.r))),)
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+              );
+            })
     );
   }
 }
