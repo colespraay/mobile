@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
+import 'package:spraay/models/current_user.dart';
 import 'package:spraay/models/registered_user_model.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/services/api_services.dart';
@@ -170,6 +171,24 @@ class EventProvider extends ChangeNotifier{
       // userInformationList= apiResponse.data?.data??[];
     }
     setloading(false);
+  }
+
+
+
+
+  List<DatumCurrentUser> ?userHorizontalScrool;
+  fetchCurrentUserApi() async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.currentUser(MySharedPreference.getToken());
+    if(apiResponse.error==true){
+      userHorizontalScrool=[];
+      print("No Category for event=${apiResponse.errorMessage??""}");
+      // errorCherryToast(context, apiResponse.errorMessage??"");
+    }else{
+      userHorizontalScrool=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
   }
 
 }

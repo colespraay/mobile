@@ -11,7 +11,11 @@ import 'package:spraay/ui/events/google_map_location.dart';
 import 'package:spraay/ui/events/select_payment_method.dart';
 
 class EventDetails extends StatefulWidget {
-  const EventDetails({Key? key}) : super(key: key);
+
+  String fromPage,eventname,event_date,eventTime,eventVenue,eventCategory, eventdescription, event_CoverImage,eventId;
+  EventDetails({required this.fromPage, required this.eventname, required this.event_date, required this.eventTime, required this.eventVenue,
+    required this.eventCategory, required this.eventdescription, required this.event_CoverImage, required this.eventId});
+  // const EventDetails({Key? key}) : super(key: key);
 
   @override
   State<EventDetails> createState() => _EventDetailsState();

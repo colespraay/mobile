@@ -61,7 +61,7 @@ class _OngoingEventState extends State<OngoingEvent> {
                   height8,
                   GestureDetector(
                       onTap:(){
-                        Navigator.push(context, FadeRoute(page: EventDetails()));
+                        Navigator.push(context, FadeRoute(page: EventDetails(fromPage: '', eventname: '', event_date: '', eventTime: '', eventVenue: '', eventCategory: '', eventdescription: '', event_CoverImage: '', eventId: '',)));
                       },
                       child: buildStatus(title: "View Details", color:CustomColors.sDarkColor3))
 

@@ -7,6 +7,7 @@ import 'dart:convert' as convert;
 import 'package:http_parser/http_parser.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/models/category_list_model.dart';
+import 'package:spraay/models/current_user.dart';
 import 'package:spraay/models/events_models.dart';
 import 'package:spraay/models/login_response.dart';
 import 'package:spraay/models/registered_user_model.dart';
@@ -666,6 +667,28 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     });
   }
 
+
+  Future<ApiResponse<CurrentUserModel>> currentUser(String mytoken){
+    return http.get(Uri.parse("$url/event/events-for-current-user"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=CurrentUserModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<CurrentUserModel>(data: note1);
+      }else{
+        return ApiResponse<CurrentUserModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<CurrentUserModel>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<CurrentUserModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+
+      }
+    });
+  }
 
 
 }
