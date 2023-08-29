@@ -82,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: CachedNetworkImage(
             width: 38.w,
             height: 38.h,
+            fit: BoxFit.contain,
             imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
             placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
             errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),

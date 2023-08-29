@@ -117,8 +117,9 @@ class _EditProfileState extends State<EditProfile> {
               CircleAvatar(
                 radius: 80.r,
                 child: CachedNetworkImage(
-                  width: 100.w,
-                  height: 100.h,
+                  width: 95.w,
+                  height: 95.h,
+                  fit: BoxFit.cover,
                   imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
                   placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
                   errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
@@ -257,7 +258,7 @@ class _EditProfileState extends State<EditProfile> {
         ),
         enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
         focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
-        hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
+        hintStyle:  CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100, fontSize: 14.sp, fontWeight: FontWeight.w500),
 
         fillColor:_textField3Focus!.hasFocus? CustomColors.sTransparentPurplecolor : CustomColors.sDarkColor2,
         errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),

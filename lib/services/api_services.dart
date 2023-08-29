@@ -656,7 +656,13 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       }
       // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
     }).catchError((e){
-      return ApiResponse<EventsModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<EventsModel>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<EventsModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+
+      }
     });
   }
 

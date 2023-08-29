@@ -539,19 +539,19 @@ class ShimmerCustomeGrid extends StatelessWidget {
               return  Container(
                 width: double.infinity,
                 height: 140,
-                margin: EdgeInsets.only(bottom: 8.h),
+                margin: EdgeInsets.only(bottom: 1.h),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container( width: 90.w, height: 120.h,
+                    Container( width: 100.w, height: 130.h,
                         decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(18.r)))),
                     SizedBox(width: 8.w,),
 
                     Expanded(
                       child: Padding(
-                        padding:  EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
+                        padding:  EdgeInsets.only(right: 16.w, top: 16.h, bottom: 1.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

@@ -36,7 +36,7 @@ class _MyEventsState extends State<MyEvents> {
           return Center(child: ShimmerCustomeGrid());
         }
         else if (ConnectionState.done != null && snapshot.hasError || snapshot.data!.error==true) {
-          return Center(child: Text(snapshot.data!.errorMessage!, style: TextStyle(fontFamily: "Metropolis", fontSize: 13.sp,),));
+          return Center(child: Text(snapshot.data!.errorMessage!, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),));
         }
         else if(snapshot.data==null)
         {
@@ -86,7 +86,8 @@ class _MyEventsState extends State<MyEvents> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(datum.eventName??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50) ),
+                  Text(datum.eventName??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp,
+                      fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),maxLines: 1, overflow: TextOverflow.ellipsis, ),
                   height4,
                   Text(datum.user?.firstName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) ),
                   height4,
@@ -133,8 +134,11 @@ class _MyEventsState extends State<MyEvents> {
         children: [
           SvgPicture.asset("images/$img.svg", width: 20.w, height: 20.h,),
           SizedBox(width: 4.w,),
-          Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500,
-              color: Color(0xffEEECFF)), maxLines: 1, overflow: TextOverflow.ellipsis, ),
+          SizedBox(
+            width: 85.w,
+            child: Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500,
+                color: Color(0xffEEECFF)), maxLines: 1, overflow: TextOverflow.ellipsis, ),
+          ),
 
         ],
       ),

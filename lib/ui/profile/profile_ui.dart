@@ -77,8 +77,9 @@ class _ProfileUiState extends State<ProfileUi> {
         CircleAvatar(
           radius: 70.r,
           child: CachedNetworkImage(
-            width: 100.w,
-            height: 100.h,
+            width: 90.w,
+            height: 90.h,
+            fit: BoxFit.cover,
             imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
             placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
             errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
