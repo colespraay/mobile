@@ -189,7 +189,9 @@ class _EventSlidderState extends State<EventSlidder> {
           // Navigator.push(context, FadeRoute(page: EventDetails()));
           Navigator.push(context, FadeRoute(page: EventDetails(fromPage: "", eventname:list[itemIndex].eventName??"",
             event_date: DateFormat('yyyy-MM-dd').format(list[itemIndex].eventDate!), eventTime: list[itemIndex].time??"", eventVenue: list[itemIndex].venue??"",
-            eventCategory: list[itemIndex].category??"", eventdescription: list[itemIndex].eventDescription??"", event_CoverImage: list[itemIndex].eventCoverImage??"", eventId: list[itemIndex].id??"",)));
+            eventCategory: list[itemIndex].category??"", eventdescription: list[itemIndex].eventDescription??"",
+            event_CoverImage: list[itemIndex].eventCoverImage??"", eventId: list[itemIndex].id??"", tag: list[itemIndex].user?.userTag??"", lat: list[itemIndex].eventGeoCoordinates?.latitude.toString()??"", long: list[itemIndex].eventGeoCoordinates?.longitude.toString()??"",
+          )));
 
         },
         child: ClipRRect(
@@ -199,16 +201,19 @@ class _EventSlidderState extends State<EventSlidder> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding:  EdgeInsets.only(right:8.r),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8.r), bottomLeft: Radius.circular(8.r)),
-                    child: CachedNetworkImage(
-                      width: 110.w, height: 140.h,
-                      fit: BoxFit.cover,
-                      imageUrl:list[itemIndex].eventCoverImage??"",
-                      placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-                      errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                Hero(
+                  tag: "image1",
+                  child: Padding(
+                    padding:  EdgeInsets.only(right:8.r),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(8.r), bottomLeft: Radius.circular(8.r)),
+                      child: CachedNetworkImage(
+                        width: 110.w, height: 140.h,
+                        fit: BoxFit.cover,
+                        imageUrl:list[itemIndex].eventCoverImage??"",
+                        placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                        errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                      ),
                     ),
                   ),
                 ),

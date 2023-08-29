@@ -690,5 +690,35 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     });
   }
 
+  Future<Map<String, dynamic>> acceptOrRejectEvent(String eventId,String mytoken, String status)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/event-rsvp"),
+          body: jsonEncode({"eventId": eventId, "status": status}),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("ressssp=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
 
 }

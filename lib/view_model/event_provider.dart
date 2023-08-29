@@ -191,4 +191,17 @@ class EventProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  acceptOrRejectEventApi(BuildContext context, String eventId, String status) async{
+    setloading(true);
+    var result=await service.acceptOrRejectEvent(eventId, mytoken, status);
+    if(result['error'] == true){
+      // Navigator.pop(context);
+      errorCherryToast(context, result['message']);
+    }else{
+      // Navigator.pop(context);
+      successCherryToast(context, result['message']);
+    }
+    setloading(false);
+  }
+
 }

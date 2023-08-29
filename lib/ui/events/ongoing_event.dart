@@ -38,7 +38,9 @@ class _OngoingEventState extends State<OngoingEvent> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset("images/profilewiz.png", width: 120.w, height: 140.h, fit: BoxFit.cover,),
+          Hero(
+              tag: "image1",
+              child: Image.asset("images/profilewiz.png", width: 120.w, height: 140.h, fit: BoxFit.cover,)),
           SizedBox(width: 2.w,),
           Expanded(
             child: Padding(
@@ -61,7 +63,7 @@ class _OngoingEventState extends State<OngoingEvent> {
                   height8,
                   GestureDetector(
                       onTap:(){
-                        Navigator.push(context, FadeRoute(page: EventDetails(fromPage: '', eventname: '', event_date: '', eventTime: '', eventVenue: '', eventCategory: '', eventdescription: '', event_CoverImage: '', eventId: '',)));
+                        Navigator.push(context, FadeRoute(page: EventDetails(fromPage: '', eventname: '', event_date: '', eventTime: '', eventVenue: '', eventCategory: '', eventdescription: '', event_CoverImage: '', eventId: '', tag: '', lat: '', long: '',)));
                       },
                       child: buildStatus(title: "View Details", color:CustomColors.sDarkColor3))
 
