@@ -223,9 +223,10 @@ class AuthProvider extends ChangeNotifier{
     }
     else {
 
+      Navigator.pushAndRemoveUntil(context, FadeRoute(page: LoginScreen()),(Route<dynamic> route) => false);
 
-      MySharedPreference.setVisitingFlag();
-      Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+      // MySharedPreference.setVisitingFlag();
+      // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
     }
     setloading(false);
   }
