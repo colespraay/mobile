@@ -13,14 +13,14 @@ import 'package:spraay/services/api_response.dart';
 import 'package:spraay/ui/events/event_details.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 
-class OngoingEvent extends StatefulWidget {
-  const OngoingEvent({Key? key}) : super(key: key);
+class PastEvent extends StatefulWidget {
+  const PastEvent({Key? key}) : super(key: key);
 
   @override
-  State<OngoingEvent> createState() => _OngoingEventState();
+  State<PastEvent> createState() => _PastEventState();
 }
 
-class _OngoingEventState extends State<OngoingEvent> {
+class _PastEventState extends State<PastEvent> {
   @override
   Widget build(BuildContext context) {
     return  _buildOngoing();
@@ -30,7 +30,7 @@ class _OngoingEventState extends State<OngoingEvent> {
   //event screen
   Widget _buildOngoing(){
     return FutureBuilder<ApiResponse<OngoingEventModel>>(
-        future: apiResponse.ongoingEventsList(MySharedPreference.getToken()),
+        future: apiResponse.pastEventsList(MySharedPreference.getToken()),
         builder: (context, snapshot) {
           if (ConnectionState.active != null && !snapshot.hasData) {
             return Center(child: ShimmerCustomeGrid());
@@ -40,11 +40,11 @@ class _OngoingEventState extends State<OngoingEvent> {
           }
           else if(snapshot.data==null)
           {
-            return Center(child: Text("No Event Ongoing", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),));
+            return Center(child: Text("No Past Event", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),));
           }
           else if(snapshot.data!.data!.data!.isEmpty)
           {
-            return Center(child: Text("No Event Ongoing", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),));
+            return Center(child: Text("No Past Event", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),));
           }
 
           return ListView.separated(
@@ -59,6 +59,15 @@ class _OngoingEventState extends State<OngoingEvent> {
         }
     );
 
+
+    // return ListView.separated(
+    //   shrinkWrap: true,
+    //   itemCount: 3,
+    //   padding: EdgeInsets.zero,
+    //   itemBuilder: (_, int position){
+    //     return buildContainer();
+    //   },
+    //   separatorBuilder: (BuildContext context, int index) { return height16; },);
   }
 
   Widget buildContainer(Datum datum){
@@ -67,7 +76,6 @@ class _OngoingEventState extends State<OngoingEvent> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-
           Padding(
             padding:  EdgeInsets.all(8.r),
             child: ClipRRect(
@@ -83,36 +91,31 @@ class _OngoingEventState extends State<OngoingEvent> {
           ),
           SizedBox(width: 6.w,),
 
+
           Expanded(
             child: Padding(
               padding:  EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(datum.eventName??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),
-                  maxLines: 1, overflow: TextOverflow.ellipsis,),
+                  Text(datum.eventName??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp,
+                      fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50), maxLines: 1, overflow: TextOverflow.ellipsis, ),
                   height4,
-                  Text(datum.user?.firstName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) ),
+                  Text(datum.user?.firstName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400,
+                      color: CustomColors.sGreyScaleColor500),maxLines: 1, overflow: TextOverflow.ellipsis,  ),
                   height4,
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      buildDateAndLocContainer(img: 'datee', title: DateFormat('dd MMM y').format(datum.eventDate!)),
-                      SizedBox(width: 8.w,),
-                      Expanded(child: buildDateAndLocContainer(img: 'location', title: datum.venue??"")),
-                    ],
-                  ),
+                  buildDateAndLocContainer(title: "Done"),
                   height8,
                   GestureDetector(
                       onTap:(){
-
                         Navigator.push(context, FadeRoute(page: EventDetails(fromPage:datum.eventStatus??"", eventname:datum.eventName??"",
                           event_date: DateFormat('yyyy-MM-dd').format(datum.eventDate!), eventTime: datum.time??"", eventVenue:datum.venue??"",
                           eventCategory: datum.category??"", eventdescription: datum.eventDescription??"",
                           event_CoverImage: datum.eventCoverImage??"", eventId: datum.id??"", tag:datum.user?.userTag??"", lat: datum.eventGeoCoordinates?.latitude.toString()??"", long: datum.eventGeoCoordinates?.longitude.toString()??"",
                         )));
-
-                        // Navigator.push(context, FadeRoute(page: EventDetails(fromPage: '', eventname: '', event_date: '', eventTime: '', eventVenue: '', eventCategory: '', eventdescription: '', event_CoverImage: '', eventId: '', tag: '', lat: '', long: '',)));
+                        // Navigator.push(context, FadeRoute(page: EventDetails(fromPage: '', eventname: '', event_date: '',
+                        //   eventTime: '', eventVenue: '', eventCategory: '', eventdescription: '', event_CoverImage: '',
+                        //   eventId: '', tag: '', lat: '', long: '',)));
                       },
                       child: buildStatus(title: "View Details", color:CustomColors.sDarkColor3))
 
@@ -128,39 +131,26 @@ class _OngoingEventState extends State<OngoingEvent> {
     );
   }
 
-  Widget buildDateAndLocContainer({required String img, required String title}){
+  Widget buildDateAndLocContainer({ required String title}){
     return Container(
-      padding: EdgeInsets.only(left: 8.w, top: 4.h, bottom: 4.h),
+      width: double.infinity,
+      height: 34.h,
       decoration: BoxDecoration(
-          color: CustomColors.sDarkColor3,
-          borderRadius: BorderRadius.all(Radius.circular(4.r))
+          color: CustomColors.sErrorColor,
+          borderRadius: BorderRadius.all(Radius.circular(6.r))
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SvgPicture.asset("images/$img.svg", width: 20.w, height: 20.h,),
-          SizedBox(width: 4.w,),
-
-          SizedBox(
-            width: 85.w,
-            child: Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500,
-                color: Color(0xffEEECFF)), maxLines: 1, overflow: TextOverflow.ellipsis, ),
-          ),
-
-
-        ],
-      ),
+      child: Center(child: Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color:CustomColors.sWhiteColor) )),
     );
   }
 
   Widget buildStatus({required String title, required Color color}){
     return   Container(
       width: double.infinity,
-      height: 38.h,
-      padding: EdgeInsets.all(8.r),
+      height: 34.h,
+      // padding: EdgeInsets.all(8.r),
       decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.all(Radius.circular(16.r))
+          borderRadius: BorderRadius.all(Radius.circular(12.r))
       ),
       child:Center(child: Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: CustomColors.sPrimaryColor100) )),
 

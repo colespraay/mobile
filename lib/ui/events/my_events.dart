@@ -80,6 +80,7 @@ class _MyEventsState extends State<MyEvents> {
           ),
           // Image.asset("images/profilewiz.png", width: 120.w, height: 140.h, fit: BoxFit.cover,),
           SizedBox(width: 6.w,),
+
           Expanded(
             child: Padding(
               padding:  EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
@@ -91,6 +92,7 @@ class _MyEventsState extends State<MyEvents> {
                   height4,
                   Text(datum.user?.firstName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) ),
                   height4,
+
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -148,7 +150,7 @@ class _MyEventsState extends State<MyEvents> {
 
   Widget buildStatus({required String title, required Color color}){
     return   Container(
-      width: 200.w,
+      width: double.infinity,
       height: 38.h,
       padding: EdgeInsets.all(8.r),
       decoration: BoxDecoration(

@@ -71,7 +71,8 @@ class _EventSlidderState extends State<EventSlidder> {
               color: Colors.grey,
               borderRadius: BorderRadius.all(Radius.circular(24.r))
           ),
-          child: Center(child: Text("No Event", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),))));
+          child: Center(child: Text("No Event", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp,
+              fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),))));
     }
     else{
       return buildEventForYou(eventProvider?.userHorizontalScrool);
@@ -82,21 +83,6 @@ class _EventSlidderState extends State<EventSlidder> {
   Widget buildEventForYou(List<DatumCurrentUser>? userHorizontalScrool){
     return Column(
       children: [
-        // GestureDetector(
-        //   onTap: (){
-        //     // _verifyYourIdentityBModal();
-        //     Navigator.push(context, FadeRoute(page: EventDetails()));
-        //   },
-        //   child: Container(
-        //     width: double.infinity,
-        //     height: 112.h,
-        //     decoration: BoxDecoration(
-        //         color: Colors.grey,
-        //         borderRadius: BorderRadius.all(Radius.circular(24.r))
-        //     ),
-        //
-        //   ),
-        // ),
 
         carouseSliderWidget(userHorizontalScrool!),
         height8,

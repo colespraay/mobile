@@ -96,12 +96,16 @@ class _EventDetailsState extends State<EventDetails> {
                 ],
               ),
               height22,
+
               GestureDetector(
                 onTap:(){
                     Navigator.push(context, FadeRoute(page: GoogleMapLocationScreen()));
                 },
                   child: buildCard()),
               height22,
+
+              widget.fromPage=="PAST"? buildDateAndLocContainer(title: "Completed"): SizedBox.shrink(),
+
               Text("About this event", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
               height4,
               Text(widget.eventdescription,
@@ -109,14 +113,11 @@ class _EventDetailsState extends State<EventDetails> {
               // height4,
               // buildHorizontalTicket(),
               // height22,
-              height22,
-              Text("Will you be attending this event?", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
-              height4,
-              Text("(Don’t worry, the even organiser will not know)",
-                  style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor50) ),
 
-              height22,
-              Row(
+              //aaa
+              widget.fromPage=="PAST"? SizedBox.shrink() : _builColmn(),
+
+              widget.fromPage=="PAST"? SizedBox.fromSize() : Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
@@ -146,6 +147,33 @@ class _EventDetailsState extends State<EventDetails> {
 
             ],
           )),
+    );
+  }
+
+  Widget _builColmn(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        height22,
+        Text("Will you be attending this event?", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
+        height4,
+        Text("(Don’t worry, the even organiser will not know)", style: CustomTextStyle.kTxtRegular.copyWith(
+            fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor50) ),
+        height22,
+      ],
+    );
+  }
+
+  Widget buildDateAndLocContainer({ required String title}){
+    return Container(
+      width: double.infinity,
+      height: 42.h,
+      margin: EdgeInsets.only(bottom: 24.h),
+      decoration: BoxDecoration(
+          color: Color(0xff4AAF57),
+          borderRadius: BorderRadius.all(Radius.circular(6.r))
+      ),
+      child: Center(child: Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color:CustomColors.sWhiteColor) )),
     );
   }
 

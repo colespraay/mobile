@@ -556,11 +556,11 @@ class ShimmerCustomeGrid extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width:140.w, height: 10.h,
+                              width:double.infinity, height: 10.h,
                               padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
                             height10,
                             Container(
-                              width:100.w, height: 8.h,
+                              width:double.infinity, height: 8.h,
                               padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
                             height18,
 
@@ -571,11 +571,15 @@ class ShimmerCustomeGrid extends StatelessWidget {
                                   width:100.w, height: 20.h,
                                   padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(6.r))),),
                                 SizedBox(width: 10.w,),
-                                Container(
-                                  width:80.w, height: 20.h,
-                                  padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(6.r))),)
+                                Expanded(
+                                  child: Container(
+                                    width:80.w, height: 20.h,
+                                    padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(6.r))),),
+                                )
                               ],
                             ),
+
+
                           ],
                         ),
                       ),

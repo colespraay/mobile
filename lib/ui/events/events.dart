@@ -8,6 +8,7 @@ import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/events/event_details.dart';
 import 'package:spraay/ui/events/my_events.dart';
 import 'package:spraay/ui/events/ongoing_event.dart';
+import 'package:spraay/ui/events/past_event/past_event.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({Key? key}) : super(key: key);
@@ -59,7 +60,8 @@ class _EventsScreenState extends State<EventsScreen> {
                   physics: NeverScrollableScrollPhysics(),
                   children: [
                     OngoingEvent(),
-                    MyEvents()
+                    MyEvents(),
+                    PastEvent()
                   ],),),
 
 
@@ -86,7 +88,7 @@ class _EventsScreenState extends State<EventsScreen> {
                 height: 38.h,
                 decoration: BoxDecoration(
                     color:currentIndex==0? CustomColors.sGreenColor500: CustomColors.sDarkColor2,
-                    borderRadius: BorderRadius.all(Radius.circular(8.r))
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8.r), bottomLeft: Radius.circular(8.r))
                 ),
                 child: Center(child: Text("Ongoing", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, color:currentIndex==0? CustomColors.sGreyScaleColor900: CustomColors.sGreyScaleColor500,
                     fontWeight: FontWeight.w400),))),
@@ -104,10 +106,28 @@ class _EventsScreenState extends State<EventsScreen> {
                 height: 38.h,
                 decoration: BoxDecoration(
                     color:currentIndex==1? CustomColors.sGreenColor500: CustomColors.sDarkColor2,
-                    borderRadius: BorderRadius.all(Radius.circular(8.r))
+                    // borderRadius: BorderRadius.all(Radius.circular(8.r))
                 ),
                 child: Center(child: Text("My Events", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp,
                     color:currentIndex==1? CustomColors.sGreyScaleColor900: CustomColors.sGreyScaleColor500, fontWeight: FontWeight.w400),))),
+          ),
+        ),
+
+
+        Expanded(
+          child: GestureDetector(
+            onTap:(){
+              _pageController!.animateToPage(2,duration: _kDuration, curve: _kCurve);
+            },
+            child: Container(
+                width:double.infinity ,
+                height: 38.h,
+                decoration: BoxDecoration(
+                    color:currentIndex==2? CustomColors.sGreenColor500: CustomColors.sDarkColor2,
+                    borderRadius: BorderRadius.only(bottomRight: Radius.circular(8.r), topRight: Radius.circular(8.r))
+                ),
+                child: Center(child: Text("Past Events", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp,
+                    color:currentIndex==2? CustomColors.sGreyScaleColor900: CustomColors.sGreyScaleColor500, fontWeight: FontWeight.w400),))),
           ),
         )
 

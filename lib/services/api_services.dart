@@ -10,6 +10,7 @@ import 'package:spraay/models/category_list_model.dart';
 import 'package:spraay/models/current_user.dart';
 import 'package:spraay/models/events_models.dart';
 import 'package:spraay/models/login_response.dart';
+import 'package:spraay/models/ongoing_event_model.dart';
 import 'package:spraay/models/registered_user_model.dart';
 import 'package:spraay/models/user_profile.dart';
 import 'package:spraay/services/api_response.dart';
@@ -662,6 +663,51 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
       }else{
         return ApiResponse<EventsModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+
+      }
+    });
+  }
+
+
+  Future<ApiResponse<OngoingEventModel>> ongoingEventsList(String mytoken){
+    return http.get(Uri.parse("$url/event/ongoing/events-for-current-user"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=OngoingEventModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<OngoingEventModel>(data: note1);
+      }else{
+        return ApiResponse<OngoingEventModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<OngoingEventModel>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<OngoingEventModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+
+      }
+    });
+  }
+
+  Future<ApiResponse<OngoingEventModel>> pastEventsList(String mytoken){
+    return http.get(Uri.parse("$url/event/past/events-for-current-user"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=OngoingEventModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<OngoingEventModel>(data: note1);
+      }else{
+        return ApiResponse<OngoingEventModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<OngoingEventModel>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<OngoingEventModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
 
       }
     });
