@@ -316,6 +316,7 @@ void cherryToastInfo(BuildContext context,String titlemsg, String dsc){
     title: Text(titlemsg, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 14.sp, color: CustomColors.sWhiteColor, fontWeight: FontWeight.w700),),
     description:Text(dsc, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, color: CustomColors.sWhiteColor, fontWeight: FontWeight.w400),),
     borderRadius: 12,
+    shadowColor: Colors.transparent,
     backgroundColor: CustomColors.sDarkColor3,
     animationDuration: Duration(milliseconds: 1000),
     autoDismiss: true,

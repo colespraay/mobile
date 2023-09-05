@@ -69,7 +69,7 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
             NumberTextInputFormatter()
           ],
           onChanged:(value){
-            setState(() {firstVal=value;});
+            setState(() {totalAmount=value.replaceAll(",", "");});
           },
         ),
         height26,
@@ -79,16 +79,21 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
         height26,
         CustomButton(
             onTap: () {
-              if( firstVal.isNotEmpty && index_sprayamt>=0){
+              if( totalAmount.isNotEmpty && index_sprayamt>=0){
 
-                noteQuantity=totalAmount/amount;
-
-                Navigator.push(context, SlideUpRoute(page: SprayScreen(cash: cash, totalAmount: totalAmount, noteQuantity: noteQuantity.toInt(),
-                unitAmount: amount,)));
+                noteQuantity=int.parse(totalAmount)/amount;
+                
+                if(noteQuantity< 1.0){
+                  cherryToastInfo(context,"Invalid amount", "Enter a valid amount" );
+                }else{
+                  Navigator.push(context, SlideUpRoute(page: SprayScreen(cash: cash, totalAmount: int.parse(totalAmount), noteQuantity: noteQuantity.toInt(),
+                    unitAmount: amount,)));
+                }
+                
               }
             },
             buttonText: 'Confirm', borderRadius: 30.r,width: 380.w,
-            buttonColor: (firstVal.isNotEmpty && index_sprayamt>=0) ? CustomColors.sPrimaryColor500:
+            buttonColor: (totalAmount.isNotEmpty && index_sprayamt>=0) ? CustomColors.sPrimaryColor500:
             CustomColors.sDisableButtonColor),
         height34,
 
@@ -176,6 +181,8 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
           int position = e.key;//position
           setState(() {
             index_pos=position;
+            totalAmount=e.value.replaceAll(",", "");
+            invitationController.text= e.value;
           });
         },
         child: Container(
@@ -202,7 +209,7 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
     CashSprayModel(amount: "1000", amountImg: "one_thousand", cash: "big_one_thousand")
   ];
 
-  int totalAmount=10000;
+  String totalAmount="";
   double noteQuantity=0.0;
   int amount=0;
 
