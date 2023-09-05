@@ -1,16 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/cashspray_model.dart';
 import 'package:spraay/navigations/SlideUpRoute.dart';
 import 'package:spraay/ui/others/spray/spray_screen.dart';
+import 'package:spraay/models/join_event_model.dart';
+
 
 class JoinEventInfo extends StatefulWidget {
-  const JoinEventInfo({Key? key}) : super(key: key);
+  Data? eventModelData;
+   JoinEventInfo(this.eventModelData) ;
 
   @override
   State<JoinEventInfo> createState() => _JoinEventInfoState();
@@ -35,6 +41,63 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
     super.dispose();
   }
 
+  Widget buildContainerr(){
+    return Container(
+      decoration: BoxDecoration(color: Color(0xff1A1A21), borderRadius: BorderRadius.all(Radius.circular(18.r))),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+
+          Padding(
+            padding:  EdgeInsets.all(8.r),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(8.r)),
+              child: CachedNetworkImage(
+                width: 100.w, height: 140.h,
+                fit: BoxFit.cover,
+                imageUrl: widget.eventModelData?.eventCoverImage??"",
+                placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+              ),
+            ),
+          ),
+          SizedBox(width: 6.w,),
+
+          Expanded(
+            child: Padding(
+              padding:  EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.eventModelData?.eventName??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),
+                    maxLines: 1, overflow: TextOverflow.ellipsis,),
+                  height4,
+                  Text(widget.eventModelData?.user?.firstName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) ),
+                  height4,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      buildDateAndLocContainer(img: 'datee', title: DateFormat('dd MMM y').format(widget.eventModelData!.eventDate!)),
+                      SizedBox(width: 8.w,),
+                      Expanded(child: buildDateAndLocContainer(img: 'location', title: widget.eventModelData?.venue??"")),
+                    ],
+                  ),
+                  height8,
+
+
+                ],
+              ),
+            ),
+          )
+
+
+        ],
+
+      ),
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +116,10 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
       shrinkWrap: true,
       children: [
         height20,
-        buildContainer(),
+        // buildContainer(),
+        // height8,
+        buildContainerr(),
+
         height20,
         Center(child: Text("How much will you like to spray?", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400,),)),
         height20,
@@ -87,7 +153,7 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
                   cherryToastInfo(context,"Invalid amount", "Enter a valid amount" );
                 }else{
                   Navigator.push(context, SlideUpRoute(page: SprayScreen(cash: cash, totalAmount: int.parse(totalAmount), noteQuantity: noteQuantity.toInt(),
-                    unitAmount: amount,)));
+                    unitAmount: amount, eventModelData: widget.eventModelData,)));
                 }
                 
               }

@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:appinio_swiper/appinio_swiper.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/rate_experience.dart';
@@ -13,13 +15,16 @@ import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/others/payment_receipt.dart';
 import 'package:spraay/ui/others/spray/spray_detail.dart';
 import 'package:spraay/ui/others/spray/topup_spray.dart';
+import 'package:spraay/models/join_event_model.dart';
+
 
 class SprayScreen extends StatefulWidget {
   String cash;
   int totalAmount;
   int noteQuantity;
   int unitAmount;
-   SprayScreen({required this.cash, required this.totalAmount, required this.noteQuantity, required this.unitAmount});
+  Data? eventModelData;
+   SprayScreen({required this.cash, required this.totalAmount, required this.noteQuantity, required this.unitAmount, required this.eventModelData});
 
   @override
   State<SprayScreen> createState() => _SprayScreenState();
@@ -121,17 +126,28 @@ class _SprayScreenState extends State<SprayScreen>{
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.asset("images/profilewiz.png", width: 120.w, height: 140.h, fit: BoxFit.cover,),
-          SizedBox(width: 2.w,),
+          Padding(
+            padding:  EdgeInsets.all(8.r),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(8.r)),
+              child: CachedNetworkImage(
+                width: 100.w, height: 140.h,
+                fit: BoxFit.cover,
+                imageUrl: widget.eventModelData?.eventCoverImage??"",
+                placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+              ),
+            ),
+          ),          SizedBox(width: 2.w,),
           Expanded(
             child: Padding(
               padding:  EdgeInsets.only(right: 16.w, top: 16.h, bottom: 16.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("#Amik23 - Amara weds", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50) ),
-                  height4,
-                  Text("Ikechukwu", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) ),
+                  Text(widget.eventModelData?.eventName??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),
+                    maxLines: 1, overflow: TextOverflow.ellipsis,),                  height4,
+                  Text(widget.eventModelData?.user?.firstName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) ),
                   height8,
                   buildDateAndLocContainer(title: "₦${formatNumberAndDecimal.format(amount)}")
 
