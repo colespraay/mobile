@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:spraay/components/constant.dart';
@@ -99,7 +100,11 @@ class _EventDetailsState extends State<EventDetails> {
 
               GestureDetector(
                 onTap:(){
-                    Navigator.push(context, FadeRoute(page: GoogleMapLocationScreen()));
+                    Navigator.push(context, FadeRoute(page: GoogleMapLocationScreen(fromPage: "", eventname:widget.eventname,
+                      event_date: widget.event_date, eventTime:widget.eventTime, eventVenue: widget.eventVenue,
+                      eventCategory: widget.eventCategory, eventdescription: widget.eventdescription,
+                      event_CoverImage: widget.event_CoverImage, eventId:widget.eventId, lat: double.parse(widget.lat), long:double.parse( widget.long),
+                    )));
                 },
                   child: buildCard()),
               height22,

@@ -554,6 +554,10 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
         result["category"] =jsonResponse["data"]["category"];
         result["eventCoverImage"] =jsonResponse["data"]["eventCoverImage"];
 
+        result["latitude"] =jsonResponse["data"]["eventGeoCoordinates"]["latitude"];
+        result["longitude"] =jsonResponse["data"]["eventGeoCoordinates"]["longitude"];
+
+
         result['error'] = false;
       }
       else{

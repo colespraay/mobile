@@ -56,6 +56,7 @@ class EventProvider extends ChangeNotifier{
   }
 
 
+  double ?latitude ,longitude;
   String? eventId,eventCode,qrCodeForEvent,eventname,eventdescription,event_date,eventTime, eventVenue,eventCategory,event_CoverImage;
   fetchCreateEventApi(BuildContext context, String eventName, String eventDescription,
       String venue, String eventDate, String time, String category, String eventCoverImage ) async{
@@ -77,6 +78,8 @@ class EventProvider extends ChangeNotifier{
       eventVenue= result["venue"];
       eventCategory= result["category"];
       event_CoverImage= result["eventCoverImage"];
+      latitude= result["latitude"];
+      longitude= result["longitude"];
 
       notifyListeners();
       // =jsonResponse["data"]["id"];

@@ -100,7 +100,11 @@ class _ViewEventState extends State<ViewEvent> {
             height22,
             GestureDetector(
                 onTap:(){
-                  Navigator.push(context, FadeRoute(page: GoogleMapLocationScreen()));
+                  Navigator.push(context, FadeRoute(page: GoogleMapLocationScreen(fromPage: 'view_event', eventname:eventProvider?.eventname??"", event_date:eventProvider?.event_date??"",
+                      eventTime: eventProvider?.eventTime??"",
+                      eventVenue: eventProvider?.eventVenue??"", eventCategory: eventProvider?.eventCategory??"",
+                      eventdescription: eventProvider?.eventdescription??"",event_CoverImage: eventProvider?.event_CoverImage??"",
+                      eventId: eventProvider?.eventId??"", lat: eventProvider?.latitude??0, long: eventProvider?.longitude??0,)));
                 },
                 child: buildCard()),
             height22,
