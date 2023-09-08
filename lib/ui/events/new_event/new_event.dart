@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,8 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
+import 'package:spraay/services/location_service.dart';
+import 'package:spraay/ui/events/dummy_search.dart';
 import 'package:spraay/ui/events/new_event/confirmation_page.dart';
 import 'package:spraay/view_model/event_provider.dart';
 import 'package:path/path.dart' as baseImg;
@@ -170,6 +173,9 @@ class _NewEventState extends State<NewEvent> {
         height26,
         CustomButton(
             onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_)=> DummyMapSearch()));
+              // LocationService().placeAuthComplete("Lekki, Lagos");
+
               if( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty && fiveVal.isNotEmpty
                   && sixVal.isNotEmpty && eventProvider!.file_url.isNotEmpty){
 
@@ -306,5 +312,55 @@ class _NewEventState extends State<NewEvent> {
 
       eventProvider?.fetchUploadFile(context, imageFile!, baseImg.basename(imageFile?.path??""));
     }
+  }
+
+  TextEditingController _searchController=TextEditingController();
+  Widget buildSearch(){
+    return Container(
+      height: 48.h,
+      margin: EdgeInsets.symmetric(horizontal: 18.w),
+      padding: EdgeInsets.symmetric(horizontal: 17.w, vertical: 0.h),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10.r))),
+      child: TextField(
+        // onChanged: (value) => _runFilter(value),
+        autofocus: false,
+        controller: _searchController,
+        keyboardType: TextInputType.text,
+        textInputAction: TextInputAction.search,
+        readOnly: false,
+        style: CustomTextStyle.kTxtMedium.copyWith(fontFamily: "Metropolis", fontSize: 18.sp,),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.only(top: 7, left: 0, right: 15, bottom: 7),
+          suffixIconConstraints: BoxConstraints(minWidth: 19, minHeight: 19,),
+          suffixIcon:  InkWell(
+            onTap:() async {
+              //The location service api is here
+              var place=await LocationService().getPlace(_searchController.text);
+              _goToPlaceInMap(place); //This moves camera to the location searched
+            },
+            child: Container(
+                width: 28.w,
+                height: 28.h,
+                // margin: EdgeInsets.only(top: 8.h),
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10.r)), color: Color(0xff076231)),
+                child: Center(child: Icon(Icons.search, color: CustomColors.sWhiteColor,
+                  size: 18.r,))),
+          ),
+          hintText: "Search...",
+          hintStyle: CustomTextStyle.kTxtMedium.copyWith(fontSize: 14.sp, color: Color(0xffA8A8A8), fontWeight: FontWeight.w400,),
+        ),
+      ),
+    );
+  }
+
+
+  Future<void> _goToPlaceInMap(Map<String, dynamic> place) async {
+    final double lat=place["geometry"]["location"]["lat"];
+    final double lng=place["geometry"]["location"]["lng"];
+
+    // final GoogleMapController controller = await _controller.future;
+    // controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(lat, lng), zoom: 16.4746)));
+    // _setMarker(LatLng(lat, lng));//the marker move to the searched position
   }
 }

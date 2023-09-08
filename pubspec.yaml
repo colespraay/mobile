@@ -54,6 +54,8 @@ dependencies:
   flutter_udid: ^2.0.1
   circular_profile_avatar: ^2.0.5
   google_maps_flutter: ^2.5.0
+  uuid: ^3.0.7
+  geocoding: ^2.1.0
 #  overlay_loader_with_app_icon: ^0.0.3
 
 dev_dependencies:
