@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/ui/events/dummy_search.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 import 'package:spraay/view_model/event_provider.dart';
 import 'package:path/path.dart' as baseImg;
@@ -161,13 +162,16 @@ class _EditEventState extends State<EditEvent> {
 
 
         height16,
-        CustomizedTextField(
-          textEditingController:venueController, keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.next,hintTxt: "Venue",focusNode: _textField5Focus,
-          onChanged:(value){
-            setState(() {fiveVal=value;});
-          },
-        ),
+        // CustomizedTextField(
+        //   textEditingController:venueController, keyboardType: TextInputType.text,
+        //   textInputAction: TextInputAction.next,hintTxt: "Venue",focusNode: _textField5Focus,
+        //   onChanged:(value){
+        //     setState(() {fiveVal=value;});
+        //   },
+        // ),
+
+        DummyMapSearch(venueController: venueController, query: fiveVal, textField5Focus: _textField5Focus),
+
 
         height16,
         buildCategory(),
@@ -196,12 +200,16 @@ class _EditEventState extends State<EditEvent> {
 
                 //url image pass to api
                 eventProvider?.editEventApi(context, fullNameController.text, descriptionController.text, venueController.text,
-                    dateController.text, timeController.text, categoryController.text, eventProvider?.file_url??"", eventId, "view_event");
+                    dateController.text, timeController.text, categoryController.text, eventProvider?.file_url??"", eventId, "view_event",
+                    eventProvider?.new_longitude.toString()??"0.00",
+                    eventProvider?.new_latitude.toString()??"0.00");
 
               }else{
 
                 eventProvider?.editEventApi(context, fullNameController.text, descriptionController.text, venueController.text,
-                    dateController.text, timeController.text, categoryController.text, eventProvider?.file_url??"", eventId, "");
+                    dateController.text, timeController.text, categoryController.text, eventProvider?.file_url??"", eventId, "",
+                    eventProvider?.new_longitude.toString()??"0.00",
+                    eventProvider?.new_latitude.toString()??"0.00");
 
               }
 

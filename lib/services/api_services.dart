@@ -528,13 +528,15 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
   Future<Map<String, dynamic>> createEvent(String eventName, String eventDescription,
-      String venue, String eventDate, String time, String category, String eventCoverImage, String mytoken)async{
+      String venue, String eventDate, String time, String category, String eventCoverImage, String mytoken, String longitude, String latitude)async{
     Map<String, dynamic> result = {};
+
+
     try{
       var response=await http.post(Uri.parse("$url/event"),
-          body: {"eventName": eventName, "eventDescription": eventDescription, "venue":venue, "eventDate":eventDate,"time":time,"category":category,
-          "eventCoverImage": eventCoverImage},
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken'}).timeout(Duration(seconds: 30));
+          body: jsonEncode({"eventName": eventName, "eventDescription": eventDescription, "venue":venue, "eventDate":eventDate,"time":time,"category":category,
+          "eventCoverImage": eventCoverImage,"eventGeoCoordinates": {"longitude": longitude, "latitude": latitude} }),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
       int statusCode = response.statusCode;
 
       log("responseData=${response.body}");
@@ -561,6 +563,8 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
         result['error'] = false;
       }
       else{
+        log("responseDataerrr=${response.body}");
+
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"]= jsonResponse["message"];
         result['error'] = true;
@@ -570,7 +574,9 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
     on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
     on FormatException{result["message"] = "invalid format";result['error'] = true;}
-    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    catch(e){
+      log("eeeeerr=${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
     return result;
   }
 
@@ -621,12 +627,13 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
   Future<Map<String, dynamic>> editEvent(String mytoken ,String eventName, String eventDescription, String venue, String eventDate, String time, String category,
-      String eventCoverImage, String eventId)async{
+      String eventCoverImage, String eventId, String longitude, String latitude)async{
     Map<String, dynamic> result = {};
     try{
       var response=await http.patch(Uri.parse("$url/event"),
           body: jsonEncode({"eventName": eventName, "eventDescription": eventDescription, "venue": venue, "eventDate": eventDate,
-            "time": time, "category": category,"eventCoverImage":eventCoverImage, "eventId": eventId,"status": true}),
+            "time": time, "category": category,"eventCoverImage":eventCoverImage, "eventId": eventId,"eventStatus": "UPCOMING","eventGeoCoordinates": {"longitude": longitude, "latitude": latitude},
+            "status": true}),
           headers: {"Accept":"application/json", 'Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {

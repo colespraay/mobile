@@ -90,6 +90,8 @@ class _NewEventState extends State<NewEvent> {
 
 
   int step=1;
+  double latitude=0.00;
+  double longitude=0.00;
   @override
   Widget build(BuildContext context) {
     return  LoadingOverlayWidget(
@@ -146,13 +148,15 @@ class _NewEventState extends State<NewEvent> {
 
 
         height16,
-        CustomizedTextField(
-          textEditingController:venueController, keyboardType: TextInputType.text,
-          textInputAction: TextInputAction.next,hintTxt: "Venue",focusNode: _textField5Focus,
-          onChanged:(value){
-            setState(() {fiveVal=value;});
-          },
-        ),
+        // CustomizedTextField(
+        //   textEditingController:venueController, keyboardType: TextInputType.text,
+        //   textInputAction: TextInputAction.next,hintTxt: "Venue",focusNode: _textField5Focus,
+        //   onChanged:(value){
+        //     setState(() {fiveVal=value;});
+        //   },
+        // ),
+
+        DummyMapSearch(venueController: venueController, query: fiveVal, textField5Focus: _textField5Focus),
 
         height16,
         buildCategory(),
@@ -173,21 +177,24 @@ class _NewEventState extends State<NewEvent> {
         height26,
         CustomButton(
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (_)=> DummyMapSearch()));
+              // print("show latitu=${eventProvider?.new_latitude} longit=${eventProvider?.new_longitude} dsc=${venueController.text}");
+
+              // Navigator.of(context).push(MaterialPageRoute(builder: (_)=> DummyMapSearch()));
               // LocationService().placeAuthComplete("Lekki, Lagos");
 
-              if( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty && fiveVal.isNotEmpty
+              if( firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty && venueController.text.isNotEmpty
                   && sixVal.isNotEmpty && eventProvider!.file_url.isNotEmpty){
 
                 eventProvider?.fetchCreateEventApi(
                     context, fullNameController.text, descriptionController.text, venueController.text,
-                    dobController.text, timeController.text, categoryController.text, eventProvider!.file_url);
+                    dobController.text, timeController.text, categoryController.text, eventProvider!.file_url,eventProvider?.new_longitude.toString()??"0.00",
+                    eventProvider?.new_latitude.toString()??"0.00");
                 // Navigator.push(context, SlideLeftRoute(page: EventConfirmationPage()));
 
               }
             },
             buttonText: 'Continue', borderRadius: 30.r,width: 380.w,
-            buttonColor: (firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty&& fiveVal.isNotEmpty && sixVal.isNotEmpty
+            buttonColor: (firstVal.isNotEmpty && secondVal.isNotEmpty && thirdVal.isNotEmpty && forthVal.isNotEmpty&& venueController.text.isNotEmpty && sixVal.isNotEmpty
                 && eventProvider!.file_url.isNotEmpty) ? CustomColors.sPrimaryColor500:
             CustomColors.sDisableButtonColor),
         height34,

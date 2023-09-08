@@ -1,13 +1,22 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:provider/provider.dart';
+import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/view_model/event_provider.dart';
 
 import '../../models/map_model.dart';
 
 class DummyMapSearch extends StatefulWidget {
-  const DummyMapSearch({super.key});
+
+  TextEditingController venueController;
+  String query;
+  FocusNode? textField5Focus;
+   DummyMapSearch({required this.venueController, required this.query, required this.textField5Focus});
 
   @override
   State<DummyMapSearch> createState() => _DummyMapSearchState();
@@ -16,121 +25,137 @@ class DummyMapSearch extends StatefulWidget {
 class _DummyMapSearchState extends State<DummyMapSearch> {
 
   PlaceApiProvider apiClient=PlaceApiProvider();
-  String query="";
-  TextEditingController _controller=TextEditingController();
+  // String query="";
 
 
-  @override
-  void initState() {
-    // PlaceApiProvider().fetchSuggestions("Lekki, Lagos", "en"/*Localizations.localeOf(context).languageCode*/);
+  bool _isLoading=false;
+  List<Suggestion> dataList=[];
+  fetchSuggestionsApi(String query) async{
+    setState(() {_isLoading=true;});
+    var apiResponse=await  apiClient.fetchSuggestions(query, "en");
+    if(apiResponse.isNotEmpty){
+      setState(() {dataList=apiResponse??[];});
+    }else{
+      setState(() {dataList=[];});
+    }
+    setState(() {_isLoading=false;});
+
   }
+
+  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CustomColors.sWhiteColor,
-      body: Padding(
-        padding: EdgeInsets.all(18),
-        child: Column(
-          // shrinkWrap: true,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    return Column(
+      // shrinkWrap: true,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
 
-            TextField(
-              controller: _controller,
-              // readOnly: true,
-              onChanged: (value){
-                query=value;
-              },
-              onTap: () async {
-                // final Suggestion result = await showSearch(
-                //   context: context,
-                //   delegate: AddressSearch(sessionToken),
-                // );
-                // // This will change the text displayed in the TextField
-                // if (result != null) {
-                //   final placeDetails = await PlaceApiProvider(sessionToken)
-                //       .getPlaceDetailFromId(result.placeId);
-                //   setState(() {
-                //     _controller.text = result.description;
-                //     _streetNumber = placeDetails.streetNumber;
-                //     _street = placeDetails.street;
-                //     _city = placeDetails.city;
-                //     _zipCode = placeDetails.zipCode;
-                //   });
-                // }
-              },
-              decoration: InputDecoration(
-                icon: Container(
-                  width: 10,
-                  height: 10,
-                  child: Icon(
-                    Icons.home,
-                    color: Colors.black,
-                  ),
-                ),
-                hintText: "Enter your shipping address",
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(left: 8.0, top: 16.0),
-              ),
-            ),
+        CustomizedTextField(
+          textEditingController:widget.venueController, keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,hintTxt: "Venue",focusNode: widget.textField5Focus,
+          onChanged:(value){
 
+            _debouncer.run(() {
+              print("objectvalue==${value}");
+              if(value.isNotEmpty){
+                widget.query=value;
+                fetchSuggestionsApi(widget.query);
+              }else{
+                // fetchSuggestionsApi("");
+                setState(() {
+                  widget.query="";
+                  dataList=[];
+                });
+              }
+              //perform search here
+            });
 
-
-            Expanded(
-              child: FutureBuilder(
-                future: query == "" ? null : apiClient.fetchSuggestions(query, "en"/*Localizations.localeOf(context).languageCode*/),
-                builder: (context, snapshot) => query == '' ? Container(padding: EdgeInsets.all(16.0), child: Text('Enter your address'),)
-                    : snapshot.hasData
-                    ? ListView.builder(
-                  itemBuilder: (context, index) => ListTile(title:
-                    Text((snapshot.data?[index] as Suggestion).description),
-                    onTap: () async{
-
-                    var result=snapshot.data?[index] as Suggestion;
-
-                      if (result != null) {
-                        final placeDetails = await apiClient.getPlaceDetailFromId(result.placeId);
-                        // setState(() {
-                        //   _controller.text = result.description;
-                        //   _streetNumber = placeDetails.streetNumber;
-                        //   _street = placeDetails.street;
-                        //   _city = placeDetails.city;
-                        //   _zipCode = placeDetails.zipCode;
-                        // });
-
-                        getAddressCoordinates(result.description);
-
-                        log("dscr=${result.description} streetnumber=${placeDetails.streetNumber} street=${ placeDetails.street} "
-                            "city==${placeDetails.city} zipcode=${placeDetails.zipCode} ");
-
-                      }
-                    },
-                  ),
-                  itemCount: snapshot.data!.length,
-                )
-                    : Container(child: Text('Loading...')),
-              ),
-            ),
-
-
-          ],
+            },
         ),
-      ),
+
+        // TextField(
+        //   controller: widget.venueController,
+        //   onChanged: (value){
+        //     query=value;
+        //     fetchSuggestionsApi(query);
+        //   },
+        //   decoration: InputDecoration(
+        //     icon: Container(
+        //       width: 10,
+        //       height: 10,
+        //       child: Icon(
+        //         Icons.home,
+        //         color: Colors.black,
+        //       ),
+        //     ),
+        //     hintText: "Enter your shipping address",
+        //     border: InputBorder.none,
+        //     contentPadding: EdgeInsets.only(left: 8.0, top: 16.0),
+        //   ),
+        // ),
+
+
+        Padding(
+          padding:  EdgeInsets.only(top: 12.h, left: 8.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:dataList.map((e) => InkWell(
+                onTap:(){
+                  getAddressCoordinates(e.description);
+                },
+                child: Padding(
+                  padding:  EdgeInsets.only(bottom: 12.h),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset("images/location.svg", width: 20.w, height: 20.h,),
+                      SizedBox(width: 8.w,),
+                      Expanded(child: Text(e.description, style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100, fontSize: 14.sp, fontWeight: FontWeight.w500),)),
+                    ],
+                  ),
+                )),
+            ).toList(),
+          ),
+        ),
+
+        // Expanded(
+        //   child: ListView.builder(
+        //     physics: NeverScrollableScrollPhysics(),
+        //     itemBuilder: (context, index) => ListTile(title: Text(dataList[index].description, style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100, fontSize: 14.sp, fontWeight: FontWeight.w500),),
+        //       onTap: () async{
+        //
+        //         getAddressCoordinates(dataList[index].description);
+        //       },
+        //     ),
+        //     itemCount: dataList.length,
+        //   ),
+        // ),
+
+
+
+
+      ],
     );
   }
 
   String result = '';
   void getAddressCoordinates(String address) async {
-    List<Location> locations = await locationFromAddress(address, localeIdentifier: "en");
+    widget.venueController.text=address;
+    setState(() {dataList=[];});
 
+    List<Location> locations = await locationFromAddress(address, localeIdentifier: "en");
     if (locations.isNotEmpty) {
       Location location = locations.first;
-      setState(() {
-        result = 'Latitude: ${location.latitude}, Longitude: ${location.longitude}';
-      });
 
-      log("latitude=${result}");
+      Provider.of<EventProvider>(context, listen: false).setLatAndLong(location.latitude, location.longitude);
+      // setState(() {
+      //   widget.longitude=location.longitude;
+      //   widget.latitude=location.latitude;
+      //   result = 'Latitude: ${location.latitude}, Longitude: ${location.longitude}';
+      // });
+
+      // log("latitude=${result}");
+
     } else {
       setState(() {
         result = 'Location not found';

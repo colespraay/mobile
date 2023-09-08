@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
@@ -56,13 +57,22 @@ class EventProvider extends ChangeNotifier{
   }
 
 
+  double new_latitude=0.00;
+  double new_longitude=0.00;
+  setLatAndLong(double lat, double long) async{
+    new_latitude = lat;
+    new_longitude=long;
+    notifyListeners();
+  }
+
+
   double ?latitude ,longitude;
   String? eventId,eventCode,qrCodeForEvent,eventname,eventdescription,event_date,eventTime, eventVenue,eventCategory,event_CoverImage;
   fetchCreateEventApi(BuildContext context, String eventName, String eventDescription,
-      String venue, String eventDate, String time, String category, String eventCoverImage ) async{
+      String venue, String eventDate, String time, String category, String eventCoverImage,String longit, String lati ) async{
     setloading(true);
     var result=await service.createEvent(eventName, eventDescription, venue,
-        eventDate, time, category, eventCoverImage, mytoken);
+        eventDate, time, category, eventCoverImage, mytoken, longit, lati);
     if(result['error'] == true){
       errorCherryToast(context, result['message']);
     }else{
@@ -78,26 +88,12 @@ class EventProvider extends ChangeNotifier{
       eventVenue= result["venue"];
       eventCategory= result["category"];
       event_CoverImage= result["eventCoverImage"];
-      latitude= result["latitude"];
-      longitude= result["longitude"];
+      latitude= double.parse(result["latitude"]);
+      longitude= double.parse(result["longitude"]);
 
       notifyListeners();
-      // =jsonResponse["data"]["id"];
-      // result["eventCode"] =jsonResponse["data"]["eventCode"];
-      // result["qrCodeForEvent"] =jsonResponse["data"]["qrCodeForEvent"];
-      // result["eventName"] =jsonResponse["data"]["eventName"];
-
-      // result["eventDescription"] =jsonResponse["data"]["eventDescription"];
-      // result["eventDate"] =jsonResponse["data"]["eventDate"];
-      // result["time"] =jsonResponse["data"]["time"];
-      // result["venue"] =jsonResponse["data"]["venue"];
-
-      // result["category"] =jsonResponse["data"]["category"];
-      // result["eventCoverImage"] =jsonResponse["data"]["eventCoverImage"];
 
       Navigator.push(context, SlideLeftRoute(page: EventConfirmationPage()));
-
-      // dataList=apiResponse.data?.data??[];
     }
     setloading(false);
     // notifyListeners();
@@ -139,9 +135,9 @@ class EventProvider extends ChangeNotifier{
 
 
   editEventApi(BuildContext context ,String eventName, String eventDescription, String venue, String eventDate, String time, String category,
-      String eventCoverImage, String eventId, String fromPage) async{
+      String eventCoverImage, String eventId, String fromPage, String longitude, String latitude) async{
     setloading(true);
-    var result=await service.editEvent(mytoken, eventName, eventDescription, venue, eventDate, time, category, eventCoverImage, eventId);
+    var result=await service.editEvent(mytoken, eventName, eventDescription, venue, eventDate, time, category, eventCoverImage, eventId, longitude, latitude);
     if(result['error'] == true){
       errorCherryToast(context, result['message']);
     }else{

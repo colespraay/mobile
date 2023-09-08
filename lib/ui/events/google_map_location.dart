@@ -49,6 +49,7 @@ class _GoogleMapLocationScreenState extends State<GoogleMapLocationScreen> {
 
   @override
   void initState() {
+    print("latitude=${widget.lat}, long=${widget.long}");
     _setMarker( LatLng(widget.lat, widget.long));
   }
 
@@ -61,7 +62,7 @@ class _GoogleMapLocationScreenState extends State<GoogleMapLocationScreen> {
           GoogleMap(
             mapType: MapType.normal,
             markers: _markers.toSet(),
-            initialCameraPosition: CameraPosition(target: LatLng(widget.lat, widget.long), zoom: 14.4746,),
+            initialCameraPosition: CameraPosition(target: LatLng(widget.lat, widget.long), zoom: 17.4746,),
             onMapCreated: (GoogleMapController controller) {
               _controller.complete(controller);
             },

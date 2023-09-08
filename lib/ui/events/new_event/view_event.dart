@@ -169,8 +169,8 @@ class _ViewEventState extends State<ViewEvent> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(eventProvider?.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500) ),
-                      Text(eventProvider?.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0x99FFFFFF)) ),
+                      Text(eventProvider?.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis, ),
+                      Text(eventProvider?.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0x99FFFFFF)), maxLines: 2, overflow: TextOverflow.ellipsis ),
                     ],
                   ),
                 ),
