@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/user_profile.dart';
@@ -36,6 +38,8 @@ class AuthProvider extends ChangeNotifier{
     isLoading = loading;
   }
 
+  //Inactivity Session timeout
+  final sessionStateStream = StreamController<SessionState>();
 
   // bool sWvalueFaceId = false;
   bool? value= MySharedPreference.getSwitchValuesForTouchID()==null? false: MySharedPreference.getSwitchValuesForTouchID();
@@ -290,6 +294,10 @@ class AuthProvider extends ChangeNotifier{
       await MySharedPreference.savePass(password);
 
       MySharedPreference.setVisitingFlag();
+
+      // start listening to session only after user logs in
+      sessionStateStream.add(SessionState.startListening);
+
       Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
 
     }

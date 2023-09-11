@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
@@ -106,6 +109,8 @@ class _ProfileUiState extends State<ProfileUi> {
   }
 
 
+  final sessionStateStream = StreamController<SessionState>();
+
   Future<void> _logoutModal(){
     return  showModalBottomSheet(
         context: context,
@@ -134,6 +139,8 @@ class _ProfileUiState extends State<ProfileUi> {
                             height26,
                             CustomButton(
                                 onTap: (){
+                                  sessionStateStream.add(SessionState.stopListening);
+
                                   Navigator.pushAndRemoveUntil(context, FadeRoute(page: LoginScreen()),(Route<dynamic> route) => false);
                                   Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
                                 },
