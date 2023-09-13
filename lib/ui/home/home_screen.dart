@@ -76,19 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // SvgPicture.asset("images/avatar.svg"),
-        CircleAvatar(
-          radius: 26.r,
-          child: CachedNetworkImage(
-            width: 38.w,
-            height: 38.h,
-            fit: BoxFit.contain,
-            imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
-            placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-            errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-          ),
-        ),
-
+        buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 26.r),
         SizedBox(width: 12.w,),
         Expanded(
           child: Row(

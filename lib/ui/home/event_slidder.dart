@@ -14,9 +14,12 @@ import 'package:spraay/models/current_user.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/navigations/scale_transition.dart';
 import 'package:spraay/ui/events/event_details.dart';
+import 'package:spraay/ui/events/new_event/new_event.dart';
 import 'package:spraay/ui/home/bvn_verification.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/event_provider.dart';
+
+import '../../components/reusable_widget.dart';
 
 class EventSlidder extends StatefulWidget {
   const EventSlidder({Key? key}) : super(key: key);
@@ -64,15 +67,25 @@ class _EventSlidderState extends State<EventSlidder> {
     }
     else if(eventProvider!.userHorizontalScrool!.isEmpty)
     {
-      return Center(child: Container(
-          width: double.infinity,
-          height: 112.h,
-          decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.all(Radius.circular(24.r))
-          ),
-          child: Center(child: Text("No Event", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp,
-              fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),))));
+      return Center(child: buildDottedBorder(
+        child: Container(
+            width: double.infinity,
+            height: 112.h,
+            child: InkWell(
+              onTap:(){
+                Navigator.push(context, ScaleTransition1(page: NewEvent()));
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("No Event", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),),
+                  height4,
+                  Text("Create one", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sPrimaryColor500),),
+                ],
+              ),
+            )),
+      ));
     }
     else{
       return buildEventForYou(eventProvider?.userHorizontalScrool);

@@ -63,10 +63,7 @@ class MyApp extends StatelessWidget {
             scaffoldBackgroundColor: CustomColors.sBackgroundColor
           ),
           builder: (context, widget) {
-            return MediaQuery(
-              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-              child: widget!,
-            );
+            return MediaQuery(data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0), child: widget!);
           },
           initialRoute: SplashScreen.id,
           routes: {

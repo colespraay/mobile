@@ -68,27 +68,7 @@ class _ProfileUiState extends State<ProfileUi> {
       children: [
         Text("Profile", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700) ),
         height40,
-        // Container(
-        //   width: 120.w,
-        //   height: 120.h,
-        //   decoration: BoxDecoration(
-        //     color: Colors.grey,
-        //     shape: BoxShape.circle
-        //   ),
-        // ),
-
-        CircleAvatar(
-          radius: 70.r,
-          child: CachedNetworkImage(
-            width: 90.w,
-            height: 90.h,
-            fit: BoxFit.cover,
-            imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
-            placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-            errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-          ),
-        ),
-
+        buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 70.r),
         height16,
         Text("${credentialsProvider?.dataResponse?.firstName??""} ${credentialsProvider?.dataResponse?.lastName??""}", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
         height4,

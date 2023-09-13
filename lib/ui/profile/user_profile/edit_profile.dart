@@ -114,17 +114,7 @@ class _EditProfileState extends State<EditProfile> {
           child: Stack(
             children: [
 
-              CircleAvatar(
-                radius: 80.r,
-                child: CachedNetworkImage(
-                  width: 95.w,
-                  height: 95.h,
-                  fit: BoxFit.cover,
-                  imageUrl:credentialsProvider?.dataResponse?.profileImageUrl??"",
-                  placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-                  errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
-                ),
-              ),
+              buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 80.r),
 
               Positioned(
                   bottom: 10.h,
