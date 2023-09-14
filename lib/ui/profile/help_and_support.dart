@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:open_mail_app/open_mail_app.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
@@ -221,19 +222,19 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
             shrinkWrap: true,
             children: [
               _buildContainer(img: "customer_serv", title: "Customer Service", onTap:(){
-
+                openEmailApp(context, "support@spraay.ng");
               }),
-              _buildContainer(img: "whatsapp", title: "WhatsApp", onTap:(){
-                openwhatsapp("08132567783");
-              }),
+              // _buildContainer(img: "whatsapp", title: "WhatsApp", onTap:(){
+              //   openwhatsapp("08132567783");
+              // }),
               _buildContainer(img: "instagram", title: "Instagram", onTap:(){
-                openWeb("url");
+                openWeb("https://instagram.com/spraay.ng?igshid=MzRlODBiNWFlZA==");
               }),
               _buildContainer(img: "twitter", title: "Twitter", onTap:(){
-                openWeb("url");
+                openWeb("https://x.com/spraay_ng?s=21");
               }),
               _buildContainer(img: "fb", title: "Facebook", onTap:(){
-                openWeb("url");
+                openWeb("https://www.facebook.com/profile.php?id=100081328026262");
               }),
 
 
@@ -244,8 +245,33 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
     );
   }
 
+
+
+  void openEmailApp(BuildContext context, String emailAdd) async {
+    EmailContent email = EmailContent(
+      to: [emailAdd],
+      subject: 'Customer Service',
+      body: 'Hello! My name is',
+      // cc: ['user2@domain.com', 'user3@domain.com'],
+      // bcc: ['boss@domain.com'],
+    );
+
+    OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(nativePickerTitle: 'Select email app to compose', emailContent: email);
+    if (!result.didOpen && !result.canOpen) {
+      showNoMailAppsDialog(context);
+    } else if (!result.didOpen && result.canOpen) {
+      showDialog(
+        context: context,
+        builder: (_) => MailAppPickerDialog(
+          mailApps: result.options,
+          emailContent: email,
+        ),
+      );
+    }
+  }
+
   Widget _buildContainer({required String img, required String title, required void Function()? onTap }){
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
@@ -280,6 +306,26 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
       text: "Hello",
     );
     await launch('$link');
+  }
+
+  void showNoMailAppsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Open Mail App"),
+          content: Text("No mail apps installed"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
 }

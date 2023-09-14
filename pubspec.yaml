@@ -57,6 +57,7 @@ dependencies:
   uuid: ^3.0.7
   geocoding: ^2.1.0
   local_session_timeout: ^2.3.0
+  open_mail_app: ^0.4.5
 
 #  overlay_loader_with_app_icon: ^0.0.3
 
