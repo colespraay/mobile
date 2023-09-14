@@ -32,11 +32,19 @@ class TermsAndCondition extends StatelessWidget {
             ),
         children: [
           height20,
-          _buildColumn(title: "1. Acceptance of Terms", content: "By downloading, installing, or using the Spray App, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, please refrain from using the app."),
-          _buildColumn(title: "2.  Use of your Personal Data", content: "You agree to use the Spray App for lawful purposes and in compliance with applicable laws and regulations. You shall not use the app for any illegal or unauthorized activities."),
-          _buildColumn(title: "3. Account Creation and Security", content: "When creating an account with the Spray App, you are responsible for maintaining the confidentiality of your login credentials. You must not share your account details with any third party. You are solely responsible for all activities that occur under your account."),
-          _buildColumn(title: "4. Privacy and Data Protection", content: "The Spray App respects your privacy and handles your personal information in accordance with our Privacy Policy. By using the app, you consent to the collection, storage, and processing of your personal data as described in the Privacy Policy."),
-          _buildColumn(title: "5. Modifications to the App and Terms", content: "The app developer reserves the right to modify, suspend, or discontinue the Spray App, in whole or in part, at any time and without prior notice. The app developer also reserves the right to update or modify these Terms and Conditions at any time. Your continued use of the app after any changes to the terms shall constitute your acceptance of the modified terms."),
+          _buildColumn(title: "1. Acceptance of Terms", content: "By using the Spraay App, you agree to these Terms and Conditions. If you do not agree, please do not use the app."),
+          _buildColumn(title: "2. User Accounts", content: "a. Registration: To use our services, you must create an account. You are responsible for keeping your account credentials confidential. \n\nb. Account Termination: We reserve the right to suspend or terminate accounts that violate these terms."),
+          _buildColumn(title: "3. Content and Usage", content: "a. User Content: You may create, post, or share content through the app. You retain ownership of your content. \n\nb. Prohibited Activities: You must not engage in illegal activities, spam, or abusive behavior on the app."),
+          _buildColumn(title: "4. Payments", content: "If you use payment features on the app, you agree to pay all associated fees. Payment information must be accurate and current."),
+          _buildColumn(title: "5. Intellectual Property", content: "a. Ownership: Spraay and Middl Technologies own all rights, title, and interest in the app and its content."),
+
+          _buildColumn(title: "6. Disclaimers and Limitations", content: "a. No Warranties: We provide the app \"as-is,\" and we do not make any warranties regarding its accuracy or reliability. \n\nb. Limitation of Liability: We are not liable for any direct, indirect, or consequential damages arising from your use of the app."),
+          _buildColumn(title: "7. Termination", content: "We may terminate your access to the app at our discretion, without notice."),
+
+          _buildColumn(title: "8. Governing Law and Jurisdiction", content: "These terms are governed by the laws of Nigeria, and any disputes shall be resolved in the appropriate courts."),
+          _buildColumn(title: "9. Changes to Terms and Conditions", content: "We may update these terms to reflect changes in our services. Users will be notified of any material changes."),
+          _buildColumn(title: "10. Contact Information", content: "For questions or support, please contact us at [support@spraay.ng]. Visit our website at [www.Spraay.ng].")
+
         ]),
       ),
     );
