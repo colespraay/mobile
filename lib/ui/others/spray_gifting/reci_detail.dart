@@ -1,15 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/others/spray_gifting/spray_gift_otp.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 
 import '../../../navigations/fade_route.dart';
 
 class ReciDetail extends StatefulWidget {
-  const ReciDetail({Key? key}) : super(key: key);
+  String? giftAmount;
+   ReciDetail({required this.giftAmount});
 
   @override
   State<ReciDetail> createState() => _ReciDetailState();
@@ -45,6 +51,10 @@ class _ReciDetailState extends State<ReciDetail> {
 
   }
 
+  // Timer? _debounce;
+
+  final _debouncer = Debouncer(milliseconds: 700);
+
   Widget buildListWidget(){
     return ListView(
       padding: horizontalPadding,
@@ -63,26 +73,69 @@ class _ReciDetailState extends State<ReciDetail> {
             child: SvgPicture.asset("images/at_svg.svg",),
           ),
           onChanged:(value){
-            setState(() {tagVal=value;});
+
+
+
+            _debouncer.run(() {
+              if(value.isNotEmpty){
+                fetchUserByTagApi(context, value.replaceAll("@", ""));
+              }else{
+                //
+              }
+              //perform search here
+            });
+
+
           },
         ),
         height8,
-        Text("Adam Smith", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 12.sp, color: CustomColors.sWhiteColor)),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _isLoading?SpinKitFadingCircle(size: 30,color: Colors.grey,):Container(),
+            Text("$firstName $lastName", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 12.sp, color: CustomColors.sWhiteColor)),
+          ],
+        ),
 
 
         height90,
         CustomButton(
             onTap: () {
-              if( tagVal.isNotEmpty){
-                Navigator.pushReplacement(context, FadeRoute(page: SprayGiftOtp()));
+              if( firstName.isNotEmpty){
+                Navigator.pushReplacement(context, FadeRoute(page: SprayGiftOtp(amount: widget.giftAmount, receiverTag:sprayTagController.text,routeStatus: "spray_tag",)));
               }
             },
             buttonText: 'Confirm', borderRadius: 30.r,width: 380.w,
-            buttonColor: ( tagVal.isNotEmpty ) ? CustomColors.sPrimaryColor500:
+            buttonColor: ( firstName.isNotEmpty ) ? CustomColors.sPrimaryColor500:
             CustomColors.sDisableButtonColor),
         height34,
       ],
     );
   }
+
+  bool _isLoading=false;
+  String firstName="";
+  String lastName="";
+  fetchUserByTagApi(BuildContext context, String userTag) async{
+    setState(() {_isLoading=true;});
+    var result=await ApiServices().userByTag("@$userTag", MySharedPreference.getToken());
+    if(result['error'] == true){
+      setState(() {
+        firstName="";
+        lastName=result['message'];
+      });
+      // errorCherryToast(context, result['message']);
+    }else{
+      setState(() {
+        firstName=result["firstName"];
+        lastName=result["lastName"];
+      });
+
+      // userInformationList= apiResponse.data?.data??[];
+    }
+    setState(() {_isLoading=false;});
+
+  }
+
 
 }

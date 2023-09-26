@@ -12,10 +12,12 @@ import 'package:spraay/components/rate_experience.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/others/payment_receipt.dart';
 import 'package:spraay/ui/others/spray/spray_detail.dart';
 import 'package:spraay/ui/others/spray/topup_spray.dart';
 import 'package:spraay/models/join_event_model.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 
 
 class SprayScreen extends StatefulWidget {
@@ -24,7 +26,8 @@ class SprayScreen extends StatefulWidget {
   int noteQuantity;
   int unitAmount;
   Data? eventModelData;
-   SprayScreen({required this.cash, required this.totalAmount, required this.noteQuantity, required this.unitAmount, required this.eventModelData});
+  String? transactionPin;
+   SprayScreen({required this.cash, required this.totalAmount, required this.noteQuantity, required this.unitAmount, required this.eventModelData, required this.transactionPin});
 
   @override
   State<SprayScreen> createState() => _SprayScreenState();
@@ -42,57 +45,93 @@ class _SprayScreenState extends State<SprayScreen>{
 
   }
 
+
+  bool _isLoading=false;
+  fetchSprayEventApi(BuildContext context ,String amount, String status) async{
+    setState(() {_isLoading=true;});
+    var result=await ApiServices().sprayEvent(widget.eventModelData?.id??"", MySharedPreference.getToken(), amount, widget.transactionPin??"");
+    if(result['error'] == true){
+
+      popupDialog(context: context, title: "Transaction Failed", content:result['message'],
+          buttonTxt: 'Try again',
+          onTap: () {
+            Navigator.pop(context);
+
+          }, png_img: 'Incorrect_sign');
+
+
+    }else{
+
+      if(status=="stopScanning"){
+        Navigator.pushReplacement(context, FadeRoute(page: SprayDetail()));
+      }
+
+      if(status=="sprayReached"){
+        print("api called=${amount}");
+      }
+
+
+    }
+
+    setState(() {_isLoading=false;});
+
+  }
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: appBarSize(),
-        body: Padding(
-          padding: horizontalPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              buildContainer(),
-              (amount>0 && _isSprayEndReached==false)?  Center(
-                child: Padding(
-                  padding:  EdgeInsets.only(top: 30.h),
-                  child: CustomButton(
-                      onTap: () {
-                        popupStopPayingDialog(context: context, title: "Are you sure?",
-                            content: "You are about to stop spraying",
-                            buttonTxt: "Yes Stop", onTap: (){
-                              // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
-                              // Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+    return  LoadingOverlayWidget(
+      loading: _isLoading,
+      child: Scaffold(
+          appBar: appBarSize(),
+          body: Padding(
+            padding: horizontalPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                buildContainer(),
+                (amount>0 && _isSprayEndReached==false)?  Center(
+                  child: Padding(
+                    padding:  EdgeInsets.only(top: 30.h),
+                    child: CustomButton(
+                        onTap: () {
+                          popupStopPayingDialog(context: context, title: "Are you sure?",
+                              content: "You are about to stop spraying",
+                              buttonTxt: "Yes Stop", onTap: (){
+                                // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+                                // Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+
+                                Navigator.pop(context);
+
+                                fetchSprayEventApi(context, amount.toString(), "stopScanning");
+
+                              }, png_img: "question");
+
+                        },
+                        buttonText: 'Stop spray', borderRadius: 30.r,width: 380.w,
+                        buttonColor: CustomColors.sErrorColor),
+                  ),
+                ).animate().fadeIn(duration: 1000.milliseconds, curve: Curves.easeIn): SizedBox.shrink(),
+
+                _isSprayEndReached==false? Spacer(): Expanded(child: _buildLimitReached().animate() // baseline=800ms
+                    .slide(
+                    duration: 800.milliseconds,curve: Curves.fastOutSlowIn,
+                    begin: Offset(0.0, 1.0),
+                    end: Offset.zero
+                )),
 
 
-                              Navigator.pushReplacement(context, FadeRoute(page: SprayDetail()));
+                _isSprayEndReached==false?buildSprayWidget(): Center(
+                  child: Image.asset("images/hand.png", height: 200.h, ).animate().slide(
+                      begin: Offset.zero,
+                      end: Offset(0.0, 1.0),
+                      duration: 800.milliseconds,curve: Curves.fastOutSlowIn),
+                )
 
-                            }, png_img: "question");
-
-                      },
-                      buttonText: 'Stop spray', borderRadius: 30.r,width: 380.w,
-                      buttonColor: CustomColors.sErrorColor),
-                ),
-              ).animate().fadeIn(duration: 1000.milliseconds, curve: Curves.easeIn): SizedBox.shrink(),
-
-              _isSprayEndReached==false? Spacer(): Expanded(child: _buildLimitReached().animate() // baseline=800ms
-                  .slide(
-                  duration: 800.milliseconds,curve: Curves.fastOutSlowIn,
-                  begin: Offset(0.0, 1.0),
-                  end: Offset.zero
-              )),
-
-
-              _isSprayEndReached==false?buildSprayWidget(): Center(
-                child: Image.asset("images/hand.png", height: 200.h, ).animate().slide(
-                    begin: Offset.zero,
-                    end: Offset(0.0, 1.0),
-                    duration: 800.milliseconds,curve: Curves.fastOutSlowIn),
-              )
-
-            ],
-          ),
-        ));
+              ],
+            ),
+          )),
+    );
   }
 
 
@@ -115,6 +154,9 @@ class _SprayScreenState extends State<SprayScreen>{
 
   void _onEnd() {
     setState(() {_isSprayEndReached=true;});
+    if(_isSprayEndReached==true){
+      fetchSprayEventApi(context, amount.toString(), "sprayReached");
+    }
     log("end reached!");
   }
 

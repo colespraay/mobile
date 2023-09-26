@@ -35,6 +35,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
   void initState() {
     _pageController = PageController(initialPage: 0);
+
     super.initState();
   }
 

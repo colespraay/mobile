@@ -12,12 +12,14 @@ import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:pdf/widgets.dart' as pdfWidgets;
 import 'package:pdf/pdf.dart';
+import 'package:spraay/models/transaction_models.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/navigations/SlideUpRoute.dart';
 import 'package:spraay/ui/profile/help_and_support.dart';
 
 class TransactionDetail extends StatefulWidget {
-  const TransactionDetail({Key? key}) : super(key: key);
+  DatumTransactionModel? transactionList;
+   TransactionDetail(this.transactionList) ;
 
   @override
   State<TransactionDetail> createState() => _TransactionDetailState();

@@ -12,7 +12,10 @@ import 'package:spraay/models/events_models.dart';
 import 'package:spraay/models/join_event_model.dart';
 import 'package:spraay/models/login_response.dart';
 import 'package:spraay/models/ongoing_event_model.dart';
+import 'package:spraay/models/recent_recipient_models.dart';
+import 'package:spraay/models/recipient_model.dart';
 import 'package:spraay/models/registered_user_model.dart';
+import 'package:spraay/models/transaction_models.dart';
 import 'package:spraay/models/user_profile.dart';
 import 'package:spraay/services/api_response.dart';
 class ApiServices{
@@ -51,6 +54,15 @@ class ApiServices{
         result["allowEmailNotifications"]=loginResponse.data?.user?.allowEmailNotifications??false;
         result["displayWalletBalance"]=loginResponse.data?.user?.displayWalletBalance??false;
         result["enableFaceId"]=loginResponse.data?.user?.enableFaceId??false;
+
+        result["walletBalance"]=loginResponse.data?.user?.walletBalance??0;
+
+
+
+        result["virtualAccountName"]=loginResponse.data?.user?.virtualAccountName??"";
+        result["virtualAccountNumber"]=loginResponse.data?.user?.virtualAccountNumber??"";
+
+
 
 
         result['error'] = false;
@@ -597,6 +609,24 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     });
   }
 
+
+  Future<ApiResponse<RecentRecipientModel>> recentRecipientApi(String mytoken,){
+    return http.get(Uri.parse("$url/transaction/find/recent-recipients"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=RecentRecipientModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<RecentRecipientModel>(data: note1);
+      }else{
+        return ApiResponse<RecentRecipientModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      return ApiResponse<RecentRecipientModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+    });
+  }
+
+
   Future<Map<String, dynamic>> sendInvite(String eventId,String mytoken, List<String> userIds)async{
     Map<String, dynamic> result = {};
     try{
@@ -625,6 +655,68 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       result["message"] = "Something went wrong";result['error'] = true;}
     return result;
   }
+
+  Future<Map<String, dynamic>> sendGift(String amount,String mytoken, String receiverTag, String transactionPin)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/gifting/send-gift"),
+          body: jsonEncode({"amount": amount, "receiverTag": receiverTag, "transactionPin": transactionPin}),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("ressssp=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result["dateCreated"] =jsonResponse['data']['receiverUser']["dateCreated"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
+  Future<Map<String, dynamic>> userByTag(String userTag,String mytoken)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("$url/user/find-by-tag/$userTag"),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("ressssp=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        // result["message"] =jsonResponse["message"];
+        result["firstName"] =jsonResponse['data']['firstName'];
+        result["lastName"] =jsonResponse['data']['lastName'];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
 
   Future<Map<String, dynamic>> editEvent(String mytoken ,String eventName, String eventDescription, String venue, String eventDate, String time, String category,
       String eventCoverImage, String eventId, String longitude, String latitude)async{
@@ -777,6 +869,93 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     return result;
   }
 
+  Future<Map<String, dynamic>> sprayEvent(String eventId,String mytoken, String amount, String transactionPin)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/event-spraay"),
+          body: jsonEncode({"amount": amount, "eventId": eventId, "transactionPin":transactionPin}),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("ressssp=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+  Future<Map<String, dynamic>> transactionPinApi(String mytoken, String transactionPin)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("$url/user/verify/transaction-pin/$transactionPin"),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("ressssp=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
+  Future<Map<String, dynamic>> checkbalanceBeforeWithdrawingApi(String mytoken, String amount)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("$url/user/account/check-balance-before-debit/$amount"),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("ressssp=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
 
   Future<ApiResponse<JoinEventModel>> joinEvent(String mytoken, String eventCode){
     return http.get(Uri.parse("$url/event/by-code/$eventCode"),
@@ -795,6 +974,30 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
       }else{
         return ApiResponse<JoinEventModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+
+      }
+    });
+  }
+
+
+
+  Future<ApiResponse<TransactionModels>> transactionListApi(String mytoken, String userId){
+    return http.get(Uri.parse("$url/transaction?userId=$userId"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=TransactionModels.fromJson(jsonDecode(response.body));
+        return ApiResponse<TransactionModels>(data: note1);
+      }else{
+        return ApiResponse<TransactionModels>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<TransactionModels>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<TransactionModels>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
 
       }
     });

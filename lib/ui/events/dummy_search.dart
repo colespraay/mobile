@@ -74,27 +74,6 @@ class _DummyMapSearchState extends State<DummyMapSearch> {
             },
         ),
 
-        // TextField(
-        //   controller: widget.venueController,
-        //   onChanged: (value){
-        //     query=value;
-        //     fetchSuggestionsApi(query);
-        //   },
-        //   decoration: InputDecoration(
-        //     icon: Container(
-        //       width: 10,
-        //       height: 10,
-        //       child: Icon(
-        //         Icons.home,
-        //         color: Colors.black,
-        //       ),
-        //     ),
-        //     hintText: "Enter your shipping address",
-        //     border: InputBorder.none,
-        //     contentPadding: EdgeInsets.only(left: 8.0, top: 16.0),
-        //   ),
-        // ),
-
 
         Padding(
           padding:  EdgeInsets.only(top: 12.h, left: 8.w),

@@ -10,8 +10,11 @@ import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/cashspray_model.dart';
 import 'package:spraay/navigations/SlideUpRoute.dart';
+import 'package:spraay/services/api_services.dart';
+import 'package:spraay/ui/others/spray/join_event_otp.dart';
 import 'package:spraay/ui/others/spray/spray_screen.dart';
 import 'package:spraay/models/join_event_model.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 
 
 class JoinEventInfo extends StatefulWidget {
@@ -101,13 +104,16 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context, title:"Join Event" ),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child:  buildInviWidget(),
-        ));
+    return  LoadingOverlayWidget(
+      loading: _isLoading,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title:"Join Event" ),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child:  buildInviWidget(),
+          )),
+    );
   }
 
   Widget buildInviWidget(){
@@ -152,8 +158,10 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
                 if(noteQuantity< 1.0){
                   cherryToastInfo(context,"Invalid amount", "Enter a valid amount" );
                 }else{
-                  Navigator.push(context, SlideUpRoute(page: SprayScreen(cash: cash, totalAmount: int.parse(totalAmount), noteQuantity: noteQuantity.toInt(),
-                    unitAmount: amount, eventModelData: widget.eventModelData,)));
+
+                  fetchCheckbalanceBeforeWithdrawingApiPinApi(context, totalAmount, amount);
+
+
                 }
                 
               }
@@ -195,14 +203,6 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
                     ],
                   ),
                   height8,
-                  // GestureDetector(
-                  //     onTap:(){
-                  //       Navigator.push(context, FadeRoute(page: EventDetails()));
-                  //     },
-                  //     child: buildStatus(title: "View Details", color:CustomColors.sDarkColor3))
-
-
-
                 ],
               ),
             ),
@@ -227,7 +227,9 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
         children: [
           SvgPicture.asset("images/$img.svg", width: 20.w, height: 20.h,),
           SizedBox(width: 4.w,),
-          Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0xffEEECFF)) ),
+          SizedBox(
+            width: 80.w,
+              child: Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0xffEEECFF)), maxLines: 1, overflow: TextOverflow.ellipsis, )),
 
         ],
       ),
@@ -317,6 +319,30 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
         ),
       ) ).toList(),
     );
+  }
+
+
+  bool _isLoading=false;
+  fetchCheckbalanceBeforeWithdrawingApiPinApi(BuildContext context ,String amount, int unitAmount) async{
+    setState(() {_isLoading=true;});
+    var result=await ApiServices().checkbalanceBeforeWithdrawingApi(MySharedPreference.getToken(), amount);
+    if(result['error'] == true){
+
+      popupDialog(context: context, title: "Transaction Failed", content:result['message'],
+          buttonTxt: 'Try again',
+          onTap: () {
+            Navigator.pop(context);
+
+          }, png_img: 'Incorrect_sign');
+
+
+    }else{
+      Navigator.push(context, SlideUpRoute(page: JoinEventOtp(cash: cash, totalAmount: int.parse(totalAmount), noteQuantity: noteQuantity.toInt(),
+        unitAmount: unitAmount, eventModelData: widget.eventModelData,)));
+
+    }
+
+    setState(() {_isLoading=false;});
   }
 
 }

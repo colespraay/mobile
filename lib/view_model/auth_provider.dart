@@ -292,6 +292,10 @@ class AuthProvider extends ChangeNotifier{
       await MySharedPreference.savePhoneNumber(result["phone"]);
       await MySharedPreference.saveProfilePicture(result["profileImageUrl"]);
       await MySharedPreference.savePass(password);
+      await MySharedPreference.saveVAccName(result["virtualAccountName"].toString());
+      await MySharedPreference.saveVAccNumber(result["virtualAccountNumber"].toString());
+
+      await MySharedPreference.saveWalletBalance(result["walletBalance"].toString());
 
       MySharedPreference.setVisitingFlag();
 
@@ -318,6 +322,8 @@ class AuthProvider extends ChangeNotifier{
       await MySharedPreference.saveLastname(result["lastname"]);
       await MySharedPreference.savePhoneNumber(result["phone"]);
       await MySharedPreference.saveProfilePicture(result["profileImageUrl"]);
+      await MySharedPreference.saveVAccName(result["virtualAccountName"].toString());
+      await MySharedPreference.saveVAccNumber(result["virtualAccountNumber"].toString());
 
       Navigator.push(context, FadeRoute(page: ChangeTransactionPin()));
 

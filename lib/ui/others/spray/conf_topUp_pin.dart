@@ -43,7 +43,8 @@ class _ConfirmTopUpPinState extends State<ConfirmTopUpPin> {
             shrinkWrap: true,
             children: [
               height16,
-              Text("You are about to top-up your Spray with ₦100,000", style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
+              Text("You are about to top-up your Spray with ₦100,000", style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 22.sp, color: CustomColors.sGreyScaleColor50,
+              fontFamily: "PlusJakartaSans")),
               height8,
               Text("Enter PIN to confirm this transaction", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
 

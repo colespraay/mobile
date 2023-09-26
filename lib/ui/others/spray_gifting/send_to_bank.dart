@@ -8,10 +8,12 @@ import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/ui/others/spray_gifting/reci_detail.dart';
+import 'package:spraay/ui/others/spray_gifting/select_recipient.dart';
 import 'package:spraay/ui/others/spray_gifting/spray_gift_otp.dart';
 
 class SendToBank extends StatefulWidget {
-  const SendToBank({Key? key}) : super(key: key);
+  final String giftAmount;
+   SendToBank({required this.giftAmount});
 
   @override
   State<SendToBank> createState() => _SendToBankState();
@@ -33,12 +35,7 @@ class _SendToBankState extends State<SendToBank> {
 
               GestureDetector(
                   onTap: ()async{
-                    final PhoneContact contact = await FlutterContactPicker.pickPhoneContact();
-                    print(contact);
-                    setState(() {
-                      phoneController.text = contact.phoneNumber?.number?.trim().replaceAll("+234", "0").replaceAll(" ", "").replaceAll("-", "")??"";
-                    });
-                    // Navigator.push(context, SlideLeftRoute(page: WithdrawalOtp(fromWhere: 'to_bank_screen',)));
+                    Navigator.push(context, SlideLeftRoute(page: SeletRecipientScreen(giftAmount: widget.giftAmount,)));
                   },
                   child: buildContainer(title: 'Send to contact')),
 
@@ -46,18 +43,11 @@ class _SendToBankState extends State<SendToBank> {
 
               GestureDetector(
                   onTap: (){
-                    Navigator.push(context, SlideLeftRoute(page: ReciDetail()));
+                    Navigator.push(context, SlideLeftRoute(page: ReciDetail(giftAmount: widget.giftAmount,)));
                   },
                   child: buildContainer(title: 'Send using Spraay Tag')),
 
               height40,
-              phoneController.text.isNotEmpty?  CustomButton(
-                  onTap: () {
-                      Navigator.push(context, SlideLeftRoute(page: SprayGiftOtp(phoneNumber: phoneController.text,)));
-                  },
-                  buttonText: 'Send to ${phoneController.text}', borderRadius: 30.r,width: 380.w,
-                  buttonColor:CustomColors.sPrimaryColor500).animate().shake():SizedBox.shrink(),
-              height20,
 
             ],
           ),

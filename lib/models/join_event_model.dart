@@ -121,8 +121,8 @@ class Data {
 }
 
 class EventGeoCoordinates {
-  int? longitude;
-  int? latitude;
+  dynamic longitude;
+  dynamic latitude;
 
   EventGeoCoordinates({
     this.longitude,

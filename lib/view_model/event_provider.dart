@@ -2,14 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/current_user.dart';
+import 'package:spraay/models/recent_recipient_models.dart';
 import 'package:spraay/models/registered_user_model.dart';
+import 'package:spraay/models/transaction_models.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
+import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/services/api_services.dart';
+import 'package:spraay/ui/dashboard/dashboard_screen.dart';
 import 'package:spraay/ui/events/new_event/confirmation_page.dart';
+import 'package:spraay/ui/others/payment_receipt.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
@@ -114,6 +120,20 @@ class EventProvider extends ChangeNotifier{
   }
 
 
+  List<DatumRecent> recentUserInformationList=[];
+  fetchRecentRecipientApi() async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.recentRecipientApi(mytoken);
+    if(apiResponse.error==true){
+      recentUserInformationList=[];
+      // errorCherryToast(context, apiResponse.errorMessage??"");
+    }else{
+      recentUserInformationList= apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
   fetchSendInviteApi(BuildContext context, String eventId, List<String> userIds, List<String> selectedName) async{
     setloading(true);
     var result=await service.sendInvite(eventId, mytoken, userIds);
@@ -128,6 +148,42 @@ class EventProvider extends ChangeNotifier{
             Navigator.pop(context);
             Navigator.pop(context);
           }, png_img: 'verified');
+      // userInformationList= apiResponse.data?.data??[];
+    }
+    setloading(false);
+  }
+
+
+  fetchSendGiftApi(BuildContext context, String amount, String receiverTag,String transactionPin) async{
+    setloading(true);
+    var result=await service.sendGift(amount.replaceAll(",", ""), mytoken, receiverTag, transactionPin);
+    if(result['error'] == true){
+      // errorCherryToast(context, result['message']);
+
+      popupDialog(context: context, title: "Transaction Failed", content:result['message'],
+          buttonTxt: 'Try again',
+          onTap: () {
+        Navigator.pop(context);
+
+          }, png_img: 'Incorrect_sign');
+
+    }else{
+
+      popupWithTwoBtnDialog(context: context, title: "Transaction successful",
+          content: "You have successfully gifted $receiverTag N${amount}",
+          buttonTxt: "Great! Take me Home", onTap: (){
+            Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+            Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+
+          }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+
+            Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: "spray_circle", type:"Spray Gift", date: dateTimeFormat(result['dateCreated'].toString()), amount: '₦$amount', meterNumber: '', transactionRef: '', transStatus: 'Successful',)));
+          });
+
+
       // userInformationList= apiResponse.data?.data??[];
     }
     setloading(false);
@@ -185,6 +241,23 @@ class EventProvider extends ChangeNotifier{
       // errorCherryToast(context, apiResponse.errorMessage??"");
     }else{
       userHorizontalScrool=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+
+  List<DatumTransactionModel>? transactionList;
+
+  fetchTransactionListApi() async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.transactionListApi(MySharedPreference.getToken(), MySharedPreference.getUId());
+    if(apiResponse.error==true){
+      transactionList=[];
+      print("fetchTransactionListApi Error=${apiResponse.errorMessage??""}");
+      // errorCherryToast(context, apiResponse.errorMessage??"");
+    }else{
+      transactionList=apiResponse.data?.data??[];
     }
     setloadingNoNotif(false);
     notifyListeners();

@@ -19,6 +19,7 @@ import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
+import 'package:spraay/view_model/event_provider.dart';
 import 'package:spraay/view_model/home_provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -31,18 +32,23 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   bool _isObscure=false;
-  String amount="200000";
+
   @override
   void initState() {
     _isObscure=Provider.of<HomeProvider>(context, listen: false).hideWalletvalue??false;
     Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+    Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
+
 
   }
 
   AuthProvider? credentialsProvider;
+
+  EventProvider? eventProvider;
   @override
   void didChangeDependencies() {
     credentialsProvider=context.watch<AuthProvider>();
+    eventProvider=context.watch<EventProvider>();
     super.didChangeDependencies();
   }
 
@@ -129,8 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Text(_isObscure?'${amount.replaceAll(RegExp(r"."), "*")}':
-                      "₦${currrency.format(double.parse(amount))}" ,
+                      child: Text(_isObscure?'${MySharedPreference.getWalletBalance().replaceAll(RegExp(r"."), "*")}':
+                      "₦${currrency.format(double.parse(MySharedPreference.getWalletBalance()))}" ,
                         style: CustomTextStyle.kTxtBold.copyWith(fontSize: 30.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans")),
                     ),
                     GestureDetector(
@@ -180,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         height16,
 
-        Expanded(child: TransactionHistory())
+        Expanded(child: eventProvider?.transactionList==null? CircularProgressIndicator(): TransactionHistory(transactionList:eventProvider?.transactionList,))
       ],
     );
   }
@@ -224,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Expanded(
                                 child: Padding(
                                   padding: horizontalPadding,
-                                  child: TransactionHistory(),
+                                  child: TransactionHistory(transactionList:eventProvider?.transactionList),
                                 ),
                               ),
 

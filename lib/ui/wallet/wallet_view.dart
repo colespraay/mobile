@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideUpRoute.dart';
@@ -10,6 +11,9 @@ import 'package:spraay/ui/home/event_slidder.dart';
 import 'package:spraay/ui/home/fund_wallet.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/ui/wallet/withdrawal/withdrawal.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/event_provider.dart';
+import 'package:spraay/view_model/home_provider.dart';
 
 class WalletView extends StatefulWidget {
   const WalletView({Key? key}) : super(key: key);
@@ -19,6 +23,24 @@ class WalletView extends StatefulWidget {
 }
 
 class _WalletViewState extends State<WalletView> {
+
+
+  @override
+  void initState() {
+    _isObscure=Provider.of<HomeProvider>(context, listen: false).hideWalletvalue??false;
+    Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
+
+
+  }
+
+
+  EventProvider? eventProvider;
+  @override
+  void didChangeDependencies() {
+    eventProvider=context.watch<EventProvider>();
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,10 +91,15 @@ class _WalletViewState extends State<WalletView> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    // Expanded(
+                    //   child: Text(_isObscure?'N${amount.replaceAll(RegExp(r"."), "*")}':
+                    //   "N${currrency.format(double.parse(amount))}" ,
+                    //       style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700)),
+                    // ),
                     Expanded(
-                      child: Text(_isObscure?'N${amount.replaceAll(RegExp(r"."), "*")}':
-                      "N${currrency.format(double.parse(amount))}" ,
-                          style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700)),
+                      child: Text(_isObscure?'${MySharedPreference.getWalletBalance().replaceAll(RegExp(r"."), "*")}':
+                      "₦${currrency.format(double.parse(MySharedPreference.getWalletBalance()))}" ,
+                          style: CustomTextStyle.kTxtBold.copyWith(fontSize: 30.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans")),
                     ),
                     GestureDetector(
                         onTap: (){
@@ -112,7 +139,7 @@ class _WalletViewState extends State<WalletView> {
         ),
         height16,
 
-        Expanded(child: TransactionHistory())
+        Expanded(child: TransactionHistory(transactionList:eventProvider?.transactionList))
       ],
     );
   }
@@ -145,7 +172,7 @@ class _WalletViewState extends State<WalletView> {
                               Expanded(
                                 child: Padding(
                                   padding: horizontalPadding,
-                                  child: TransactionHistory(),
+                                  child: TransactionHistory(transactionList:eventProvider?.transactionList),
                                 ),
                               ),
 
@@ -213,4 +240,6 @@ class _WalletViewState extends State<WalletView> {
       ],
     );
   }
+
+
 }

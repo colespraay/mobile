@@ -1,9 +1,12 @@
+import 'package:cherry_toast/cherry_toast.dart';
+import 'package:cherry_toast/resources/arrays.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 
 class FundWallet extends StatelessWidget {
   const FundWallet({Key? key}) : super(key: key);
@@ -25,7 +28,7 @@ class FundWallet extends StatelessWidget {
               Text("Account Number",
                 style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.w700, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
               height4,
-              Text("00418273618",
+              Text(MySharedPreference.getVAccNumber(),
                   style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp, color: CustomColors.sGreyScaleColor400)),
               height4,
               dividerWidget,
@@ -33,7 +36,7 @@ class FundWallet extends StatelessWidget {
               Text("Bank Name",
                   style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.w700, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
               height4,
-              Text("Wema Bank",
+              Text(MySharedPreference.getVAccName(),
                   style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 16.sp, color: CustomColors.sGreyScaleColor400)),
               height4,
               dividerWidget,
@@ -43,8 +46,8 @@ class FundWallet extends StatelessWidget {
               Center(
                 child: CustomButton(
                     onTap: () {
-                      Clipboard.setData(ClipboardData(text: "12340494")).then((_){
-                        cherryToastInfo(context, "Account number copied", "Sending to this account will fund  your Spraay account automatically");
+                      Clipboard.setData(ClipboardData(text:MySharedPreference.getVAccNumber())).then((_){
+                        cherryToastInfooo(context, "Account number copied", "Sending to this account will fund  your Spraay account automatically");
                       });
                     },
                     buttonText: 'Copy', borderRadius: 30.r,width: 380.w,
@@ -61,5 +64,22 @@ class FundWallet extends StatelessWidget {
             ],
           ),
         ));
+  }
+
+  void cherryToastInfooo(BuildContext context,String titlemsg, String dsc){
+    return CherryToast.info(
+      title: Text(titlemsg, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 14.sp, color: CustomColors.sWhiteColor, fontWeight: FontWeight.w700),),
+      description:Text(dsc, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, color: CustomColors.sWhiteColor, fontWeight: FontWeight.w400),),
+      borderRadius: 8.r,
+      shadowColor: Colors.transparent,
+      backgroundColor: CustomColors.sDarkColor3,
+      animationDuration: Duration(milliseconds: 1000),
+      autoDismiss: true,
+      displayTitle: true,
+      toastPosition: Position.top,
+      animationType: AnimationType.fromTop,
+      enableIconAnimation: false,
+      displayIcon: false,
+    ).show(context);
   }
 }

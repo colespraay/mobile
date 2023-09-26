@@ -72,7 +72,7 @@ class _SprayGiftingState extends State<SprayGifting> {
               CustomButton(
                   onTap: () {
                     if(firstBtn.isNotEmpty){
-                      Navigator.push(context, SlideLeftRoute(page: SendToBank()));
+                      Navigator.push(context, SlideLeftRoute(page: SendToBank(giftAmount: phoneController.text,)));
                     }
                   },
                   buttonText: 'Continue', borderRadius: 30.r,width: 380.w,

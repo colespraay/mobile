@@ -1,27 +1,27 @@
 // To parse this JSON data, do
 //
-//     final logoinResponse = logoinResponseFromJson(jsonString);
+//     final recipientModel = recipientModelFromJson(jsonString);
 
 import 'dart:convert';
 
-LogoinResponse logoinResponseFromJson(String str) => LogoinResponse.fromJson(json.decode(str));
+RecipientModel recipientModelFromJson(String str) => RecipientModel.fromJson(json.decode(str));
 
-String logoinResponseToJson(LogoinResponse data) => json.encode(data.toJson());
+String recipientModelToJson(RecipientModel data) => json.encode(data.toJson());
 
-class LogoinResponse {
+class RecipientModel {
   bool? success;
   int? code;
   String? message;
   Data? data;
 
-  LogoinResponse({
+  RecipientModel({
     this.success,
     this.code,
     this.message,
     this.data,
   });
 
-  factory LogoinResponse.fromJson(Map<String, dynamic> json) => LogoinResponse(
+  factory RecipientModel.fromJson(Map<String, dynamic> json) => RecipientModel(
     success: json["success"],
     code: json["code"],
     message: json["message"],
@@ -37,65 +37,67 @@ class LogoinResponse {
 }
 
 class Data {
-  String? userId;
-  String? role;
-  User? user;
-  String? token;
+  List<B>? b;
+  List<B>? d;
+  List<B>? g;
+  List<B>? n;
 
   Data({
-    this.userId,
-    this.role,
-    this.user,
-    this.token,
+    this.b,
+    this.d,
+    this.g,
+    this.n,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    userId: json["userId"],
-    role: json["role"],
-    user: json["user"] == null ? null : User.fromJson(json["user"]),
-    token: json["token"],
+    b: json["B"] == null ? [] : List<B>.from(json["B"]!.map((x) => B.fromJson(x))),
+    d: json["D"] == null ? [] : List<B>.from(json["D"]!.map((x) => B.fromJson(x))),
+    g: json["G"] == null ? [] : List<B>.from(json["G"]!.map((x) => B.fromJson(x))),
+    n: json["N"] == null ? [] : List<B>.from(json["N"]!.map((x) => B.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "userId": userId,
-    "role": role,
-    "user": user?.toJson(),
-    "token": token,
+    "B": b == null ? [] : List<dynamic>.from(b!.map((x) => x.toJson())),
+    "D": d == null ? [] : List<dynamic>.from(d!.map((x) => x.toJson())),
+    "G": g == null ? [] : List<dynamic>.from(g!.map((x) => x.toJson())),
+    "N": n == null ? [] : List<dynamic>.from(n!.map((x) => x.toJson())),
   };
 }
 
-class User {
+class B {
   String? id;
   bool? status;
   DateTime? dateCreated;
   DateTime? dateUpdated;
   String? email;
-  dynamic phoneNumber;
-  dynamic firstName;
-  dynamic lastName;
+  String? phoneNumber;
+  String? firstName;
+  String? lastName;
+  int? walletBalance;
   String? uniqueVerificationCode;
   bool? isNewUser;
   String? role;
-  dynamic deviceId;
+  String? deviceId;
   String? authProvider;
   String? profileImageUrl;
   dynamic bvn;
+  dynamic bankCustomerId;
   dynamic virtualAccountName;
   dynamic virtualAccountNumber;
   dynamic bankName;
-  dynamic gender;
-  dynamic dob;
-  dynamic userTag;
-  dynamic walletBalance;
-  dynamic transactionPin;
+  String? gender;
+  DateTime? dob;
+  String? userTag;
+  String? transactionPin;
   dynamic externalUserId;
   bool? allowPushNotifications;
   bool? allowSmsNotifications;
   bool? allowEmailNotifications;
   bool? displayWalletBalance;
   bool? enableFaceId;
+  String? firstLetter;
 
-  User({
+  B({
     this.id,
     this.status,
     this.dateCreated,
@@ -104,6 +106,7 @@ class User {
     this.phoneNumber,
     this.firstName,
     this.lastName,
+    this.walletBalance,
     this.uniqueVerificationCode,
     this.isNewUser,
     this.role,
@@ -111,13 +114,13 @@ class User {
     this.authProvider,
     this.profileImageUrl,
     this.bvn,
+    this.bankCustomerId,
     this.virtualAccountName,
     this.virtualAccountNumber,
     this.bankName,
     this.gender,
     this.dob,
     this.userTag,
-    this.walletBalance,
     this.transactionPin,
     this.externalUserId,
     this.allowPushNotifications,
@@ -125,9 +128,10 @@ class User {
     this.allowEmailNotifications,
     this.displayWalletBalance,
     this.enableFaceId,
+    this.firstLetter,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
+  factory B.fromJson(Map<String, dynamic> json) => B(
     id: json["id"],
     status: json["status"],
     dateCreated: json["dateCreated"] == null ? null : DateTime.parse(json["dateCreated"]),
@@ -136,20 +140,21 @@ class User {
     phoneNumber: json["phoneNumber"],
     firstName: json["firstName"],
     lastName: json["lastName"],
+    walletBalance: json["walletBalance"],
     uniqueVerificationCode: json["uniqueVerificationCode"],
     isNewUser: json["isNewUser"],
-    role: json["role"],
+    role:json["role"],
     deviceId: json["deviceId"],
     authProvider: json["authProvider"],
     profileImageUrl: json["profileImageUrl"],
     bvn: json["bvn"],
+    bankCustomerId: json["bankCustomerId"],
     virtualAccountName: json["virtualAccountName"],
     virtualAccountNumber: json["virtualAccountNumber"],
     bankName: json["bankName"],
     gender: json["gender"],
-    dob: json["dob"],
+    dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
     userTag: json["userTag"],
-    walletBalance: json["walletBalance"],
     transactionPin: json["transactionPin"],
     externalUserId: json["externalUserId"],
     allowPushNotifications: json["allowPushNotifications"],
@@ -157,6 +162,7 @@ class User {
     allowEmailNotifications: json["allowEmailNotifications"],
     displayWalletBalance: json["displayWalletBalance"],
     enableFaceId: json["enableFaceId"],
+    firstLetter: json["firstLetter"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -168,6 +174,7 @@ class User {
     "phoneNumber": phoneNumber,
     "firstName": firstName,
     "lastName": lastName,
+    "walletBalance": walletBalance,
     "uniqueVerificationCode": uniqueVerificationCode,
     "isNewUser": isNewUser,
     "role": role,
@@ -175,13 +182,13 @@ class User {
     "authProvider": authProvider,
     "profileImageUrl": profileImageUrl,
     "bvn": bvn,
+    "bankCustomerId": bankCustomerId,
     "virtualAccountName": virtualAccountName,
     "virtualAccountNumber": virtualAccountNumber,
     "bankName": bankName,
     "gender": gender,
-    "dob": dob,
+    "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
     "userTag": userTag,
-    "walletBalance":walletBalance,
     "transactionPin": transactionPin,
     "externalUserId": externalUserId,
     "allowPushNotifications": allowPushNotifications,
@@ -189,5 +196,7 @@ class User {
     "allowEmailNotifications": allowEmailNotifications,
     "displayWalletBalance": displayWalletBalance,
     "enableFaceId": enableFaceId,
+    "firstLetter": firstLetter,
   };
 }
+

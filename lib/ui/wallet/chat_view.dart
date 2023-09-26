@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/home/transaction_detail.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/ui/wallet/bar_graph/bar_graph.dart';
+import 'package:spraay/view_model/event_provider.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({Key? key}) : super(key: key);
@@ -18,6 +20,12 @@ class ChatView extends StatefulWidget {
 
 class _ChatViewState extends State<ChatView> {
 
+  EventProvider? eventProvider;
+  @override
+  void didChangeDependencies() {
+    eventProvider=context.watch<EventProvider>();
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,14 +134,26 @@ class _ChatViewState extends State<ChatView> {
   }
 
   Widget buildTransactionList(){
+    if(eventProvider!.transactionList!.isEmpty)
+    {
+      return Center(child:Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("No Transactions has been made.", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),),
+          height4,
+          Text("Make one!", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sPrimaryColor500),),
+        ],
+      ),);
+    }else{
     return ListView.builder(
         shrinkWrap: true,
-        itemCount: 20,
+        itemCount: eventProvider!.transactionList!.length,
         physics: NeverScrollableScrollPhysics(),
         itemBuilder:(context, int position){
           return InkWell(
             onTap: (){
-              Navigator.push(context, FadeRoute(page: TransactionDetail()));
+              Navigator.push(context, FadeRoute(page: TransactionDetail(eventProvider?.transactionList?[position])));
 
             },
             child: Column(
@@ -158,9 +178,9 @@ class _ChatViewState extends State<ChatView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Spray activity at Quilox", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400),),
+                            Text(eventProvider?.transactionList?[position].narration??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400),),
                             height4,
-                            Text("${DateFormat.MMMd().format(DateTime.now())}, ${DateFormat.jm().format(DateTime.now())}",
+                            Text("${DateFormat.MMMd().format(eventProvider!.transactionList![position].dateCreated!)}, ${DateFormat.jm().format(eventProvider!.transactionList![position].dateCreated!)}",
                               style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
                           ],
                         ),
@@ -170,9 +190,10 @@ class _ChatViewState extends State<ChatView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text("-N300,000", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700, color: CustomColors.sErrorColor)),
+                        Text("${eventProvider?.transactionList?[position].type=="Debit"?"-":"+"} ₦${eventProvider?.transactionList?[position].amount??0}", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700,
+                            color:eventProvider?.transactionList?[position].type=="Debit"? CustomColors.sErrorColor: CustomColors.sSuccessColor, fontFamily: "PlusJakartaSans")),
 
-                        Text("${DateFormat.jm().format(DateTime.now())}",
+                        Text("${DateFormat.jm().format(eventProvider!.transactionList![position].dateCreated!)}",
                           style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
 
                       ],
@@ -184,6 +205,7 @@ class _ChatViewState extends State<ChatView> {
             ),
           );
         });
+    }
   }
 
 

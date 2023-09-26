@@ -32,6 +32,17 @@ class MySharedPreference{
   static Future saveProfilePicture(String picture) async {_preferences?.setString('picture', picture);}
   static String getProfilePicture()  {return _preferences?.getString('picture')??"";}
 
+
+  static Future saveVAccName(String virtualAccountName) async {_preferences?.setString('virtualAccountName', virtualAccountName);}
+  static String getVAccName()  {return _preferences?.getString('virtualAccountName')??"";}
+
+  static Future saveVAccNumber(String virtualAccountNumber) async {_preferences?.setString('virtualAccountNumber', virtualAccountNumber);}
+  static String getVAccNumber()  {return _preferences?.getString('virtualAccountNumber')??"";}
+
+
+  static Future saveWalletBalance(String walletBalance) async {_preferences?.setString('walletBalance', walletBalance);}
+  static String getWalletBalance()  {return _preferences?.getString('walletBalance')??"";}
+
   //Switch for activating or enabling face/touch ID
   static Future<bool?> saveSwitchState(bool value) async {return _preferences?.setBool("switchStateTouchID", value);}
   static bool? getSwitchValuesForTouchID()  {return _preferences?.getBool("switchStateTouchID");}
