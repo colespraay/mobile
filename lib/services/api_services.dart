@@ -10,6 +10,7 @@ import 'package:spraay/models/category_list_model.dart';
 import 'package:spraay/models/current_user.dart';
 import 'package:spraay/models/events_models.dart';
 import 'package:spraay/models/join_event_model.dart';
+import 'package:spraay/models/list_of_banks_model.dart';
 import 'package:spraay/models/login_response.dart';
 import 'package:spraay/models/ongoing_event_model.dart';
 import 'package:spraay/models/recent_recipient_models.dart';
@@ -17,6 +18,7 @@ import 'package:spraay/models/recipient_model.dart';
 import 'package:spraay/models/registered_user_model.dart';
 import 'package:spraay/models/transaction_models.dart';
 import 'package:spraay/models/user_profile.dart';
+import 'package:spraay/models/user_saved_bank_model.dart';
 import 'package:spraay/services/api_response.dart';
 class ApiServices{
 
@@ -27,7 +29,7 @@ class ApiServices{
       var response=await http.post(Uri.parse("$url/auth/login/phone-number"), body:{"phoneNumber":phoneNumber, "password":password},
           headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
       // int statusCode = response.statusCode;
-      log("ResbodyMM==${response.body}");
+      // log("ResbodyMM==${response.body}");
       // print("Resbody statusCode==${response.statusCode}");
 
       var jsonResponse=convert.jsonDecode(response.body);
@@ -926,6 +928,71 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     return result;
   }
 
+  Future<Map<String, dynamic>> userSaveBankApi(String mytoken, String bankCode, String accountNumber)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/user-account"),
+          body: jsonEncode({"bankCode": bankCode, "accountNumber": accountNumber}),
+
+          headers:  {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("ressssp=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["accountName"] =jsonResponse["data"]["accountName"];
+        result["accountNumber"] =jsonResponse["data"]["accountNumber"];
+        result["bankCode"] =jsonResponse["data"]["bankCode"];
+        result["bankName"] =jsonResponse["data"]["bankName"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
+  Future<Map<String, dynamic>> withdrawalApi(String mytoken, String bankName, String accountNumber, String bankCode, String transactionPin, String amount)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/withdrawal"),
+          body: jsonEncode({"bankName": bankName, "bankCode": bankCode, "accountNumber": accountNumber, "transactionPin": transactionPin, "amount": amount}),
+
+          headers:  {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
 
   Future<Map<String, dynamic>> checkbalanceBeforeWithdrawingApi(String mytoken, String amount)async{
     Map<String, dynamic> result = {};
@@ -1002,6 +1069,52 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       }
     });
   }
+
+
+  Future<ApiResponse<ListOfBankModel>> listOfBankApi(String mytoken){
+    return http.get(Uri.parse("$url/wallet/list-of-banks"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=ListOfBankModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<ListOfBankModel>(data: note1);
+      }else{
+        return ApiResponse<ListOfBankModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e){
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<ListOfBankModel>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<ListOfBankModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+
+      }
+    });
+  }
+
+
+  Future<ApiResponse<UserSavedBankModels>> savedBanksInfoApi(String mytoken){
+    return http.get(Uri.parse("$url/user-account"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=UserSavedBankModels.fromJson(jsonDecode(response.body));
+        return ApiResponse<UserSavedBankModels>(data: note1);
+      }else{
+        return ApiResponse<UserSavedBankModels>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e){
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<UserSavedBankModels>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<UserSavedBankModels>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+
+      }
+    });
+  }
+
+
 
 
 

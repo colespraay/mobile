@@ -9,6 +9,7 @@ import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 import 'package:spraay/view_model/event_provider.dart';
 import 'package:spraay/view_model/home_provider.dart';
+import 'package:spraay/view_model/transaction_provider.dart';
 
 Future main()async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ Future main()async {
             ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
             ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
             ChangeNotifierProvider<EventProvider>(create: (_) => EventProvider()),
+            ChangeNotifierProvider<TransactionProvider>(create: (_) => TransactionProvider()),
           ],
           child:  MyApp()));
 }

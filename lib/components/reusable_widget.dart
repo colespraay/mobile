@@ -539,7 +539,7 @@ class ShimmerCustomeGrid extends StatelessWidget {
 
         child:ListView.builder(
             shrinkWrap: true,
-            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 25.h),
+            // padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 25.h),
             itemBuilder: (_,int position){
               return  Container(
                 width: double.infinity,
@@ -623,4 +623,56 @@ Widget buildCircularNetworkImage({required String imageUrl, required double radi
       errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
     ),
   );
+}
+
+class ShimmerList extends StatelessWidget {
+  const ShimmerList({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+        baseColor: CustomColors.sPrimaryColor500,
+        highlightColor: Colors.grey,
+
+        child:ListView.builder(
+            shrinkWrap: true,
+            // padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 25.h),
+            itemBuilder: (_,int position){
+              return  Container(
+                width: double.infinity,
+                height: 64.h,
+                margin: EdgeInsets.only(bottom: 1.h),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container( width: 50.w, height: 50.h,
+                        decoration: BoxDecoration(color: CustomColors.sWhiteColor,shape: BoxShape.circle,/* borderRadius: BorderRadius.all(Radius.circular(18.r))*/)),
+                    SizedBox(width: 8.w,),
+
+                    Expanded(
+                      child: Padding(
+                        padding:  EdgeInsets.only(right: 16.w, top: 6.h, bottom: 1.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width:double.infinity, height: 10.h,
+                              padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
+                            height10,
+                            Container(
+                              width:120.w, height: 8.h,
+                              padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
+
+                          ],
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+              );
+            })
+    );
+  }
 }

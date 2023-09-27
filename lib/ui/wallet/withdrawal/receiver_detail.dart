@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/models/list_of_banks_model.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
+import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/wallet/withdrawal/withdrawal_pin.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 
 class ReceiverDetailScreen extends StatefulWidget {
-  const ReceiverDetailScreen({Key? key}) : super(key: key);
+  DatumBankModel? bankDetail;
+  String amount;
+   ReceiverDetailScreen(this.bankDetail, this.amount) ;
 
   @override
   State<ReceiverDetailScreen> createState() => _ReceiverDetailScreenState();
@@ -28,8 +34,35 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
     });
   }
 
-  String firstBtn="";
+  String accountNumber="";
   String secondBtn="";
+
+
+
+
+  bool _isLoading=false;
+  String accountName="";
+
+  fetchTransactionPinApi(BuildContext context ,String accountNo,) async{
+    setState(() {_isLoading=true;});
+    var result=await ApiServices().userSaveBankApi(MySharedPreference.getToken(), widget.bankDetail?.bankCode??"", accountNo);
+    if(result['error'] == true){
+      setState(() {
+        accountName=result["message"];
+      });
+
+    }else{
+
+      setState(() {
+        accountName=result["accountName"];
+        accountNumber=result["accountNumber"];
+      });
+    }
+
+    setState(() {_isLoading=false;});
+
+  }
+
   @override
   void dispose() {
     _textField1Focus?.dispose();
@@ -55,10 +88,24 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
                   FilteringTextInputFormatter.digitsOnly
                 ],
                 onChanged:(value){
-                  setState(() {firstBtn=value;});
+                if(value.length==10){
+                  fetchTransactionPinApi(context, value);
+                }
+
                 },
               ),
-              Text("Uche Usman", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: Color(0xffFAFAFA))),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _isLoading? Padding(
+                    padding:  EdgeInsets.only(right: 12.w),
+                    child: SpinKitFadingCircle(size: 25.r,color: Colors.grey,),
+                  ):SizedBox.shrink(),
+
+                  Text(accountName, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: Color(0xffFAFAFA))),
+                ],
+              ),
 
 
               Spacer(),
@@ -67,15 +114,17 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
 
               CustomButton(
                   onTap: () {
-                    if( firstBtn.isNotEmpty){
-                      Navigator.push(context, SlideLeftRoute(page: WithdrawalOtp(fromWhere: 'new_bank_screen',)));
+                    if( accountNumber.isNotEmpty){
+                      Navigator.push(context, SlideLeftRoute(page: WithdrawalOtp(fromWhere: 'new_bank_screen',
+                        bankCode: widget.bankDetail?.bankCode??"", bankName: widget.bankDetail?.bankName??"", amount:widget.amount, accountNumber: accountNumber,
+                        accountName: accountName,)));
                       // MySharedPreference.setVisitingFlag();
                       // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
 
                     }
                   },
                   buttonText: 'Next', borderRadius: 30.r,width: 380.w,
-                  buttonColor: firstBtn.isNotEmpty ? CustomColors.sPrimaryColor500:
+                  buttonColor: accountNumber.isNotEmpty ? CustomColors.sPrimaryColor500:
                   CustomColors.sDisableButtonColor),
               height12,
               CustomButton(
@@ -100,9 +149,17 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SvgPicture.asset("images/bnk.svg", width: 40.w, height: 40.h,),
+        Container(
+            width: 40.w,
+            height: 40.h,
+            decoration: BoxDecoration(
+                color: CustomColors.sTransparentPurplecolor,
+                shape: BoxShape.circle
+            ),
+            child: Center(child: Text(getInitials(widget.bankDetail?.bankName??""), style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400)))),
         SizedBox(width: 16.w,),
-        Expanded(child: Text("Access Bank", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400))),
+        Expanded(child: Text(widget.bankDetail?.bankName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400))),
+
         GestureDetector(
           onTap:(){
             Navigator.pop(context);

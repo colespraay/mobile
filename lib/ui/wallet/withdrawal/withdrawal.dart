@@ -79,7 +79,7 @@ class _WithdrawalState extends State<Withdrawal> {
               CustomButton(
                   onTap: () {
                     if(firstBtn.isNotEmpty){
-                      Navigator.push(context, FadeRoute(page: ToBankAccount()));
+                      Navigator.push(context, FadeRoute(page: ToBankAccount(amount: phoneController.text,)));
                     }
                   },
                   buttonText: 'Continue', borderRadius: 30.r,width: 380.w,

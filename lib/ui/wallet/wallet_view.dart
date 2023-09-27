@@ -216,7 +216,9 @@ class _WalletViewState extends State<WalletView> {
         Expanded(
           child: GestureDetector(
             onTap:(){
-              Navigator.push(context, SlideUpRoute(page: Withdrawal()));
+              Navigator.push(context, SlideUpRoute(page: Withdrawal())).then((value){
+                Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
+              });
             },
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 12.h),

@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         height16,
 
-        Expanded(child: eventProvider?.transactionList==null? CircularProgressIndicator(): TransactionHistory(transactionList:eventProvider?.transactionList,))
+        Expanded(child: eventProvider?.transactionList==null? ShimmerList(): TransactionHistory(transactionList:eventProvider?.transactionList,))
       ],
     );
   }
