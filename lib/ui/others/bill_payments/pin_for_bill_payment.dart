@@ -76,7 +76,7 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
                             Navigator.pop(context);
                             Navigator.pop(context);
                             Navigator.pop(context);
-                            Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: widget.image, type:widget.title, date: '17 April, 2:30 PM', amount: '₦500.00', meterNumber: '+2346123456', transactionRef: 'SPA-71eas908', transStatus: 'Successful',)));
+                            Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: widget.image, type:widget.title, date: '17 April, 2:30 PM', amount: '₦500.00', meterNumber: '+2346123456', transactionRef: 'SPA-71eas908', transStatus: 'Successful', transactionId: '',)));
                           });
                     }
                   },

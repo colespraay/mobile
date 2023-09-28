@@ -7,7 +7,9 @@ import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/others/spray/spray_detail.dart';
 
 class RateExperience extends StatefulWidget {
-  const RateExperience({Key? key}) : super(key: key);
+  String? response_amount, response_transactiondate, response_eventId,response_transactRef;
+
+   RateExperience({required this.response_amount, required this.response_eventId,required this.response_transactiondate,required this.response_transactRef, Key? key}) : super(key: key);
 
   @override
   State<RateExperience> createState() => _RateExperienceState();
@@ -125,8 +127,9 @@ class _RateExperienceState extends State<RateExperience> {
             right: 0.w,
             child: CustomButton(
                 onTap:(){
-                  Navigator.pushReplacement(context, FadeRoute(page: SprayDetail()));
 
+                  Navigator.pushReplacement(context, FadeRoute(page: SprayDetail(response_amount:widget.response_amount, response_eventId:widget.response_eventId,
+                  response_transactiondate: widget.response_transactiondate, response_transactRef:widget.response_transactRef,)));
                 },
                 buttonText: "Submit", borderRadius: 30.r,
                 buttonColor:  CustomColors.sPrimaryColor500),

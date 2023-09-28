@@ -53,8 +53,8 @@ class TransactionHistory extends StatelessWidget {
                           Container(
                             width: 40.w,
                             height: 40.h,
-                            decoration: BoxDecoration(color: Colors.grey, shape: BoxShape.circle,
-                              // image: DecorationImage(image: AssetImage("images/aa.png"), fit: BoxFit.fill,)
+                            decoration: BoxDecoration(color: CustomColors.sDarkColor3, shape: BoxShape.circle,
+                              image: DecorationImage(image: AssetImage("images/cash_png.png"), fit: BoxFit.fill,)
                             ),
                           ),
 

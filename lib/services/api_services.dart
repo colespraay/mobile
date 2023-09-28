@@ -2,10 +2,12 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:document_file_save_plus/document_file_save_plus.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:http_parser/http_parser.dart';
 import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/category_list_model.dart';
 import 'package:spraay/models/current_user.dart';
 import 'package:spraay/models/events_models.dart';
@@ -882,6 +884,10 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];
+        result["amount"] =jsonResponse["data"]["amount"];
+        result["dateCreated"] =jsonResponse["data"]["dateCreated"];
+        result["eventCode"] =jsonResponse["eventCode"];
+        result["transactionReference"] =jsonResponse["transactionReference"];
         result['error'] = false;
       }
       else{
@@ -970,11 +976,25 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
           headers:  {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
       int statusCode = response.statusCode;
+
+
+
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
-        result["message"]= jsonResponse["message"];
+        log("messagewithdrawalApi==${jsonResponse}");
 
-        result['error'] = false;
+
+
+        result["message"]= jsonResponse["message"];
+    result["transactionId"]= jsonResponse["data"]["transactionId"];
+    result["amount"]= jsonResponse["data"]["amount"];
+    result["type"]= jsonResponse["data"]["transaction"]["type"];
+    result["dateCreated"]= jsonResponse["data"]["transaction"]["dateCreated"];
+    result["reference"]= jsonResponse["data"]["transaction"]["reference"];
+
+
+
+    result['error'] = false;
       }
       else{
         var jsonResponse=convert.jsonDecode(response.body);
@@ -1115,6 +1135,38 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
 
+  Future<Map<String, dynamic>> downloadSingleTransaction(String mytoken, String transactionListID)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("https://spraay-api-577f3dc0a0fe.herokuapp.com/transaction/download-receipt/$transactionListID"),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+
+      print("statusCodestatusCode11=${statusCode}");
+      log("ressssp=${response.body}");
+      // final bytes = response.bodyBytes;
+      // await DocumentFileSavePlus().saveFile(bytes, "spray.pdf", "appliation/pdf").then((valueee){
+      //
+      //   toastMessage("Filed downloaded");
+      // });
+
+
+      if (statusCode == 200 || statusCode==201) {
+        result["bytes"] =response.bodyBytes;
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    catch(e){
+      print("objecteeeroo${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
 
 
 

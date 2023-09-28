@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/file_storage.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/user_saved_bank_model.dart';
@@ -19,14 +20,16 @@ class TransactionProvider extends ChangeNotifier {
   ApiServices service=ApiServices();
   String mytoken=MySharedPreference.getToken();
 
-  bool get loading => isLoading;
-  setloading(bool loading) async{
-    isLoading = loading;
+  // bool get loading => isLoading;
+  bool  loading =false;
+
+  setloading(bool load) async{
+    loading = load;
     notifyListeners();
   }
 
-  setloadingNoNotif(bool loading) async{
-    isLoading = loading;
+  setloadingNoNotif(bool load) async{
+    loading = load;
   }
 
 
@@ -43,6 +46,7 @@ class TransactionProvider extends ChangeNotifier {
           onTap: () {Navigator.pop(context);}, png_img: 'Incorrect_sign');
     }else{
 
+
       // ignore: use_build_context_synchronously
       popupSuccessfulDialog(context: context, title: "Transaction successful",
           content: "You have successfully withdrawn N$amount to $accountName $accountNumber",
@@ -50,7 +54,9 @@ class TransactionProvider extends ChangeNotifier {
             Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
             Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
-          }, png_img: "verified", fromWhere: fromWhere);
+          }, png_img: "verified", fromWhere: fromWhere,transactionId: result["transactionId"].toString(),amount: result["amount"].toString(),type: result["type"],
+          dateCreated: result["dateCreated"].toString(),
+          reference: result["reference"]);
 
 
     }
@@ -74,10 +80,28 @@ class TransactionProvider extends ChangeNotifier {
   }
 
 
+  downloadPdf(BuildContext context ,String transactionListID) async{
+    setloading(true);
+    var result=await ApiServices().downloadSingleTransaction(MySharedPreference.getToken(), transactionListID);
+    if(result['error'] == true){
+      errorCherryToast(context, result['message']);
+    }else{
+      toastMessage("Receipt Downloaded");
+      FileStorage.saveDownloadedFile(result["bytes"], "spray.pdf");
+      sharePdfFile(context, result["bytes"]);
+    }
+    setloading(false);
+  }
+
+
   popupSuccessfulDialog({ required BuildContext context, required String title, required String content, required String buttonTxt,
-    required void Function() onTap, required String png_img, required String fromWhere}){
+    required void Function() onTap, required String png_img, required String fromWhere,
+
+    String? transactionId, String? amount, String? type,String? dateCreated, String? reference
+  }){
     double height=MediaQuery.of(context).size.height;
     double width=MediaQuery.of(context).size.width;
+
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -119,6 +143,8 @@ class TransactionProvider extends ChangeNotifier {
                           height22,
                           CustomButton(
                               onTap:(){
+                                // String? transactionId, String? amount, String? type,String? dateCreated, String? reference
+
                                 if(fromWhere=="new_bank_screen"){
                                   //call this if you route in through new_bank_screen
                                   Navigator.pop(context);
@@ -126,16 +152,16 @@ class TransactionProvider extends ChangeNotifier {
                                   Navigator.pop(context);
                                   Navigator.pop(context);
                                   Navigator.pop(context);
-                                  Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: 'spray_anim', type: 'Electricity Bill', date: '17 April, 2:30 PM', amount: '1000', meterNumber: '123456789',
-                                    transactionRef: 'SPA-71eas908', transStatus: 'Successful',)));
+                                  Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: 'spray_anim', type: type??"", date: dateCreated??"", amount: amount??"", meterNumber: '',
+                                    transactionRef: reference??"", transStatus: 'Successful', transactionId: transactionId??"",)));
 
                                 }else{
                                   //call this if you route in through to_bank_screen
                                   Navigator.pop(context);
                                   Navigator.pop(context);
                                   Navigator.pop(context);
-                                  Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: 'spray_anim', type: 'Electricity Bill', date: '17 April, 2:30 PM', amount: '1000', meterNumber: '123456789',
-                                    transactionRef: 'SPA-71eas908', transStatus: 'Successful',)));
+                                  Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: 'spray_anim', type: type??"", date: dateCreated??"", amount: amount??"", meterNumber: '',
+                                    transactionRef: reference??"", transStatus: 'Successful', transactionId: transactionId??"",)));
 
                                 }
                               },

@@ -7,7 +7,9 @@ import 'package:spraay/components/themes.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
 class SprayDetail extends StatefulWidget {
-  const SprayDetail({Key? key}) : super(key: key);
+  String? response_amount, response_transactiondate, response_eventId,response_transactRef;
+  SprayDetail({required this.response_amount, required this.response_eventId,required this.response_transactiondate,required this.response_transactRef, Key? key}) : super(key: key);
+
 
   @override
   State<SprayDetail> createState() => _SprayDetailState();
@@ -53,13 +55,13 @@ class _SprayDetailState extends State<SprayDetail> {
           height16,
           dividerWidget,
           height26,
-          buildRow(title: "Spray Amount:", content: "N50,000.00"),
+          buildRow(title: "Spray Amount:", content: "N${widget.response_amount}"),
           height8,
-          buildRow(title: "Transaction Date:", content: "15 June, 1:23 PM"),
+          buildRow(title: "Transaction Date:", content: dateTimeFormat(widget.response_transactiondate??"")),
           height8,
-          buildRow(title: "Event ID:", content: "xyzrdsa"),
+          buildRow(title: "Event ID:", content: widget.response_eventId??""),
           height8,
-          buildRow(title: "Transaction Reference:", content: "SPA2-P9165yz"),
+          buildRow(title: "Transaction Reference:", content: widget.response_transactRef??""),
           height16,
           dividerWidget,
 

@@ -45,6 +45,7 @@ class DataResponse {
   String? phoneNumber;
   dynamic firstName;
   dynamic lastName;
+  dynamic walletBalance;
   dynamic uniqueVerificationCode;
   bool? isNewUser;
   String? role;
@@ -75,6 +76,7 @@ class DataResponse {
     this.phoneNumber,
     this.firstName,
     this.lastName,
+    this.walletBalance,
     this.uniqueVerificationCode,
     this.isNewUser,
     this.role,
@@ -106,6 +108,7 @@ class DataResponse {
     phoneNumber: json["phoneNumber"],
     firstName: json["firstName"],
     lastName: json["lastName"],
+    walletBalance: json["walletBalance"],
     uniqueVerificationCode: json["uniqueVerificationCode"],
     isNewUser: json["isNewUser"],
     role: json["role"],
@@ -137,6 +140,7 @@ class DataResponse {
     "phoneNumber": phoneNumber,
     "firstName": firstName,
     "lastName": lastName,
+    "walletBalance":walletBalance,
     "uniqueVerificationCode": uniqueVerificationCode,
     "isNewUser": isNewUser,
     "role": role,

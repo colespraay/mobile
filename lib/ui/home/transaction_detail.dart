@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,17 +6,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/file_storage.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
-import 'package:pdf/widgets.dart' as pdfWidgets;
-import 'package:pdf/pdf.dart';
 import 'package:spraay/models/transaction_models.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/navigations/SlideUpRoute.dart';
+import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/profile/help_and_support.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/transaction_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class TransactionDetail extends StatefulWidget {
   DatumTransactionModel? transactionList;
@@ -29,64 +35,82 @@ class _TransactionDetailState extends State<TransactionDetail> {
 
   ScreenshotController screenshotController = ScreenshotController();
 
+  TransactionProvider? _transactionProvider;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _transactionProvider=context.watch<TransactionProvider>();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: buildAppBar(context: context, title: "Spray details"),
-        body:  ListView(
-          padding: horizontalPadding,
-          children: [
-            height18,
-            SvgPicture.asset("images/spray_anim.svg", width: 80.w, height: 80.h,),
-            height22,
-            buildContainer(),
+    return LoadingOverlayWidget(
+      loading: _transactionProvider?.loading??false,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title: "Spray details"),
+          body:  ListView(
+            padding: horizontalPadding,
+            children: [
+              height18,
+              SvgPicture.asset("images/spray_anim.svg", width: 80.w, height: 80.h,),
+              height22,
+              buildContainer(),
 
-            height40,
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-              InkWell(
-                onTap:(){
-                  _captureScreenshotAndSaveAsPdf();
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SvgPicture.asset("images/download.svg"),
-                    height4,
-                    Text("Download Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
-                  ],
-                ),
-              ),
-
-                SizedBox(width: 50.w,),
+              height40,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
                 InkWell(
                   onTap:(){
-                    _takeScreenhot();
+                    //this link download pdf
+
+                    _transactionProvider?.downloadPdf(context, widget.transactionList?.id??"");
+                    // ApiServices().downloadSingleTransaction(MySharedPreference.getToken(), widget.transactionList?.id??"");
+                    // dowad.DocumentFileSave.saveFile(pdfBytes, "my_sample_file.pdf", "appliation/pdf");
+                    // "https://spraay-api-577f3dc0a0fe.herokuapp.com/transaction/download-receipt/${widget.transactionList?.id}";
+
+                    // _captureScreenshotAndSaveAsPdf();
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset("images/share_m.svg"),
+                      SvgPicture.asset("images/download.svg"),
                       height4,
-                      Text("Share Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
+                      Text("Download Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
                     ],
                   ),
                 ),
 
+                  SizedBox(width: 50.w,),
+                  InkWell(
+                    onTap:(){
+                      _takeScreenhot();
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset("images/share_m.svg"),
+                        height4,
+                        Text("Share Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
+                      ],
+                    ),
+                  ),
 
-              ],
-            ),
-            height40,
-            buildButton(),
-            height22
+
+                ],
+              ),
+              height40,
+              buildButton(),
+              height22
 
 
-          ],
-        ));
+            ],
+          )),
+    );
   }
 
   Widget buildContainer(){
@@ -105,13 +129,13 @@ class _TransactionDetailState extends State<TransactionDetail> {
             height16,
             dividerWidget,
             height26,
-            buildRow(title: "Spray Amount:", content: "N50,000.00"),
+            buildRow(title: "Spray Amount:", content: "N${widget.transactionList?.amount}"),
             height8,
-            buildRow(title: "Transaction Date:", content: "15 June, 1:23 PM"),
+            buildRow(title: "Transaction Date:", content: dateTimeFormat(widget.transactionList!.dateCreated.toString())),
             height8,
-            buildRow(title: "Event ID:", content: "xyzrdsa"),
+            buildRow(title: "Event ID:", content: ""),
             height8,
-            buildRow(title: "Transaction Reference:", content: "SPA2-P9165yz"),
+            buildRow(title: "Transaction Reference:", content: widget.transactionList?.reference??""),
             height16,
             dividerWidget,
 
@@ -181,57 +205,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
     });
   }
 
-  String _pdfPath = "";
 
-  Future<void> _captureScreenshotAndSaveAsPdf() async {
-
-    await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List ?image) async {
-      if (image != null) {
-        final directory = await getApplicationDocumentsDirectory();
-        final imagePath = await File('${directory.path}/Downloads/spray.pdf').create();
-        await imagePath.writeAsBytes(image);
-
-
-        final pdf = pdfWidgets.Document();
-        pdf.addPage(
-          pdfWidgets.Page(
-            build: (pdfWidgets.Context context) {
-              return pdfWidgets.Image(pdfWidgets.MemoryImage( imagePath.readAsBytesSync()));
-            },
-          ),
-        );
-
-        // await imagePath.create(recursive: true);
-        await imagePath.writeAsBytes( await pdf.save());
-        setState(() {
-          _pdfPath = imagePath.path;
-        });
-
-        print("_pdfPath_pdfPath$_pdfPath");
-
-        // await Share.shareFiles([imagePath.path], sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,);
-      }
-    });
-
-
-    // Uint8List? screenshotBytes = await screenshotController.capture();
-
-    // Directory? directory = await getExternalStorageDirectory();
-    // File pdfFile = File('${directory?.path}/screenshot.pdf');
-
-    // final pdf = pdfWidgets.Document();
-    // pdf.addPage(
-    //   pdfWidgets.Page(
-    //     build: (pdfWidgets.Context context) {
-    //       return pdfWidgets.Image(pdfWidgets.MemoryImage(screenshotBytes!));
-    //     },
-    //   ),
-    // );
-    //
-    // await pdfFile.writeAsBytes( await pdf.save());
-
-    // setState(() {_pdfPath = pdfFile.path;});
-  }
 }
 
 

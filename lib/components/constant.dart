@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/services/api_services.dart';
 
@@ -128,6 +130,17 @@ String monthString(String date){
  return formatter.format(dateTime);
 }
 
+void sharePdfFile(BuildContext context ,Uint8List data)async{
+ final box = context.findRenderObject() as RenderBox?;
+ if (data != null) {
+  final directory = await getApplicationDocumentsDirectory();
+  final imagePath = await File('${directory.path}/spray.pdf').create();
+  await imagePath.writeAsBytes(data);
+  await Share.shareFiles([imagePath.path],
+   sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+  );
+ }
+}
 
 
 

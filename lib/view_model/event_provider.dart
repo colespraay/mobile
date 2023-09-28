@@ -180,7 +180,7 @@ class EventProvider extends ChangeNotifier{
             Navigator.pop(context);
             Navigator.pop(context);
 
-            Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: "spray_circle", type:"Spray Gift", date: dateTimeFormat(result['dateCreated'].toString()), amount: '₦$amount', meterNumber: '', transactionRef: '', transStatus: 'Successful',)));
+            Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: "spray_circle", type:"Spray Gift", date: dateTimeFormat(result['dateCreated'].toString()), amount: '₦$amount', meterNumber: '', transactionRef: '', transStatus: 'Successful', transactionId: '',)));
           });
 
 

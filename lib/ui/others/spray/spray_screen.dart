@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/rate_experience.dart';
 import 'package:spraay/components/reusable_widget.dart';
@@ -18,6 +19,7 @@ import 'package:spraay/ui/others/spray/spray_detail.dart';
 import 'package:spraay/ui/others/spray/topup_spray.dart';
 import 'package:spraay/models/join_event_model.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/auth_provider.dart';
 
 
 class SprayScreen extends StatefulWidget {
@@ -62,11 +64,23 @@ class _SprayScreenState extends State<SprayScreen>{
 
     }else{
 
+      Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+
+      setState(() {
+        _isDismissHandAfterSpraying=true;
+        response_amount=result["amount"].toString();
+        response_transactiondate=  result["dateCreated"].toString();
+        response_eventId= result["eventCode"].toString();
+        response_transactRef= result["transactionReference"].toString();
+      });
+
       if(status=="stopScanning"){
-        Navigator.pushReplacement(context, FadeRoute(page: SprayDetail()));
+        Navigator.pushReplacement(context, FadeRoute(page: SprayDetail(response_amount:response_amount, response_eventId:response_eventId,
+          response_transactiondate: response_transactiondate, response_transactRef:response_transactRef,)));
       }
 
       if(status=="sprayReached"){
+
         print("api called=${amount}");
       }
 
@@ -90,7 +104,7 @@ class _SprayScreenState extends State<SprayScreen>{
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 buildContainer(),
-                (amount>0 && _isSprayEndReached==false)?  Center(
+                (amount>0 && _isDismissHandAfterSpraying==false)?  Center(
                   child: Padding(
                     padding:  EdgeInsets.only(top: 30.h),
                     child: CustomButton(
@@ -113,7 +127,7 @@ class _SprayScreenState extends State<SprayScreen>{
                   ),
                 ).animate().fadeIn(duration: 1000.milliseconds, curve: Curves.easeIn): SizedBox.shrink(),
 
-                _isSprayEndReached==false? Spacer(): Expanded(child: _buildLimitReached().animate() // baseline=800ms
+                _isDismissHandAfterSpraying==false? Spacer(): Expanded(child: _buildLimitReached().animate() // baseline=800ms
                     .slide(
                     duration: 800.milliseconds,curve: Curves.fastOutSlowIn,
                     begin: Offset(0.0, 1.0),
@@ -121,7 +135,7 @@ class _SprayScreenState extends State<SprayScreen>{
                 )),
 
 
-                _isSprayEndReached==false?buildSprayWidget(): Center(
+                _isDismissHandAfterSpraying==false?buildSprayWidget(): Center(
                   child: Image.asset("images/hand.png", height: 200.h, ).animate().slide(
                       begin: Offset.zero,
                       end: Offset(0.0, 1.0),
@@ -137,18 +151,21 @@ class _SprayScreenState extends State<SprayScreen>{
 
   bool _isSprayEndReached=false;
 
+  bool _isDismissHandAfterSpraying=false;
+
+
   void _swipe(int index, AppinioSwiperDirection direction) {
     setState(() {
       amount =amount+widget.unitAmount;
     });
-    log("the card was swiped to the: " + direction.name);
+    // log("the card was swiped to the: " + direction.name);
   }
 
   void _unswipe(bool unswiped) {
     if (unswiped) {
-      log("SUCCESS: card was unswiped");
+      // log("SUCCESS: card was unswiped");
     } else {
-      log("FAIL: no card left to unswipe");
+      // log("FAIL: no card left to unswipe");
     }
   }
 
@@ -157,7 +174,7 @@ class _SprayScreenState extends State<SprayScreen>{
     if(_isSprayEndReached==true){
       fetchSprayEventApi(context, amount.toString(), "sprayReached");
     }
-    log("end reached!");
+    // log("end reached!");
   }
 
 
@@ -260,6 +277,8 @@ class _SprayScreenState extends State<SprayScreen>{
       )),
     );
   }
+
+   String? response_amount, response_transactiondate, response_eventId,response_transactRef;
 
   Widget _buildLimitReached(){
     return Column(
@@ -364,7 +383,7 @@ class _SprayScreenState extends State<SprayScreen>{
         barrierDismissible: true,
         barrierColor: Colors.black54,
         builder: (BuildContext context){
-          return RateExperience();
+          return RateExperience(response_amount: response_amount, response_eventId: response_eventId, response_transactiondate: response_transactiondate, response_transactRef: response_transactRef,);
         });
   }
 

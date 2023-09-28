@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:spraay/components/constant.dart';
@@ -12,13 +13,13 @@ import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/ui/profile/help_and_support.dart';
-import 'package:pdf/widgets.dart' as pdfWidgets;
+import 'package:spraay/view_model/transaction_provider.dart';
 
 
 class PaymentReceipt extends StatefulWidget {
-  String svg_img, amount, type, date, meterNumber, transactionRef, transStatus;
+  String svg_img, amount, type, date, meterNumber, transactionRef, transStatus,transactionId;
    PaymentReceipt({required this.svg_img, required this.type, required this.date, required this.amount, required this.meterNumber, required this.transactionRef
-  , required this.transStatus});
+  , required this.transStatus, required this.transactionId});
 
   @override
   State<PaymentReceipt> createState() => _PaymentReceiptState();
@@ -27,65 +28,75 @@ class PaymentReceipt extends StatefulWidget {
 class _PaymentReceiptState extends State<PaymentReceipt> {
 
   ScreenshotController screenshotController = ScreenshotController();
+  TransactionProvider? _transactionProvider;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _transactionProvider=context.watch<TransactionProvider>();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: buildAppBar(context: context, title: "Receipt"),
-        body:  ListView(
-          padding: horizontalPadding,
-          children: [
-            height18,
-            SvgPicture.asset("images/${widget.svg_img}.svg", width: 80.w, height: 80.h,),
-            // height16,
-            buildContainer(),
+    return LoadingOverlayWidget(
+      loading: _transactionProvider!.loading,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title: "Receipt"),
+          body:  ListView(
+            padding: horizontalPadding,
+            children: [
+              height18,
+              SvgPicture.asset("images/${widget.svg_img}.svg", width: 80.w, height: 80.h,),
+              // height16,
+              buildContainer(),
 
-            height40,
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap:(){
-                    _captureScreenshotAndSaveAsPdf();
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset("images/download.svg"),
-                      height4,
-                      Text("Download Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
-                    ],
+              height40,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap:(){
+                      Provider.of<TransactionProvider>(context, listen: false).downloadPdf(context, widget.transactionId);
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset("images/download.svg"),
+                        height4,
+                        Text("Download Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
+                      ],
+                    ),
                   ),
-                ),
 
-                SizedBox(width: 50.w,),
-                InkWell(
-                  onTap:(){
-                    _takeScreenhot();
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset("images/share_m.svg"),
-                      height4,
-                      Text("Share Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
-                    ],
+                  SizedBox(width: 50.w,),
+                  InkWell(
+                    onTap:(){
+                      _takeScreenhot();
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset("images/share_m.svg"),
+                        height4,
+                        Text("Share Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
+                      ],
+                    ),
                   ),
-                ),
 
 
-              ],
-            ),
-            height40,
-            buildButton(),
-            height22
+                ],
+              ),
+              height40,
+              buildButton(),
+              height22
 
 
-          ],
-        ));
+            ],
+          )),
+    );
   }
 
   Widget buildContainer(){
@@ -108,7 +119,7 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
             height12,
             buildRow(title: "Transaction Type:", content: widget.type),
             height12,
-            buildRow(title: "Transaction Date:", content: widget.date),
+            buildRow(title: "Transaction Date:", content:dateTimeFormat(widget.date)),
             height12,
             buildRow(title: "Meter No:", content: widget.meterNumber),
             height12,
@@ -204,57 +215,4 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
     });
   }
 
-  String _pdfPath = "";
-
-  Future<void> _captureScreenshotAndSaveAsPdf() async {
-
-
-
-    await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List ?image) async {
-      if (image != null) {
-        final directory = await getApplicationDocumentsDirectory();
-        final imagePath = await File('${directory.path}/Downloads/spray.pdf').create();
-        await imagePath.writeAsBytes(image);
-
-
-        final pdf = pdfWidgets.Document();
-        pdf.addPage(
-          pdfWidgets.Page(
-            build: (pdfWidgets.Context context) {
-              return pdfWidgets.Image(pdfWidgets.MemoryImage( imagePath.readAsBytesSync()));
-            },
-          ),
-        );
-
-        // await imagePath.create(recursive: true);
-        await imagePath.writeAsBytes( await pdf.save());
-        setState(() {
-          _pdfPath = imagePath.path;
-        });
-
-        print("_pdfPath_pdfPath$_pdfPath");
-
-        // await Share.shareFiles([imagePath.path], sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,);
-      }
-    });
-
-
-    // Uint8List? screenshotBytes = await screenshotController.capture();
-
-    // Directory? directory = await getExternalStorageDirectory();
-    // File pdfFile = File('${directory?.path}/screenshot.pdf');
-
-    // final pdf = pdfWidgets.Document();
-    // pdf.addPage(
-    //   pdfWidgets.Page(
-    //     build: (pdfWidgets.Context context) {
-    //       return pdfWidgets.Image(pdfWidgets.MemoryImage(screenshotBytes!));
-    //     },
-    //   ),
-    // );
-    //
-    // await pdfFile.writeAsBytes( await pdf.save());
-
-    // setState(() {_pdfPath = pdfFile.path;});
-  }
 }

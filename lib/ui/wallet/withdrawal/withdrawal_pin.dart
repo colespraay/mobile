@@ -74,7 +74,8 @@ class _WithdrawalOtpState extends State<WithdrawalOtp> {
                 CustomButton(
                     onTap: () {
                       if(requiredNumber.length==4){
-                        _transactionProvider?.fetchWithdrawalApi(context, widget.bankName,
+
+                        Provider.of<TransactionProvider>(context, listen: false).fetchWithdrawalApi(context, widget.bankName,
                             widget. accountNumber,  widget.bankCode, requiredNumber,  widget.amount, widget.fromWhere, widget.accountName);
 
                       }

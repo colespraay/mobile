@@ -34,7 +34,6 @@ dependencies:
   screenshot: ^2.1.0
   path_provider: ^2.1.0
   share_plus: ^7.1.0
-  pdf: ^3.10.4
   url_launcher: ^6.1.12
   whatsapp_unilink: ^2.1.0
   dotted_border: ^2.0.0+3
@@ -58,6 +57,8 @@ dependencies:
   geocoding: ^2.1.0
   local_session_timeout: ^2.3.0
   open_mail_app: ^0.4.5
+  document_file_save_plus: ^2.0.0
+#  flutter_media_downloader: ^0.0.1
 
 #  overlay_loader_with_app_icon: ^0.0.3
 

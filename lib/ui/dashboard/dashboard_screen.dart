@@ -54,7 +54,9 @@ class _DasboardScreenState extends State<DasboardScreen> {
             // elevation: 10,
             backgroundColor: Color(0xffD3F701),
             onPressed: () {
-              _choseFABModal();
+              _choseFABModal().then((value){
+                Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+              });
             },
             child: SvgPicture.asset("images/add_icon.svg"),
           ),

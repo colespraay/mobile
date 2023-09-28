@@ -345,6 +345,7 @@ class AuthProvider extends ChangeNotifier{
       errorCherryToast(context, apiResponse.errorMessage??"");
     }else{
       dataResponse= apiResponse.data?.data;
+      await MySharedPreference.saveWalletBalance(apiResponse.data?.data?.walletBalance.toString()??"");
     }
     setloadingNoNotif(false);
     notifyListeners();
