@@ -31,7 +31,7 @@ class ApiServices{
       var response=await http.post(Uri.parse("$url/auth/login/phone-number"), body:{"phoneNumber":phoneNumber, "password":password},
           headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
       // int statusCode = response.statusCode;
-      // log("ResbodyMM==${response.body}");
+      log("ResbodyMM==${response.body}");
       // print("Resbody statusCode==${response.statusCode}");
 
       var jsonResponse=convert.jsonDecode(response.body);
@@ -662,6 +662,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
   Future<Map<String, dynamic>> sendGift(String amount,String mytoken, String receiverTag, String transactionPin)async{
     Map<String, dynamic> result = {};
+    print("receiverTag=$receiverTag");
     try{
       var response=await http.post(Uri.parse("$url/gifting/send-gift"),
           body: jsonEncode({"amount": amount, "receiverTag": receiverTag, "transactionPin": transactionPin}),
@@ -671,7 +672,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];
-        result["dateCreated"] =jsonResponse['data']['receiverUser']["dateCreated"];
+        result["dateCreated"] =jsonResponse['data']["dateCreated"];
         result['error'] = false;
       }
       else{

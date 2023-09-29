@@ -71,7 +71,8 @@ class _SprayGiftOtpState extends State<SprayGiftOtp> {
                 CustomButton(
                     onTap: () {
                       if(requiredNumber.length==4){
-                          Provider.of<EventProvider>(context, listen: false).fetchSendGiftApi(context, widget.amount??"", widget.receiverTag??"", requiredNumber);
+
+                          Provider.of<EventProvider>(context, listen: false).fetchSendGiftApi(context, widget.amount??"", widget.receiverTag?.replaceAll("@", "")??"", requiredNumber);
                       }
 
                     },

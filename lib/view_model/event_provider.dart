@@ -156,7 +156,7 @@ class EventProvider extends ChangeNotifier{
 
   fetchSendGiftApi(BuildContext context, String amount, String receiverTag,String transactionPin) async{
     setloading(true);
-    var result=await service.sendGift(amount.replaceAll(",", ""), mytoken, receiverTag, transactionPin);
+    var result=await service.sendGift(amount.replaceAll(",", ""), mytoken, "@$receiverTag", transactionPin);
     if(result['error'] == true){
       // errorCherryToast(context, result['message']);
 
@@ -168,6 +168,10 @@ class EventProvider extends ChangeNotifier{
           }, png_img: 'Incorrect_sign');
 
     }else{
+
+      Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+      Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
+
 
       popupWithTwoBtnDialog(context: context, title: "Transaction successful",
           content: "You have successfully gifted $receiverTag N${amount}",
