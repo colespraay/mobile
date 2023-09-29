@@ -86,12 +86,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
                   textInputAction: TextInputAction.next,hintTxt: "7012345678",focusNode: _textField1Focus,
                   maxLength: 10,
-                  autofocus: false,
+                  autofocus: MySharedPreference.getRemember()==1?false: true,
                   prefixText: "+234 ",
-                  // prefixIcon: Padding(
-                  //   padding:  EdgeInsets.only(right: 8.w, left: 10.w),
-                  //   child: SvgPicture.asset("images/number.svg", height: 11.h,),
-                  // ) ,
                   inputFormat: [
                     FilteringTextInputFormatter.digitsOnly
                   ],

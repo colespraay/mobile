@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/file_storage.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
@@ -30,6 +31,11 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
   ScreenshotController screenshotController = ScreenshotController();
   TransactionProvider? _transactionProvider;
 
+  @override
+  void initState() {
+    super.initState();
+    FileStorage.getExternalDocumentPath();
+  }
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

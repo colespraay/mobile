@@ -1169,5 +1169,39 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
 
+  Future<Map<String, dynamic>> downloadSOA(String mytoken, String userId, String startDate, String endDate)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("https://spraay-api-577f3dc0a0fe.herokuapp.com/transaction/download-soa/$userId?startDate=$startDate&endDate=$endDate"),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+
+      print("statusCodestatusCode11=${statusCode}");
+      log("ressssp=${response.body}");
+      // final bytes = response.bodyBytes;
+      // await DocumentFileSavePlus().saveFile(bytes, "spray.pdf", "appliation/pdf").then((valueee){
+      //
+      //   toastMessage("Filed downloaded");
+      // });
+
+
+      if (statusCode == 200 || statusCode==201) {
+        result["bytes"] =response.bodyBytes;
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    catch(e){
+      print("objecteeeroo${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
 
 }

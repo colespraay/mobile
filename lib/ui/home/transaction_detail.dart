@@ -37,6 +37,13 @@ class _TransactionDetailState extends State<TransactionDetail> {
 
   TransactionProvider? _transactionProvider;
 
+
+  @override
+  void initState() {
+    super.initState();
+    FileStorage.getExternalDocumentPath();
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -64,14 +71,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
                 children: [
                 InkWell(
                   onTap:(){
-                    //this link download pdf
-
                     _transactionProvider?.downloadPdf(context, widget.transactionList?.id??"");
-                    // ApiServices().downloadSingleTransaction(MySharedPreference.getToken(), widget.transactionList?.id??"");
-                    // dowad.DocumentFileSave.saveFile(pdfBytes, "my_sample_file.pdf", "appliation/pdf");
-                    // "https://spraay-api-577f3dc0a0fe.herokuapp.com/transaction/download-receipt/${widget.transactionList?.id}";
-
-                    // _captureScreenshotAndSaveAsPdf();
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,

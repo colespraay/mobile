@@ -4,6 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/navigations/SlideDownRoute.dart';
+import 'package:spraay/navigations/SlideUpRoute.dart';
+import 'package:spraay/ui/profile/download_account_screen.dart';
 import 'package:spraay/ui/wallet/chat_view.dart';
 import 'package:spraay/ui/wallet/wallet_view.dart';
 
@@ -41,6 +44,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
   PopupMenuItem _buildPopupMenuItem(String title) {
     return PopupMenuItem(
+      value: 0,
       child:  Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400)),
     );}
 
@@ -63,6 +67,11 @@ class _WalletScreenState extends State<WalletScreen> {
                     color: CustomColors.sDarkColor2,
                     elevation: 2,
                     icon: SvgPicture.asset("images/hori_do.svg"),
+                    onSelected: (result) {
+                      if (result == 0) {
+                        Navigator.push(context,SlideDownRoute(page: DownloadAccountUi()));
+                      }
+                    },
                     itemBuilder: (ctx) => [
                       _buildPopupMenuItem('Download Statement'),
                     ],

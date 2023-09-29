@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/file_storage.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/view_model/transaction_provider.dart';
 
 class DownloadAccountUi extends StatefulWidget {
   const DownloadAccountUi({super.key});
@@ -23,8 +26,21 @@ class _DownloadAccountUiState extends State<DownloadAccountUi> {
 
   FocusNode? _textField3Focus;
   FocusNode? _textField4Focus;
+
+  TransactionProvider? _transactionProvider;
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _transactionProvider=context.watch<TransactionProvider>();
+  }
+
+
   @override
   void initState() {
+    FileStorage.getExternalDocumentPath();
+
     setState(() {
       _textField3Focus = FocusNode();
       _textField4Focus = FocusNode();
@@ -43,13 +59,16 @@ class _DownloadAccountUiState extends State<DownloadAccountUi> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context, title:"Download Statement" ),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: buildStep1Widget(),
-        ));
+    return  LoadingOverlayWidget(
+      loading: _transactionProvider!.loading,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title:"Download Statement" ),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: buildStep1Widget(),
+          )),
+    );
 
   }
 
@@ -100,17 +119,13 @@ class _DownloadAccountUiState extends State<DownloadAccountUi> {
         height26,
         CustomButton(
             onTap: () {
-              if(thirdVal.isNotEmpty && forthVal.isNotEmpty){
-                popupWithTwoBtnDialog(context: context, title: "Statement sent",
-                    content: "Your bank statement has been sent to john.doe@yourdomain.com ",
-                    buttonTxt: "Great!", onTap: (){
-                      Navigator.pop(context);
-                      Navigator.pop(context);
+              // fetchdownloadSOAApi
+              // print("endDateController=${selectedDate}  selectedStartDate=${selectedStartDate}");
 
-                    }, png_img: "verified", btn2Txt: 'Request another', onTapBtn2: () {
-                      Navigator.pop(context);
-                    });
-                // Navigator.push(context, SlideLeftRoute(page: CreateAccountOtpPage()));
+              if(thirdVal.isNotEmpty && forthVal.isNotEmpty){
+
+                Provider.of<TransactionProvider>(context, listen: false).fetchdownloadSOAApi(context, selectedStartDate.toString(), selectedDate.toString());
+
               }
             },
             buttonText: 'Download', borderRadius: 30.r,width: 380.w,

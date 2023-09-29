@@ -88,11 +88,36 @@ class TransactionProvider extends ChangeNotifier {
     }else{
       toastMessage("Receipt Downloaded");
       FileStorage.saveDownloadedFile(result["bytes"], "spray.pdf");
-      sharePdfFile(context, result["bytes"]);
+      sharePdfFile(context, result["bytes"],"spray");
     }
     setloading(false);
   }
 
+
+  fetchdownloadSOAApi(BuildContext context ,String startDate, String endDate) async{
+    setloading(true);
+    var result=await ApiServices().downloadSOA(mytoken, MySharedPreference.getUId(), startDate, endDate);
+    if(result['error'] == true){
+      errorCherryToast(context, result['message']);
+    }else{
+      // toastMessage("Receipt Downloaded");
+      // FileStorage.saveDownloadedFile(result["bytes"], "SpraySOA.pdf");
+      // sharePdfFile(context, result["bytes"], "SpraySOA");
+
+
+      popupWithTwoBtnDialog(context: context, title: "Statement sent",
+          content: "Your bank statement has been sent to ${MySharedPreference.getEmail()}",
+          buttonTxt: "Great!", onTap: (){
+            Navigator.pop(context);
+            Navigator.pop(context);
+
+          }, png_img: "verified", btn2Txt: 'Request another', onTapBtn2: () {
+            Navigator.pop(context);
+          });
+
+    }
+    setloading(false);
+  }
 
   popupSuccessfulDialog({ required BuildContext context, required String title, required String content, required String buttonTxt,
     required void Function() onTap, required String png_img, required String fromWhere,

@@ -130,11 +130,11 @@ String monthString(String date){
  return formatter.format(dateTime);
 }
 
-void sharePdfFile(BuildContext context ,Uint8List data)async{
+void sharePdfFile(BuildContext context ,Uint8List data, String title)async{
  final box = context.findRenderObject() as RenderBox?;
  if (data != null) {
   final directory = await getApplicationDocumentsDirectory();
-  final imagePath = await File('${directory.path}/spray.pdf').create();
+  final imagePath = await File('${directory.path}/$title.pdf').create();
   await imagePath.writeAsBytes(data);
   await Share.shareFiles([imagePath.path],
    sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
