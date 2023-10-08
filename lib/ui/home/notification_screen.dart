@@ -34,8 +34,8 @@ class NotificationScreen extends StatelessWidget {
                           child: ListView.separated(
                               padding: horizontalPadding,
                               shrinkWrap: true,
-                              controller: scrollController,
-                              itemCount: 30,
+                              // controller: scrollController,
+                              itemCount: 20,
                               separatorBuilder: (context, int) {
                                 return  height12;
                               },
@@ -44,9 +44,8 @@ class NotificationScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
 
-                                    SvgPicture.asset("images/notf_add_card.svg"),
-
-                                    SizedBox(width: 10.w,),
+                                    // SvgPicture.asset("images/notf_add_card.svg"),
+                                    // SizedBox(width: 10.w,),
 
                                     Expanded(
                                       child: SizedBox(

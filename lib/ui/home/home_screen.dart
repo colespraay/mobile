@@ -17,6 +17,7 @@ import 'package:spraay/ui/home/event_slidder.dart';
 import 'package:spraay/ui/home/fund_wallet.dart';
 import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
+import 'package:spraay/ui/profile/user_profile/edit_profile.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 import 'package:spraay/view_model/event_provider.dart';
@@ -82,7 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 26.r),
+        InkWell(
+          onTap:(){
+            Navigator.push(context,FadeRoute(page: EditProfile(credentialsProvider?.dataResponse)));
+          },
+            child: buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 26.r)),
         SizedBox(width: 12.w,),
         Expanded(
           child: Row(

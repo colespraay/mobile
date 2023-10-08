@@ -46,6 +46,8 @@ var height70=SizedBox(height: 70.h,);
 var height80=SizedBox(height: 80.h,);
 var height90=SizedBox(height: 90.h,);
 var height100=SizedBox(height: 100.h,);
+var height200=SizedBox(height: 200.h,);
+
 
 EdgeInsets horizontalPadding=EdgeInsets.symmetric(horizontal: 18.w);
 

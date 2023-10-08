@@ -11,6 +11,8 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/user_profile.dart';
+import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/ui/profile/user_profile/view_profile_picture.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 import 'package:path/path.dart' as baseImg;
@@ -114,7 +116,13 @@ class _EditProfileState extends State<EditProfile> {
           child: Stack(
             children: [
 
-              buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 80.r),
+              InkWell(
+                onTap:(){
+                  Navigator.push(context,FadeRoute(page:ViewProfile(imageUrl:  credentialsProvider?.dataResponse?.profileImageUrl??"") ));
+    },
+                  child: Hero(tag: "hero_image",
+                      transitionOnUserGestures: true,
+                  child: buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 80.r))),
 
               Positioned(
                   bottom: 10.h,

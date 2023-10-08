@@ -21,6 +21,7 @@ import 'package:spraay/ui/profile/privacy_policy.dart';
 import 'package:spraay/ui/profile/profile_notification.dart';
 import 'package:spraay/ui/profile/user_profile/edit_profile.dart';
 import 'package:spraay/ui/profile/user_profile/terms_and_condition.dart';
+import 'package:spraay/ui/profile/user_profile/view_profile_picture.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
 class ProfileUi extends StatefulWidget {
@@ -68,7 +69,14 @@ class _ProfileUiState extends State<ProfileUi> {
       children: [
         Text("Profile", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700) ),
         height40,
-        buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 70.r),
+        InkWell(
+          onTap:(){
+            // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ViewProfile(imageUrl:  credentialsProvider?.dataResponse?.profileImageUrl??"")   ));
+            Navigator.push(context,FadeRoute(page:ViewProfile(imageUrl:  credentialsProvider?.dataResponse?.profileImageUrl??"") ));
+
+          },
+            child: Hero(tag: "hero_image",
+            child: buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 70.r))),
         height16,
         Text("${credentialsProvider?.dataResponse?.firstName??""} ${credentialsProvider?.dataResponse?.lastName??""}", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
         height4,
