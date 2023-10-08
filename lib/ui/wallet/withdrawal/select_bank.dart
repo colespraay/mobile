@@ -97,7 +97,7 @@ class _SelectBankScreenState extends State<SelectBankScreen> {
 
         // SvgPicture.asset("images/bnk.svg", width: 40.w, height: 40.h,),
         SizedBox(width: 16.w,),
-        Text(bankDetail?.bankName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400)),
+        Expanded(child: Text(bankDetail?.bankName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400))),
 
       ],
     );

@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Expanded(
                       child: Text(_isObscure?'${MySharedPreference.getWalletBalance().replaceAll(RegExp(r"."), "*")}':
                       "₦${currrency.format(double.parse(MySharedPreference.getWalletBalance()))}" ,
-                        style: CustomTextStyle.kTxtBold.copyWith(fontSize: 30.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans")),
+                        style: CustomTextStyle.kTxtBold.copyWith(fontSize: 30.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans"),maxLines: 2, overflow: TextOverflow.ellipsis,),
                     ),
                     GestureDetector(
                         onTap: (){

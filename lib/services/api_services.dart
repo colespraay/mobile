@@ -147,6 +147,8 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       var response=await http.get(Uri.parse("$url/user/resend-otp-code/$userID"),
           headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
       int statusCode = response.statusCode;
+      log("messagedddre=${response.body}");
+
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];
@@ -1172,8 +1174,10 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
   Future<Map<String, dynamic>> downloadSOA(String mytoken, String userId, String startDate, String endDate)async{
     Map<String, dynamic> result = {};
+
     try{
-      var response=await http.get(Uri.parse("https://spraay-api-577f3dc0a0fe.herokuapp.com/transaction/download-soa/$userId?startDate=$startDate&endDate=$endDate"),
+
+      var response=await http.get(Uri.parse("$url/transaction/export-soa?startDate=$startDate&endDate=$endDate"),
           headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
       int statusCode = response.statusCode;
 

@@ -31,6 +31,7 @@ class _CreateAccountOtpPageState extends State<CreateAccountOtpPage> {
     errorController = StreamController<ErrorAnimationType>();
     startTimer();
   }
+
   @override
   void dispose() {
     errorController!.close();
