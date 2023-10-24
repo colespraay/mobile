@@ -502,7 +502,7 @@ class _EmptyListLotieState extends State<EmptyListLotie> with SingleTickerProvid
 class LoadingOverlayWidget extends StatelessWidget {
   final bool loading;
   final Widget child;
-  LoadingOverlayWidget({required this.loading, required this.child});
+  const LoadingOverlayWidget({super.key, required this.loading, required this.child});
   @override
   Widget build(BuildContext context) {
     return LoadingOverlay(

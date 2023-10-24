@@ -5,10 +5,7 @@ class CustomColors {
   static const Color sBackgroundColor = Color(0xFF09090B);
   static const Color sPrimaryColor500= Color(0xFF5B45FF);
   static const Color sPrimaryColor400= Color(0xFF7664FF);
-
   static const Color sPrimaryColor100= Color(0xFFEEECFF);
-
-
   static const Color sWhiteColor=Color(0xffFFFFFF);
   static const Color sDisableButtonColor= Color(0xFF747474);
   static const Color sGreyScaleColor50= Color(0xFFFAFAFA);
@@ -17,7 +14,6 @@ class CustomColors {
   static const Color sGreyScaleColor700= Color(0xFF616161);
   static const Color sGreyScaleColor800= Color(0xFF424242);
   static const Color sGreyScaleColor900= Color(0xFF212121);
-
   static const Color sDarkColor2= Color(0xFF1A1A21);
   static const Color sDarkColor3= Color(0xFF35383F);
   static const Color sGreyScaleColor500= Color(0xFF9E9E9E);

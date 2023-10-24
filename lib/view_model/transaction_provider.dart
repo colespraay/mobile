@@ -63,7 +63,6 @@ class TransactionProvider extends ChangeNotifier {
     setloading(false);
   }
 
-  //savedBanksInfoApi
   List<DatumSavedBank>? savedBankList;
   fetchSavedBanksInfoApi() async{
     setloadingNoNotif(true);
@@ -71,7 +70,6 @@ class TransactionProvider extends ChangeNotifier {
     if(apiResponse.error==true){
       savedBankList=[];
       print("No Category for event=${apiResponse.errorMessage??""}");
-      // errorCherryToast(context, apiResponse.errorMessage??"");
     }else{
       savedBankList=apiResponse.data?.data??[];
     }
@@ -100,20 +98,18 @@ class TransactionProvider extends ChangeNotifier {
     if(result['error'] == true){
       errorCherryToast(context, result['message']);
     }else{
-      // toastMessage("Receipt Downloaded");
-      // FileStorage.saveDownloadedFile(result["bytes"], "SpraySOA.pdf");
-      // sharePdfFile(context, result["bytes"], "SpraySOA");
 
+      if (context.mounted){
+        popupWithTwoBtnDialog(context: context, title: "Statement sent",
+            content: "Your bank statement has been sent to ${MySharedPreference.getEmail()}",
+            buttonTxt: "Great!", onTap: (){
+              Navigator.pop(context);
+              Navigator.pop(context);
 
-      popupWithTwoBtnDialog(context: context, title: "Statement sent",
-          content: "Your bank statement has been sent to ${MySharedPreference.getEmail()}",
-          buttonTxt: "Great!", onTap: (){
-            Navigator.pop(context);
-            Navigator.pop(context);
-
-          }, png_img: "verified", btn2Txt: 'Request another', onTapBtn2: () {
-            Navigator.pop(context);
-          });
+            }, png_img: "verified", btn2Txt: 'Request another', onTapBtn2: () {
+              Navigator.pop(context);
+            });
+      }
 
     }
     setloading(false);
@@ -168,8 +164,6 @@ class TransactionProvider extends ChangeNotifier {
                           height22,
                           CustomButton(
                               onTap:(){
-                                // String? transactionId, String? amount, String? type,String? dateCreated, String? reference
-
                                 if(fromWhere=="new_bank_screen"){
                                   //call this if you route in through new_bank_screen
                                   Navigator.pop(context);

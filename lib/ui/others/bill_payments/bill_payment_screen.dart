@@ -5,6 +5,7 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/image_title_models.dart';
+import 'package:spraay/ui/others/bill_payments/data/data_top_up.dart';
 
 import '../../../navigations/scale_transition.dart';
 import 'bill_payment_detail.dart';
@@ -42,6 +43,7 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
 
   List<ImageTitleModel> cableList=[
     ImageTitleModel(image: "airtime_topup", title: "Airtime Top-up"),
+    ImageTitleModel(image: "airtime_topup", title: "Data Top-up"),
     ImageTitleModel(image: "electricity", title: "Electricity"),
     ImageTitleModel(image: "Internet", title: "Internet"),
     ImageTitleModel(image: "tv", title: "Television"),
@@ -58,7 +60,16 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
           onTap:(){
             int position = e.key;//position
 
-            Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
+            if(e.value.title=="Airtime Top-up"){
+              Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
+            }
+            else if(e.value.title=="Data Top-up"){
+              Navigator.push(context, ScaleTransition1(page: DataTopUp(title:e.value.title,)));
+            }else{
+              Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
+
+            }
+
 
           },
           child: Container(
@@ -71,7 +82,6 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
                 SvgPicture.asset("images/${e.value.image}.svg", width: 80.w, height: 80.h,),
                 height12,
                 Text(e.value.title, style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sWhiteColor)),
-
               ],
             ),
           ),

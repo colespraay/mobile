@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -277,7 +278,7 @@ class AuthProvider extends ChangeNotifier{
   }
 
 
-  fetchLoginEndpoint(context,String password,String phoneNumber) async{
+  fetchLoginEndpoint( context,String password,String phoneNumber) async{
     setloading(true);
     var result = await apiResponse.logIn(phoneNumber, password);
     if (result['error'] == true) {
@@ -342,7 +343,8 @@ class AuthProvider extends ChangeNotifier{
     setloadingNoNotif(true);
     var apiResponse=await service.userDetailApi(mytoken, MySharedPreference.getUId());
     if(apiResponse.error==true){
-      errorCherryToast(context, apiResponse.errorMessage??"");
+      log("UserDetailApi:${apiResponse.errorMessage}");
+      // errorCherryToast(context, apiResponse.errorMessage??"");
     }else{
       dataResponse= apiResponse.data?.data;
       await MySharedPreference.saveWalletBalance(apiResponse.data?.data?.walletBalance.toString()??"");

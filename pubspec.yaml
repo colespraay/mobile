@@ -107,5 +107,8 @@ flutter:
      - family: SemiPlusJakartaSans
        fonts:
          - asset: fonts/PlusJakartaSans-SemiBold.ttf
+     - family: LightPlusJakartaSans
+       fonts:
+         - asset: fonts/PlusJakartaSans-Light.ttf
 
 

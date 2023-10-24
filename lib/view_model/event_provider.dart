@@ -140,14 +140,19 @@ class EventProvider extends ChangeNotifier{
     if(result['error'] == true){
       errorCherryToast(context, result['message']);
     }else{
-      popupDialog(context: context, title: "Invites successfully sent!", content: "You have successfully sent ${selectedName[0]} and ${userIds.length -1} others an invite to your event!",
-          buttonTxt: 'Home',
-          onTap: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pop(context);
-          }, png_img: 'verified');
+      if (context.mounted){
+        popupDialog(context: context, title: "Invites successfully sent!", content: "You have successfully sent ${selectedName[0]} and ${userIds.length -1} others an invite to your event!",
+            buttonTxt: 'Home',
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            }, png_img: 'verified');
+      }
+
+
+
       // userInformationList= apiResponse.data?.data??[];
     }
     setloading(false);
@@ -159,36 +164,37 @@ class EventProvider extends ChangeNotifier{
     var result=await service.sendGift(amount.replaceAll(",", ""), mytoken, "@$receiverTag", transactionPin);
     if(result['error'] == true){
       // errorCherryToast(context, result['message']);
+      if (context.mounted){
+        popupDialog(context: context, title: "Transaction Failed", content:result['message'],
+            buttonTxt: 'Try again',
+            onTap: () {
+              Navigator.pop(context);
 
-      popupDialog(context: context, title: "Transaction Failed", content:result['message'],
-          buttonTxt: 'Try again',
-          onTap: () {
-        Navigator.pop(context);
+            }, png_img: 'Incorrect_sign');
+      }
 
-          }, png_img: 'Incorrect_sign');
 
     }else{
 
-      Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
-      Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
 
+      if (context.mounted){
+        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+        Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
 
-      popupWithTwoBtnDialog(context: context, title: "Transaction successful",
-          content: "You have successfully gifted $receiverTag N${amount}",
-          buttonTxt: "Great! Take me Home", onTap: (){
-            Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
-            Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+        popupWithTwoBtnDialog(context: context, title: "Transaction successful",
+            content: "You have successfully gifted $receiverTag N${amount}",
+            buttonTxt: "Great! Take me Home", onTap: (){
+              Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+              Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
-          }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
-            Navigator.pop(context);
-            Navigator.pop(context);
-            Navigator.pop(context);
+            }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
 
-            Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: "spray_circle", type:"Spray Gift", date: dateTimeFormat(result['dateCreated'].toString()), amount: '₦$amount', meterNumber: '', transactionRef: '', transStatus: 'Successful', transactionId: '',)));
-          });
-
-
-      // userInformationList= apiResponse.data?.data??[];
+              Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: "spray_circle", type:"Spray Gift", date: dateTimeFormat(result['dateCreated'].toString()), amount: '₦$amount', meterNumber: '', transactionRef: '', transStatus: 'Successful', transactionId: '',)));
+            });
+      }
     }
     setloading(false);
   }
@@ -199,35 +205,40 @@ class EventProvider extends ChangeNotifier{
     setloading(true);
     var result=await service.editEvent(mytoken, eventName, eventDescription, venue, eventDate, time, category, eventCoverImage, eventId, longitude, latitude);
     if(result['error'] == true){
-      errorCherryToast(context, result['message']);
+      if (context.mounted){
+        errorCherryToast(context, result['message']);
+      }
+
     }else{
       if(fromPage=="view_event"){
-        popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
-            buttonTxt: 'Home',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
-            }, png_img: 'verified');
-      }else{
-        popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
-            buttonTxt: 'Home',
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+        if (context.mounted){
+          popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
+              buttonTxt: 'Home',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+              }, png_img: 'verified');
+        }
 
-            }, png_img: 'verified');
+      }else{
+        if (context.mounted){
+          popupDialog(context: context, title: "Saved Successfully", content: "Your edit has been saved successfully.",
+              buttonTxt: 'Home',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+
+              }, png_img: 'verified');
+        }
+
 
       }
 
-
-
-
-      // userInformationList= apiResponse.data?.data??[];
     }
     setloading(false);
   }
@@ -258,7 +269,7 @@ class EventProvider extends ChangeNotifier{
     var apiResponse=await service.transactionListApi(MySharedPreference.getToken(), MySharedPreference.getUId());
     if(apiResponse.error==true){
       transactionList=[];
-      print("fetchTransactionListApi Error=${apiResponse.errorMessage??""}");
+      // print("fetchTransactionListApi Error=${apiResponse.errorMessage??""}");
       // errorCherryToast(context, apiResponse.errorMessage??"");
     }else{
       transactionList=apiResponse.data?.data??[];
@@ -271,10 +282,8 @@ class EventProvider extends ChangeNotifier{
     setloading(true);
     var result=await service.acceptOrRejectEvent(eventId, mytoken, status);
     if(result['error'] == true){
-      // Navigator.pop(context);
       errorCherryToast(context, result['message']);
     }else{
-      // Navigator.pop(context);
       successCherryToast(context, result['message']);
     }
     setloading(false);

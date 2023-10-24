@@ -53,7 +53,7 @@ class TransactionHistory extends StatelessWidget {
                           Container(
                             width: 40.w,
                             height: 40.h,
-                            decoration: BoxDecoration(color: CustomColors.sDarkColor3, shape: BoxShape.circle,
+                            decoration: const BoxDecoration(color: CustomColors.sDarkColor3, shape: BoxShape.circle,
                               image: DecorationImage(image: AssetImage("images/cash_png.png"), fit: BoxFit.fill,)
                             ),
                           ),
@@ -66,7 +66,7 @@ class TransactionHistory extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(transactionList?[position].narration??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400),),
+                                  Text(transactionList?[position].narration??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400,fontFamily: "LightPlusJakartaSans"),),
                                   height4,
                                   Text("${DateFormat.MMMd().format(transactionList![position].dateCreated!)}, ${DateFormat.jm().format(transactionList![position].dateCreated!)}",
                                     style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),

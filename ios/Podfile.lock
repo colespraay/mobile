@@ -111,7 +111,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_udid: 0848809dbed4c055175747ae6a45a8b4f6771e1c
   fluttercontactpicker: d582836dea6b5d489f3d259f35d7817ae82ee5e6
-  fluttertoast: fafc4fa4d01a6a9e4f772ecd190ffa525e9e2d9c
+  fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geocoding_ios: a389ea40f6f548de6e63006a2e31bf66ff80769a
   google_maps_flutter_ios: abdac20d6ce8931f6ebc5f46616df241bfaa2cfd
@@ -130,4 +130,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 094321e96921623d98a7594541afd891c72e07d6
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.13.0

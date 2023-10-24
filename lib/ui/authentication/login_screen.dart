@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       checkedValue= MySharedPreference.getRemember()==1?true:false;
 
-      phoneController.text=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1):"";
+      phoneController.text=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1).toString():"";
       firstBtn=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1):"";
       _textField1Focus = FocusNode();
       _textField2Focus = FocusNode();
@@ -167,27 +167,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool checkedValue=false;
   Widget buildCheckBox(){
-    return  CheckboxListTile(
-      contentPadding: EdgeInsets.only(left: 0.w),
-      checkColor: Colors.white,
-      activeColor: CustomColors.sPrimaryColor500,
-      title: Text("Remember me", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: Color(0xffF0F0F0)),),
-      // subtitle: Text("08:00  -  11:00 AM", style: kTxtLight.copyWith(fontSize: 10.sp, fontWeight: FontWeight.w300, color: Colors.black),),
-      value: checkedValue,
-      onChanged: (newValue) {
-        setState(() {
-          checkedValue = newValue!;
-        });
+    return  SizedBox(
+      width: 220.w,
+      child: CheckboxListTile(
+        contentPadding: EdgeInsets.only(left: 0.w),
+        checkColor: Colors.white,
+        activeColor: CustomColors.sPrimaryColor500,
+        title: Text("Remember me", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: Color(0xffF0F0F0)),),
+        // subtitle: Text("08:00  -  11:00 AM", style: kTxtLight.copyWith(fontSize: 10.sp, fontWeight: FontWeight.w300, color: Colors.black),),
+        value: checkedValue,
+        onChanged: (newValue) {
+          setState(() {
+            checkedValue = newValue!;
+          });
 
-        if(checkedValue==true){
-          MySharedPreference.saveRemember(1);
-        }else{
-          MySharedPreference.saveRemember(0);
-        }
+          if(checkedValue==true){
+            MySharedPreference.saveRemember(1);
+          }else{
+            MySharedPreference.saveRemember(0);
+          }
 
-        // print("checkedValue=$checkedValue");
-      },
-      controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+          // print("checkedValue=$checkedValue");
+        },
+        controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+      ),
     );
   }
 

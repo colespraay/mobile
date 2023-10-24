@@ -10,6 +10,7 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/category_list_model.dart';
 import 'package:spraay/models/current_user.dart';
+import 'package:spraay/models/data_model.dart';
 import 'package:spraay/models/events_models.dart';
 import 'package:spraay/models/join_event_model.dart';
 import 'package:spraay/models/list_of_banks_model.dart';
@@ -802,6 +803,26 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     });
   }
 
+
+  Future<ApiResponse<DataPlanModel>> findPlanByProvider(String mytoken, String provider){
+    return http.get(Uri.parse("$url/bill/data-purchase/find-plans/$provider"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        final note1=DataPlanModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<DataPlanModel>(data: note1);
+      }else{
+        return ApiResponse<DataPlanModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e){
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<DataPlanModel>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<DataPlanModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
+  }
+
   Future<ApiResponse<OngoingEventModel>> pastEventsList(String mytoken){
     return http.get(Uri.parse("$url/event/past/events-for-current-user"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
@@ -1045,6 +1066,144 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     return result;
   }
 
+
+  Future<Map<String, dynamic>> airtimePurchaseApi(String mytoken, String provider, String phoneNumber,String amount,String transactionPin )async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/bill/airtime-purchase"),
+
+          body: jsonEncode( {"provider": provider, "phoneNumber": phoneNumber, "amount": amount, "transactionPin": transactionPin}),
+
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+
+        result["message"] =jsonResponse["message"];
+    result["phoneNumber"] =jsonResponse["data"]["phoneNumber"];
+    result["provider"] =jsonResponse["data"]["provider"];
+    result["dateCreated"] =jsonResponse["data"]["dateCreated"];
+        result["transactionId"] =jsonResponse["data"]["transactionId"];
+
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+  Future<Map<String, dynamic>> electricityUnitPurchaseApi(String mytoken, String provider, String meterNumber,String amount,String transactionPin,
+      String plan, String billerName)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/bill/electricity-unit-purchase"),
+          body: jsonEncode( {"provider": provider, "meterNumber": meterNumber, "amount": amount, "transactionPin": transactionPin, "plan":plan, "billerName":billerName}),
+
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+
+        result["message"] =jsonResponse["message"];
+        result["phoneNumber"] =jsonResponse["data"]["meterNumber"];
+        result["provider"] =jsonResponse["data"]["provider"];
+        result["dateCreated"] =jsonResponse["data"]["dateCreated"];
+        result["transactionId"] =jsonResponse["data"]["transactionId"];
+
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
+  Future<Map<String, dynamic>> dataPurchaseApi(String mytoken, String provider, String phoneNumber,String dataPlanId,String transactionPin )async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/bill/data-purchase"),
+          body: jsonEncode({"provider": provider, "phoneNumber": phoneNumber, "dataPlanId": int.parse(dataPlanId), "transactionPin": transactionPin}),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result["phoneNumber"] =jsonResponse["data"]["phoneNumber"];
+        result["provider"] =jsonResponse["data"]["provider"];
+        result["dateCreated"] =jsonResponse["data"]["dateCreated"];
+        result["transactionId"] =jsonResponse["data"]["transactionId"];
+
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+  Future<Map<String, dynamic>> verifyElectricityUnitPurchaseApi(String mytoken, String provider,
+      String meterNumber,String amount,String plan )async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/bill/electricity-unit-purchase/verify"),
+          body: jsonEncode({"provider": provider, "meterNumber": meterNumber, "amount": amount, "plan": plan}),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result["billerName"] =jsonResponse["data"]["billerName"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
 
 
   Future<ApiResponse<JoinEventModel>> joinEvent(String mytoken, String eventCode){

@@ -52,7 +52,7 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
             padding: horizontalPadding,
             children: [
               height18,
-              SvgPicture.asset("images/${widget.svg_img}.svg", width: 80.w, height: 80.h,),
+              widget.type.contains("Electricity")? Image.asset("images/${widget.svg_img}.png", width: 80.w, height: 80.h,):  SvgPicture.asset("images/${widget.svg_img}.svg", width: 80.w, height: 80.h,),
               // height16,
               buildContainer(),
 
@@ -110,7 +110,7 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
       controller: screenshotController,
       child: Container(
         padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 39.h, top: 10.h),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
             color:CustomColors.sBackgroundColor,
             // borderRadius: BorderRadius.all(Radius.circular(23.r))
         ),
@@ -145,11 +145,12 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(width: 140.w,
-            child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 13.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) )),
-        Spacer(),
+        SizedBox(width: 140.w, child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 13.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) )),
+       SizedBox(width: 10.w,),
 
-        Text(content, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w700, fontFamily: "SemiPlusJakartaSans") ),
+        Expanded(child: Text(content,
+            style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w700, fontFamily: "SemiPlusJakartaSans",),
+        textAlign: TextAlign.end,)),
       ],
     );
   }

@@ -39,8 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _isObscure=Provider.of<HomeProvider>(context, listen: false).hideWalletvalue??false;
     Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
     Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
-
-
   }
 
   AuthProvider? credentialsProvider;
@@ -119,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
         height: 200.h,
         padding: EdgeInsets.zero,
         margin: EdgeInsets.zero,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: CustomColors.sPrimaryColor500,
           image: DecorationImage(
             image: AssetImage('images/pattern_endd.png'),

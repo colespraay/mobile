@@ -12,11 +12,18 @@ import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/dashboard/dashboard_screen.dart';
 import 'package:spraay/ui/others/payment_receipt.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
+import 'package:spraay/view_model/bill_payment_provider.dart';
 
 class PinForBillPayment extends StatefulWidget {
-  String title, image;
-   PinForBillPayment({required this.title, required this.image});
+  String title, image,amount,provider,phoneController;
+  String? dataPlanId,electricityProvider,billerName,plan;
+
+
+
+   PinForBillPayment({super.key, required this.title, required this.image, required this.amount, required this.provider,
+    required this.phoneController, this.dataPlanId, this.electricityProvider, this.billerName, this.plan});
 
   @override
   State<PinForBillPayment> createState() => _PinForBillPaymentState();
@@ -27,6 +34,13 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
   StreamController<ErrorAnimationType>? errorController;
   String requiredNumber="";
 
+  BillPaymentProvider? _billPaymentProvider;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _billPaymentProvider=context.watch<BillPaymentProvider>();
+  }
 
   @override
   void initState() {
@@ -40,53 +54,60 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context, title: "Confirm ${widget.title}"),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: ListView(
-            padding: horizontalPadding,
-            shrinkWrap: true,
-            children: [
-              height34,
-              Center(child: SvgPicture.asset("images/${widget.image}.svg", width: 80.w, height: 80.h,)),
-              height20,
-              Text("You are buying ₦500 airtime on +234816123456789",
-                  style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 21.sp, color: CustomColors.sGreyScaleColor50,
-              fontFamily: "PlusJakartaSans")),
-              height16,
-              Text("Enter PIN to confirm this transaction", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
+    return  LoadingOverlayWidget(
+      loading: _billPaymentProvider?.loading??false,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title: "Confirm ${widget.title}"),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: ListView(
+              padding: horizontalPadding,
+              shrinkWrap: true,
+              children: [
+                height34,
+                widget.title=="Electricity"?Center(child: Image.asset("images/${widget.image}.png", width: 80.w, height: 80.h,)) : Center(child: SvgPicture.asset("images/${widget.image}.svg", width: 80.w, height: 80.h,)),
+                height20,
+                Text("You are buying ₦${widget.amount} ${widget.title.toLowerCase()} on ${widget.phoneController}",
+                    style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 21.sp, color: CustomColors.sGreyScaleColor50,
+                fontFamily: "PlusJakartaSans")),
+                height16,
+                Text("Enter PIN to confirm this transaction", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
 
-              height45,
-              pincodeTextfield(context),
+                height45,
+                pincodeTextfield(context),
 
-              height26,
-              CustomButton(
-                  onTap: () {
-                    if(requiredNumber.length==4){
+                height26,
+                CustomButton(
+                    onTap: () {
+                      if(requiredNumber.length==4){
+                        //call API for transaction
+                        if(widget.dataPlanId !=null) {
+                          //Call data purchase API
+                          _billPaymentProvider?.fetchDataPurchaseApi(context, MySharedPreference.getToken(), widget.provider, widget.phoneController,
+                              widget.amount, requiredNumber, widget.image, widget.dataPlanId??"");
 
-                      popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
-                          content: "+234816123456789 has been credited with ₦500 ",
-                          buttonTxt: "Okay", onTap: (){
-                            Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
-                            Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+                        }else if(widget.electricityProvider!=null){
+                          //call electricityProvider api
+                          _billPaymentProvider?.fetchelEctricityUnitPurchaseApi(context,MySharedPreference.getToken(),widget.electricityProvider!, widget.phoneController,
+                              widget.amount, requiredNumber, widget.image, widget.plan!, widget.billerName!);
+                        }else{
+                          //call airtime purchase api
+                          _billPaymentProvider?.fetchAirtimePurchaseApi(context, MySharedPreference.getToken(), widget.provider, widget.phoneController,
+                              widget.amount, requiredNumber, widget.image);
 
-                          }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                            Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: widget.image, type:widget.title, date: '17 April, 2:30 PM', amount: '₦500.00', meterNumber: '+2346123456', transactionRef: 'SPA-71eas908', transStatus: 'Successful', transactionId: '',)));
-                          });
-                    }
-                  },
-                  buttonText: requiredNumber.length==4?"Top up": 'Continue', borderRadius: 30.r,width: 380.w,
-                  buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
-                  CustomColors.sDisableButtonColor),
-              height34,
-            ],
-          ),
-        ));
+                        }
+
+                      }
+                    },
+                    buttonText: requiredNumber.length==4?"Top up": 'Continue', borderRadius: 30.r,width: 380.w,
+                    buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
+                    CustomColors.sDisableButtonColor),
+                height34,
+              ],
+            ),
+          )),
+    );
   }
 
   Widget pincodeTextfield(BuildContext context){

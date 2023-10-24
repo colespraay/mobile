@@ -9,7 +9,9 @@ import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/cashspray_model.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/navigations/SlideUpRoute.dart';
+import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/others/bill_payments/pin_for_bill_payment.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 
 class PayBilDetail extends StatefulWidget {
   String title;
@@ -30,10 +32,13 @@ class _PayBilDetailState extends State<PayBilDetail> {
 
   @override
   void initState() {
+
     setState(() {
       _textField1Focus = FocusNode();
       _textField2Focus = FocusNode();
     });
+
+    super.initState();
   }
 
   String firstBtn="";
@@ -50,13 +55,16 @@ class _PayBilDetailState extends State<PayBilDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context, title:widget.title ),
-        body: Form(
-          key: _myKey,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          child:  buildInviWidget(),
-        ));
+    return  LoadingOverlayWidget(
+      loading: _isLoading,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title:widget.title ),
+          body: Form(
+            key: _myKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child:  buildInviWidget(),
+          )),
+    );
   }
 
   Widget buildInviWidget(){
@@ -65,9 +73,10 @@ class _PayBilDetailState extends State<PayBilDetail> {
       shrinkWrap: true,
       children: [
         height45,
-        buildHorizontalContainer(),
+        widget.title=="Airtime Top-up"? buildHorizontalContainer() : buildElectricityDropDown(),
         height20,
         CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
+          maxLength: 11,
           textInputAction: TextInputAction.next,hintTxt: widget.title=="Airtime Top-up"? "Enter Phone Number": "Meter Number" ,focusNode: _textField1Focus,
           inputFormat: [
             FilteringTextInputFormatter.digitsOnly
@@ -112,8 +121,14 @@ class _PayBilDetailState extends State<PayBilDetail> {
         Center(
           child: CustomButton(
               onTap: () {
-                if( firstBtn.isNotEmpty && secondBtn.isNotEmpty && airtimePosition>-1){
-                  Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime,)));
+                if( firstBtn.isNotEmpty && secondBtn.isNotEmpty){
+
+                  if(airtimePosition<0){
+                    cherryToastInfo(context, "Info!", "Select provider");
+                  }else{
+                    fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text);
+                  }
+                  
                 }
               },
               buttonText: 'Continue', borderRadius: 30.r,width: 380.w,
@@ -211,5 +226,134 @@ class _PayBilDetailState extends State<PayBilDetail> {
     );
   }
 
+
+
+  bool _isLoading=false;
+  fetchCheckbalanceBeforeWithdrawingApiPinApi(BuildContext context ,String amount) async{
+    setState(() {_isLoading=true;});
+    var result=await ApiServices().checkbalanceBeforeWithdrawingApi(MySharedPreference.getToken(), amount.replaceAll(",", ""));
+    if(result['error'] == true){
+      if(context.mounted){
+        popupDialog(context: context, title: "Transaction Failed", content:result['message'],
+            buttonTxt: 'Try again', onTap: () {Navigator.pop(context);}, png_img: 'Incorrect_sign');
+      }
+
+    }else{
+
+      if(context.mounted && widget.title=="Electricity"){
+        //call API
+        fetchverifyElectricityUnitPurchaseApi(context, electricityProvider, phoneController.text, amount, "PREPAID");
+
+      }else{
+        Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime, amount: amount,
+          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,)));
+      }
+    }
+
+    setState(() {_isLoading=false;});
+  }
+
+  fetchverifyElectricityUnitPurchaseApi(BuildContext context ,String provider,String meterNumber,String amount, String plan ) async{
+    setState(() {_isLoading=true;});
+    var result=await ApiServices().verifyElectricityUnitPurchaseApi(MySharedPreference.getToken(), provider, meterNumber, amount, plan);
+    if(result['error'] == true){
+      if(context.mounted){
+        popupDialog(context: context, title: "Transaction Failed", content:result['message'],
+            buttonTxt: 'Try again', onTap: () {Navigator.pop(context);}, png_img: 'Incorrect_sign');
+      }
+
+    }else{
+
+      if(context.mounted){
+        //call API
+        Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime, amount: amount,
+          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,electricityProvider: provider,billerName: result["billerName"],plan: plan,)));
+
+      }
+    }
+
+    setState(() {_isLoading=false;});
+  }
+
+
+
+  List <String> electricityList=["AEDC","BEDC","EEDC","IBEDC","IKEDC","JEDC","KAEDCO","KEDCO","PHED"];
+  // Widget buildHorizontalElectricity(){
+  //   return SizedBox(
+  //     height: 90.h,
+  //     width: double.infinity,
+  //     child: ListView.builder(
+  //       shrinkWrap: true,
+  //       padding: EdgeInsets.zero,
+  //       itemCount: electricityList.length,
+  //       scrollDirection:Axis.horizontal,
+  //       itemBuilder: (BuildContext context, int index) {
+  //         return GestureDetector(
+  //           onTap:(){
+  //             setState(() {
+  //               airtimePosition = index;//position
+  //               imageAirtime=electricityList[index];
+  //             });
+  //
+  //           },
+  //           child: Column(
+  //             children: [
+  //               Container(
+  //                 margin: EdgeInsets.only(right: 4.w, bottom: 4.h),
+  //                 decoration: BoxDecoration(
+  //                   shape: BoxShape.circle,
+  //                   border: Border.all(color:airtimePosition==index?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
+  //                 ),
+  //                 child: Image.asset("images/${electricityList[index].toLowerCase()}.png", width: 70.w, height: 70.h,),
+  //
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       },
+  //
+  //     ),
+  //   );
+  // }
+
+  String electricityProvider="";
+  Widget buildElectricityDropDown(){
+    return DropdownButtonFormField<String>(
+      iconEnabledColor: CustomColors.sDisableButtonColor,
+      focusColor: CustomColors.sDarkColor2,
+      dropdownColor:CustomColors.sDarkColor2,
+      isDense: false,
+      items: electricityList.map((value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: SizedBox(
+              width: 290.w,
+              child: Text(value, style: CustomTextStyle.kTxtRegular.copyWith(color:CustomColors.sWhiteColor, fontSize: 14.sp), )),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+
+        setState(() {
+          airtimePosition = 0;//position
+          imageAirtime="ekedc";
+          electricityProvider=newValue??"";
+        });
+      },
+      decoration: InputDecoration(
+
+        contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
+        hintText: "Choose electricity plan",
+        isDense: true,
+        fillColor: CustomColors.sDarkColor2,
+        filled: true,
+        errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+        hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
+        focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:Color(0xff0166F4), width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
+      ),
+    );
+
+  }
 
 }

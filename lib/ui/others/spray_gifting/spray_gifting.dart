@@ -104,9 +104,7 @@ class _SprayGiftingState extends State<SprayGifting> {
           buttonTxt: 'Try again', onTap: () {Navigator.pop(context);}, png_img: 'Incorrect_sign');
 
     }else{
-
       Navigator.push(context, SlideLeftRoute(page: SendToBank(giftAmount: phoneController.text,)));
-
     }
 
     setState(() {_isLoading=false;});

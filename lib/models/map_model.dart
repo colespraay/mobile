@@ -39,7 +39,7 @@ class PlaceApiProvider {
   final sessionToken = Uuid().v4();
 
   // final apiKey = Platform.isAndroid ? androidKey : iosKey;
-  final String apiKey="AIzaSyDludqPHQ7KP_4I0Rpj4xzVcG9vsS-YgPs";
+  final String apiKey="AIzaSyD-wphDwAJBt5Jd87jvJUaK-0iQT9UhPt4";
 
   Future<List<Suggestion>> fetchSuggestions(String input, String lang) async {
     //maps.googleapis.com/maps/api/place/autocomplete/json

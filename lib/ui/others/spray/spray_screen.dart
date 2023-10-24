@@ -44,9 +44,18 @@ class _SprayScreenState extends State<SprayScreen>{
   int? noteQuantity;
   @override
   void initState() {
+    super.initState();
+
 
   }
 
+
+  //just added
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
 
   bool _isLoading=false;
   fetchSprayEventApi(BuildContext context ,String amount, String status) async{
