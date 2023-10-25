@@ -43,7 +43,7 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
 
   List<ImageTitleModel> cableList=[
     ImageTitleModel(image: "airtime_topup", title: "Airtime Top-up"),
-    ImageTitleModel(image: "airtime_topup", title: "Data Top-up"),
+    // ImageTitleModel(image: "airtime_topup", title: "Data Top-up"),
     ImageTitleModel(image: "electricity", title: "Electricity"),
     ImageTitleModel(image: "Internet", title: "Internet"),
     ImageTitleModel(image: "tv", title: "Television"),
@@ -63,8 +63,8 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
             if(e.value.title=="Airtime Top-up"){
               Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
             }
-            else if(e.value.title=="Data Top-up"){
-              Navigator.push(context, ScaleTransition1(page: DataTopUp(title:e.value.title,)));
+            else if(e.value.title=="Internet"){
+              Navigator.push(context, ScaleTransition1(page: DataTopUp(title:"Data Top-up",)));
             }else{
               Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
 

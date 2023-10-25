@@ -38,11 +38,11 @@ dependencies:
   whatsapp_unilink: ^2.1.0
   dotted_border: ^2.0.0+3
   image_picker: ^1.0.2
-  fl_chart: ^0.63.0
+  fl_chart: ^0.64.0
   qr_flutter: ^4.1.0
   fluttertoast: ^8.2.2
 #  contacts_service: ^0.6.3
-  permission_handler: ^10.4.3
+  permission_handler: ^11.0.1
   lottie: ^2.6.0
   appinio_swiper: ^2.0.2
   flutter_animate: ^4.2.0+1
@@ -53,7 +53,7 @@ dependencies:
   flutter_udid: ^2.0.1
   circular_profile_avatar: ^2.0.5
   google_maps_flutter: ^2.5.0
-  uuid: ^3.0.7
+  uuid: ^4.1.0
   geocoding: ^2.1.0
   local_session_timeout: ^2.3.0
   open_mail_app: ^0.4.5

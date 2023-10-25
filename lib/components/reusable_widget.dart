@@ -209,6 +209,7 @@ popupDialog({ required BuildContext context, required String title, required Str
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState){
               return Dialog(
+                elevation: 0,
                 backgroundColor: CustomColors.sDarkColor2,
                 insetPadding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.r),),
@@ -263,6 +264,7 @@ popupWithTwoBtnDialog({ required BuildContext context, required String title, re
             builder: (BuildContext context, StateSetter setState){
               return Dialog(
                 backgroundColor: CustomColors.sDarkColor2,
+                elevation: 0,
                 insetPadding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 20.h),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.r),),
                 child: Container(
