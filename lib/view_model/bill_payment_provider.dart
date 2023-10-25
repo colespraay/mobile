@@ -52,7 +52,6 @@ class BillPaymentProvider extends ChangeNotifier {
 
 
       }
-
     }
     setloading(false);
   }
@@ -98,6 +97,44 @@ class BillPaymentProvider extends ChangeNotifier {
       String transactionPin,String svg_img, String dataPlanId ) async{
     setloading(true);
     var result=await service.dataPurchaseApi(mytoken, service_provider, phoneNumber,dataPlanId, transactionPin);
+    if(result['error'] == true){
+      if(context.mounted){
+        errorCherryToast(context, result['message']);
+      }
+    }else{
+      if (context.mounted){
+
+        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+        Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
+
+        popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
+            content: result["message"]/*"$phoneNumber has been credited with ₦${amount}"*/,
+            buttonTxt: "Okay", onTap: (){
+              Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+              Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+
+            }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+
+              Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: svg_img, type: result["message"], date: result["dateCreated"], amount: '₦$amount', meterNumber: result["phoneNumber"], transactionRef: result["transactionId"] , transStatus: 'Successful', transactionId: '',)));
+            });
+
+
+      }
+
+    }
+    setloading(false);
+  }
+
+
+
+  //cablePurchaseApi
+  fetchCablePurchaseApi(BuildContext context ,String mytoken, String service_provider, String phoneNumber,String amount,
+      String transactionPin,String svg_img, String dataPlanId ) async{
+    setloading(true);
+    var result=await service.cablePurchaseApi(mytoken,service_provider, phoneNumber, dataPlanId, transactionPin, amount);
     if(result['error'] == true){
       if(context.mounted){
         errorCherryToast(context, result['message']);

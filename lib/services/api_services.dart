@@ -823,6 +823,26 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     });
   }
 
+  Future<ApiResponse<DataPlanModel>> findCablePlanByProvider(String mytoken, String provider){
+    return http.get(Uri.parse("$url/bill/cable-purchase/provider-options/$provider"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        final note1=DataPlanModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<DataPlanModel>(data: note1);
+      }else{
+        return ApiResponse<DataPlanModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e){
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<DataPlanModel>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<DataPlanModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
+  }
+
+
   Future<ApiResponse<OngoingEventModel>> pastEventsList(String mytoken){
     return http.get(Uri.parse("$url/event/past/events-for-current-user"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
@@ -1173,6 +1193,43 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       result["message"] = "Something went wrong";result['error'] = true;}
     return result;
   }
+
+  Future<Map<String, dynamic>> cablePurchaseApi(String mytoken, String provider, String phoneNumber,String dataPlanId,String transactionPin, String amount)async{
+    Map<String, dynamic> result = {};
+    try{
+
+      var response=await http.post(Uri.parse("$url/bill/cable-purchase"),
+          body: jsonEncode({"provider": provider, "smartCardNumber": phoneNumber, "cablePlanId": int.parse(dataPlanId),
+            "transactionPin": transactionPin, "amount":amount}),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result["phoneNumber"] =jsonResponse["data"]["smartCardNumber"];
+        result["provider"] =jsonResponse["data"]["provider"];
+        result["dateCreated"] =jsonResponse["data"]["dateCreated"];
+        result["transactionId"] =jsonResponse["data"]["transactionId"];
+
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
 
   Future<Map<String, dynamic>> verifyElectricityUnitPurchaseApi(String mytoken, String provider,
       String meterNumber,String amount,String plan )async{

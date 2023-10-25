@@ -5,6 +5,7 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/image_title_models.dart';
+import 'package:spraay/ui/others/bill_payments/cable_sub/cable_subscription.dart';
 import 'package:spraay/ui/others/bill_payments/data/data_top_up.dart';
 
 import '../../../navigations/scale_transition.dart';
@@ -65,11 +66,20 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
             }
             else if(e.value.title=="Internet"){
               Navigator.push(context, ScaleTransition1(page: DataTopUp(title:"Data Top-up",)));
-            }else{
+            }
+            else if(e.value.title=="Television"){
+              Navigator.push(context, ScaleTransition1(page: CableSubscriptionscreen(title:e.value.title,)));
+            }
+
+            else if(e.value.title=="Electricity"){
               Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
 
             }
 
+            else{
+
+              // Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
+            }
 
           },
           child: Container(

@@ -18,12 +18,12 @@ import 'package:spraay/view_model/bill_payment_provider.dart';
 
 class PinForBillPayment extends StatefulWidget {
   String title, image,amount,provider,phoneController;
-  String? dataPlanId,electricityProvider,billerName,plan;
+  String? dataPlanId,electricityProvider,billerName,plan, cableSubscriptionId;
 
 
 
    PinForBillPayment({super.key, required this.title, required this.image, required this.amount, required this.provider,
-    required this.phoneController, this.dataPlanId, this.electricityProvider, this.billerName, this.plan});
+    required this.phoneController, this.dataPlanId, this.electricityProvider, this.billerName, this.plan, this.cableSubscriptionId});
 
   @override
   State<PinForBillPayment> createState() => _PinForBillPaymentState();
@@ -89,12 +89,20 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
 
                         }else if(widget.electricityProvider!=null){
                           //call electricityProvider api
-                          _billPaymentProvider?.fetchelEctricityUnitPurchaseApi(context,MySharedPreference.getToken(),widget.electricityProvider!, widget.phoneController,
-                              widget.amount, requiredNumber, widget.image, widget.plan!, widget.billerName!);
-                        }else{
+                          _billPaymentProvider?.fetchelEctricityUnitPurchaseApi(context,MySharedPreference.getToken(),
+                              widget.electricityProvider!, widget.phoneController, widget.amount, requiredNumber, widget.image, widget.plan!, widget.billerName!);
+                        }
+                        else if(widget.cableSubscriptionId !=null){
+                          //DSTV cable subscription
+                          //widget.cableSubscriptionId
+                          _billPaymentProvider?.fetchCablePurchaseApi(context, MySharedPreference.getToken(),widget.provider, widget.phoneController,
+                              widget.amount, requiredNumber, widget.image,widget.cableSubscriptionId!);
+
+                        }
+                        else{
                           //call airtime purchase api
-                          _billPaymentProvider?.fetchAirtimePurchaseApi(context, MySharedPreference.getToken(), widget.provider, widget.phoneController,
-                              widget.amount, requiredNumber, widget.image);
+                          _billPaymentProvider?.fetchAirtimePurchaseApi(context, MySharedPreference.getToken(), widget.provider,
+                              widget.phoneController,widget.amount, requiredNumber, widget.image);
 
                         }
 
