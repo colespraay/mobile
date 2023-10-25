@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return  LoadingOverlayWidget(
       loading: credentialsProvider!.loading,
       child: Scaffold(
-          appBar: buildAppBar(context: context),
+          appBar: appBarSize(height: 28.h),
           body: Form(
             key: _myKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
