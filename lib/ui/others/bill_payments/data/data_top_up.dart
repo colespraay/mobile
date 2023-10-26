@@ -206,7 +206,7 @@ class _DataTopUpState extends State<DataTopUp> {
     }else{
       if(context.mounted){
         Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime, amount: amount,
-          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,dataPlanId: dataPlanId,)));
+          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,dataPlanId: dataPlanId)));
       }
     }
 
@@ -218,6 +218,7 @@ class _DataTopUpState extends State<DataTopUp> {
   List<DataPlan> getVDataPlans=[];
   bool loadingVplans= false;
   String dataPlanId="";
+
 
   fetchGetDataPlanListList(BuildContext context, String vendingCode, StateSetter setState) async{
     setState(() {loadingVplans=true;});
@@ -231,8 +232,9 @@ class _DataTopUpState extends State<DataTopUp> {
   }
 
   Widget buildDataPlan(){
+
     if(loadingVplans){
-      return Center(child: SpinKitFadingCircle(color: CustomColors.sPrimaryColor500, size: 50.r,));
+      return CustomizedTextField(hintTxt:"Loading...", readOnly: true, focusNode: _textField3Focus,);
     }
     else if(getVDataPlans.isEmpty){
       return  CustomizedTextField(hintTxt:"No Plan", readOnly: true, focusNode: _textField3Focus,);
@@ -257,6 +259,7 @@ class _DataTopUpState extends State<DataTopUp> {
           amtController.text=newValue.amount.toString()??"0.00";
           secondBtn=newValue.amount.toString()??"0.00";
           dataPlanId=newValue.id.toString();
+
         });
         },
         decoration: InputDecoration(

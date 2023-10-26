@@ -19,8 +19,9 @@ import 'package:spraay/view_model/transaction_provider.dart';
 
 class PaymentReceipt extends StatefulWidget {
   String svg_img, amount, type, date, meterNumber, transactionRef, transStatus,transactionId;
+  String?cableSubscriptionId;
    PaymentReceipt({required this.svg_img, required this.type, required this.date, required this.amount, required this.meterNumber, required this.transactionRef
-  , required this.transStatus, required this.transactionId});
+  , required this.transStatus, required this.transactionId, this.cableSubscriptionId});
 
   @override
   State<PaymentReceipt> createState() => _PaymentReceiptState();
@@ -52,7 +53,7 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
             padding: horizontalPadding,
             children: [
               height18,
-              widget.type.contains("Electricity")? Image.asset("images/${widget.svg_img}.png", width: 80.w, height: 80.h,):  SvgPicture.asset("images/${widget.svg_img}.svg", width: 80.w, height: 80.h,),
+              widget.type.contains("Electricity") || widget.cableSubscriptionId !=null ? Image.asset("images/${widget.svg_img}.png", width: 80.w, height: 80.h,):  SvgPicture.asset("images/${widget.svg_img}.svg", width: 80.w, height: 80.h,),
               // height16,
               buildContainer(),
 

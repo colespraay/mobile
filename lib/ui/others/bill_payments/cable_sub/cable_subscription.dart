@@ -167,7 +167,7 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
                     border: Border.all(color:airtimePosition==e.key?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
                     // borderRadius: BorderRadius.all(Radius.circular(8.r))
                   ),
-                  child: SvgPicture.asset("images/${e.value}.svg", width: 70.w, height: 70.h,),
+                  child: Image.asset("images/${e.value}.png", width: 70.w, height: 70.h,),
 
                 ),
               ) ).toList(),
@@ -212,7 +212,7 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
     }else{
       if(context.mounted){
         Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime, amount: amount,
-          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text, cableSubscriptionId: dataPlanId,)));
+          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text, cableSubscriptionId: dataPlanId,cableName: cableName,)));
       }
     }
 
@@ -226,7 +226,7 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
   bool loadingVplans= false;
 
   String dataPlanId="";
-
+  String cableName="";
   fetchGetDataPlanListList(BuildContext context, String vendingCode, StateSetter setState) async{
     setState(() {loadingVplans=true;});
     var apiData=await apiResponse.findCablePlanByProvider(MySharedPreference.getToken(), vendingCode);
@@ -240,7 +240,7 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
 
   Widget buildDataPlan(){
     if(loadingVplans){
-      return Center(child: SpinKitFadingCircle(color: CustomColors.sPrimaryColor500, size: 50.r,));
+      return CustomizedTextField(hintTxt:"Loading...", readOnly: true, focusNode: _textField3Focus,);
     }
     else if(getVDataPlans.isEmpty){
       return  CustomizedTextField(hintTxt:"No Plan", readOnly: true, focusNode: _textField3Focus,);
@@ -265,6 +265,7 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
             amtController.text=newValue.amount.toString()??"0.00";
             secondBtn=newValue.amount.toString()??"0.00";
             dataPlanId=newValue.id.toString();
+            cableName=newValue.billerName??"";
           });
         },
         decoration: InputDecoration(

@@ -10,8 +10,8 @@ class MySharedPreference{
   static Future saveToken(String token) async {_preferences?.setString('token', token);}
   static String getToken()  {return _preferences?.getString('token')??"";}
 
-  static Future savePass(String pass) async {_preferences?.setString('pass', pass);}
-  static String getPass()  {return _preferences?.getString('pass')??"";}
+  // static Future savePass(String pass) async {_preferences?.setString('pass', pass);}
+  // static String getPass()  {return _preferences?.getString('pass')??"";}
 
   static Future saveRemember(int remem) async {_preferences?.setInt('remem', remem);}
   static int getRemember()  {return _preferences?.getInt('remem')??0;}
@@ -38,7 +38,6 @@ class MySharedPreference{
 
   static Future saveVAccNumber(String virtualAccountNumber) async {_preferences?.setString('virtualAccountNumber', virtualAccountNumber);}
   static String getVAccNumber()  {return _preferences?.getString('virtualAccountNumber')??"";}
-
 
   static Future saveWalletBalance(String walletBalance) async {_preferences?.setString('walletBalance', walletBalance);}
   static String getWalletBalance()  {return _preferences?.getString('walletBalance')??"";}

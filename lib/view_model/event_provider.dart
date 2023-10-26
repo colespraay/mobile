@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/current_user.dart';
+import 'package:spraay/models/notification_model.dart';
 import 'package:spraay/models/recent_recipient_models.dart';
 import 'package:spraay/models/registered_user_model.dart';
 import 'package:spraay/models/transaction_models.dart';
@@ -273,6 +274,22 @@ class EventProvider extends ChangeNotifier{
       // errorCherryToast(context, apiResponse.errorMessage??"");
     }else{
       transactionList=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+
+  List<NotificationDatum>? notificationlist;
+  fetchNotificationApi() async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.notificationApi(MySharedPreference.getToken(), MySharedPreference.getUId());
+    if(apiResponse.error==true){
+      notificationlist=[];
+      // print("fetchTransactionListApi Error=${apiResponse.errorMessage??""}");
+      // errorCherryToast(context, apiResponse.errorMessage??"");
+    }else{
+      notificationlist=apiResponse.data?.data??[];
     }
     setloadingNoNotif(false);
     notifyListeners();

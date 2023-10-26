@@ -4,9 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/models/notification_model.dart';
 
 class NotificationScreen extends StatelessWidget {
-  const NotificationScreen({Key? key}) : super(key: key);
+
+  List<NotificationDatum>? notificationlist;
+
+   NotificationScreen( {required this.notificationlist, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,56 +25,62 @@ class NotificationScreen extends StatelessWidget {
                 maxChildSize: 0.92,
                 builder: (BuildContext context, ScrollController scrollController) {
 
-                  // return buildNoNotification();
+                  if(notificationlist!.isEmpty){
+                    return buildNoNotification();
+                  }else{
 
-                  return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                       Container(width: double.infinity, height: 30.h, decoration: BoxDecoration(color: CustomColors.sDarkColor2,
-                       borderRadius: BorderRadius.only(topLeft: Radius.circular(25.r), topRight: Radius.circular(25.r))),
-                       child: Center(child: SvgPicture.asset("images/indicate.svg")),),
+                    return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(width: double.infinity, height: 30.h, decoration: BoxDecoration(color: CustomColors.sDarkColor2,
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(25.r), topRight: Radius.circular(25.r))),
+                            child: Center(child: SvgPicture.asset("images/indicate.svg")),),
 
-                        Expanded(
-                          child: ListView.separated(
-                              padding: horizontalPadding,
-                              shrinkWrap: true,
-                              // controller: scrollController,
-                              itemCount: 20,
-                              separatorBuilder: (context, int) {
-                                return  height12;
-                              },
-                              itemBuilder:(context, int position){
-                                return Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                          Expanded(
+                            child: ListView.separated(
+                                padding: EdgeInsets.symmetric(horizontal: 18.w,vertical: 16.h),
+                                shrinkWrap: true,
+                                // controller: scrollController,
+                                itemCount: notificationlist!.length,
+                                separatorBuilder: (context, int) {
+                                  return  height12;
+                                },
+                                itemBuilder:(context, int position){
+                                  return Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
 
-                                    // SvgPicture.asset("images/notf_add_card.svg"),
-                                    // SizedBox(width: 10.w,),
+                                      SvgPicture.asset("images/notification_holder.svg"),
+                                      SizedBox(width: 10.w,),
 
-                                    Expanded(
-                                      child: SizedBox(
-                                        width: 175.w,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text("Card successfully added", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400),),
-                                            height4,
-                                            Text("You can now top-up your wallet from your card",
-                                              style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500)),
-                                          ],
+                                      Expanded(
+                                        child: SizedBox(
+                                          width: 175.w,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(notificationlist?[position].subject??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400),),
+                                              height4,
+                                              Text(notificationlist?[position].message??"",
+                                                  style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor500,
+                                                      fontFamily: "LightPlusJakartaSans")),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
 
-                                    Text("${DateFormat.yMMMd().format(DateTime.now())}",
-                                      style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500)),
+                                      Text("${DateFormat.yMMMd().format(notificationlist![position].dateCreated!)}",
+                                          style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500)),
 
-                                  ],
-                                );
-                              }),
-                        ),
+                                    ],
+                                  );
+                                }),
+                          ),
 
-                      ]);
+                        ]);
+                  }
+
+
                 });
           }),
     );
@@ -85,7 +95,7 @@ class NotificationScreen extends StatelessWidget {
             borderRadius: BorderRadius.only(topLeft: Radius.circular(25.r), topRight: Radius.circular(25.r))),
           child: Center(child: SvgPicture.asset("images/indicate.svg")),),
 
-        Expanded(child: Center(child: SvgPicture.asset("images/no_notification_bell.svg"))),
+        Expanded(child: Center(child: SvgPicture.asset("images/no_notification_bell.svg",width: 270.w, height: 300.h,))),
       ],
     );
   }

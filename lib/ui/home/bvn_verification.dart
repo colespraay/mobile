@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
+
+import '../../view_model/auth_provider.dart';
 
 class BvnVerification extends StatefulWidget {
   const BvnVerification({Key? key}) : super(key: key);
@@ -24,6 +28,13 @@ class _BvnVerificationState extends State<BvnVerification> {
     });
   }
 
+  AuthProvider? credentialsProvider;
+  @override
+  void didChangeDependencies() {
+    credentialsProvider=context.watch<AuthProvider>();
+    super.didChangeDependencies();
+  }
+
   String firstBtn="";
   @override
   void dispose() {
@@ -32,53 +43,52 @@ class _BvnVerificationState extends State<BvnVerification> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: buildAppBar(context: context, title: "BVN Verification"),
-        body:  Padding(
-          padding: horizontalPadding,
-          child: ListView(
-            shrinkWrap: true,
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              height22,
-              buildContainer(),
-              height26,
-              CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
-                textInputAction: TextInputAction.done,hintTxt: "7012345678",focusNode: _textField1Focus,
-                maxLength: 11,
-                inputFormat: [
-                  FilteringTextInputFormatter.digitsOnly
-                ],
-                onChanged:(value){
-                  setState(() {firstBtn=value;});
-                },
-              ),
-              height50,
-
-
-
-              CustomButton(
-                  onTap: () {
-                    if(firstBtn.length==11){
-                      popupDialog(context: context, title: "Identity Verified", content: "Yaay!!! You can not enjoy all the features of Spray App!",
-                          buttonTxt: 'Let’s get started',
-                          onTap: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          }, png_img: 'verified');
-                    }
-
+    return LoadingOverlayWidget(
+      loading: credentialsProvider?.loading??false,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title: "BVN Verification"),
+          body:  Padding(
+            padding: horizontalPadding,
+            child: ListView(
+              shrinkWrap: true,
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                height22,
+                buildContainer(),
+                height26,
+                CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
+                  textInputAction: TextInputAction.done,hintTxt: "7012345678",focusNode: _textField1Focus,
+                  maxLength: 11,
+                  inputFormat: [
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  onChanged:(value){
+                    setState(() {firstBtn=value;});
                   },
-                  buttonText: 'Verify', borderRadius: 30.r,width: 380.w,
-                  buttonColor: firstBtn.length==11  ? CustomColors.sPrimaryColor500:
-                  CustomColors.sDisableButtonColor),
+                ),
+                height50,
 
 
-              height40
 
-            ],
-          ),
-        ));
+                CustomButton(
+                    onTap: () {
+                      if(firstBtn.length==11){
+                        Provider.of<AuthProvider>(context, listen: false).verifyBvnCodeEndpoint(context, MySharedPreference.getUId(), phoneController.text);
+
+                      }
+
+                    },
+                    buttonText: 'Verify', borderRadius: 30.r,width: 380.w,
+                    buttonColor: firstBtn.length==11  ? CustomColors.sPrimaryColor500:
+                    CustomColors.sDisableButtonColor),
+
+
+                height40
+
+              ],
+            ),
+          )),
+    );
   }
 
   Widget buildContainer(){

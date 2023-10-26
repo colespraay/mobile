@@ -156,7 +156,8 @@ class BillPaymentProvider extends ChangeNotifier {
               Navigator.pop(context);
               Navigator.pop(context);
 
-              Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: svg_img, type: result["message"], date: result["dateCreated"], amount: '₦$amount', meterNumber: result["phoneNumber"], transactionRef: result["transactionId"] , transStatus: 'Successful', transactionId: '',)));
+              Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: svg_img, type: result["message"], date: result["dateCreated"], amount: '₦$amount', meterNumber: result["phoneNumber"], transactionRef: result["transactionId"] , transStatus: 'Successful', transactionId: '',
+              cableSubscriptionId: dataPlanId,)));
             });
 
 

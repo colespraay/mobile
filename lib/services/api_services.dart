@@ -15,6 +15,7 @@ import 'package:spraay/models/events_models.dart';
 import 'package:spraay/models/join_event_model.dart';
 import 'package:spraay/models/list_of_banks_model.dart';
 import 'package:spraay/models/login_response.dart';
+import 'package:spraay/models/notification_model.dart';
 import 'package:spraay/models/ongoing_event_model.dart';
 import 'package:spraay/models/recent_recipient_models.dart';
 import 'package:spraay/models/recipient_model.dart';
@@ -32,7 +33,6 @@ class ApiServices{
       var response=await http.post(Uri.parse("$url/auth/login/phone-number"), body:{"phoneNumber":phoneNumber, "password":password},
           headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
       // int statusCode = response.statusCode;
-      log("ResbodyMM==${response.body}");
       // print("Resbody statusCode==${response.statusCode}");
 
       var jsonResponse=convert.jsonDecode(response.body);
@@ -61,9 +61,7 @@ class ApiServices{
         result["enableFaceId"]=loginResponse.data?.user?.enableFaceId??false;
 
         result["walletBalance"]=loginResponse.data?.user?.walletBalance??0;
-
-
-
+        result["bvn"]=loginResponse.data?.user?.bvn??"";
         result["virtualAccountName"]=loginResponse.data?.user?.virtualAccountName??"";
         result["virtualAccountNumber"]=loginResponse.data?.user?.virtualAccountNumber??"";
 
@@ -141,6 +139,33 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   catch(e){result["message"] = "Something went wrong";result['error'] = true;}
   return result;
 }
+
+  Future<Map<String, dynamic>> verifyBvnCode(String userId,String bvn, String token)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.patch(Uri.parse("$url/user"),
+          body: {"userId": userId,"bvn": bvn,},
+          headers: {"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
 
   Future<Map<String, dynamic>> resendOTPCode(String userID)async{
     Map<String, dynamic> result = {};
@@ -1326,6 +1351,29 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
       }else{
         return ApiResponse<ListOfBankModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+
+      }
+    });
+  }
+
+
+
+  Future<ApiResponse<NotificationModel>> notificationApi(String mytoken, String uid){
+    return http.get(Uri.parse("$url/notification?userId=$uid"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=NotificationModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<NotificationModel>(data: note1);
+      }else{
+        return ApiResponse<NotificationModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e){
+      if(e.toString().contains("SocketException")){
+        return ApiResponse<NotificationModel>(error: true, errorMessage: 'Error in network connection');
+
+      }else{
+        return ApiResponse<NotificationModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
 
       }
     });

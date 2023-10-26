@@ -58,6 +58,7 @@ dependencies:
   local_session_timeout: ^2.3.0
   open_mail_app: ^0.4.5
   document_file_save_plus: ^2.0.0
+  flutter_secure_storage: ^9.0.0
 #  flutter_media_downloader: ^0.0.1
 
 #  overlay_loader_with_app_icon: ^0.0.3

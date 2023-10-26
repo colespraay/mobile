@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/fancy_fab.dart';
+import 'package:spraay/components/modal_buttom.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
@@ -19,6 +20,7 @@ import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/ui/profile/user_profile/edit_profile.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/utils/secure_storage.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 import 'package:spraay/view_model/event_provider.dart';
 import 'package:spraay/view_model/home_provider.dart';
@@ -39,6 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
     _isObscure=Provider.of<HomeProvider>(context, listen: false).hideWalletvalue??false;
     Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
     Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
+    Provider.of<EventProvider>(context, listen: false).fetchNotificationApi();
+
+    SecureStorage().getVn().then((value){
+      if(value.isEmpty){
+        //showd bvn modal
+        verifyYourIdentityBModal(context: context);
+      }
+    });
   }
 
   AuthProvider? credentialsProvider;
@@ -201,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
         shape: RoundedRectangleBorder(borderRadius:BorderRadius.only(topRight: Radius.circular(25.r), topLeft: Radius.circular(25.r)),),
         context: context,
         builder: (context) {
-          return NotificationScreen();
+          return NotificationScreen(notificationlist:eventProvider?.notificationlist??[],);
         });
   }
 

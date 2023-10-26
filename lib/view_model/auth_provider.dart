@@ -19,6 +19,7 @@ import 'package:spraay/ui/authentication/tell_us_about_yourself.dart';
 import 'package:spraay/ui/dashboard/dashboard_screen.dart';
 import 'package:spraay/ui/profile/reset_trans_pin/change_transaction_pin.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/utils/secure_storage.dart';
 
 class AuthProvider extends ChangeNotifier{
 
@@ -278,6 +279,24 @@ class AuthProvider extends ChangeNotifier{
   }
 
 
+  verifyBvnCodeEndpoint(context,String userId, String bvn) async{
+    setloading(true);
+    var result = await apiResponse.verifyBvnCode(userId, bvn, MySharedPreference.getToken());
+    if (result['error'] == true) {
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      popupDialog(context: context, title: "Identity Verified", content: "Yaay!!! You can now enjoy all the features of Spray App!",
+          buttonTxt: 'Let’s get started',
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }, png_img: 'verified');
+    }
+    setloading(false);
+  }
+
+
   fetchLoginEndpoint( context,String password,String phoneNumber) async{
     setloading(true);
     var result = await apiResponse.logIn(phoneNumber, password);
@@ -292,16 +311,22 @@ class AuthProvider extends ChangeNotifier{
       await MySharedPreference.saveLastname(result["lastname"]);
       await MySharedPreference.savePhoneNumber(result["phone"]);
       await MySharedPreference.saveProfilePicture(result["profileImageUrl"]);
-      await MySharedPreference.savePass(password);
+
+      // await MySharedPreference.savePass(password);
+      await SecureStorage().savePassword(password);
+
       await MySharedPreference.saveVAccName(result["virtualAccountName"].toString());
       await MySharedPreference.saveVAccNumber(result["virtualAccountNumber"].toString());
 
+      await SecureStorage().saveVn(result["bvn"]);
+      // await MySharedPreference.saveCheckBvn(result["bvn"].toString());
       await MySharedPreference.saveWalletBalance(result["walletBalance"].toString());
 
       MySharedPreference.setVisitingFlag();
 
       // start listening to session only after user logs in
       sessionStateStream.add(SessionState.startListening);
+
 
       Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
 
@@ -348,6 +373,9 @@ class AuthProvider extends ChangeNotifier{
     }else{
       dataResponse= apiResponse.data?.data;
       await MySharedPreference.saveWalletBalance(apiResponse.data?.data?.walletBalance.toString()??"");
+      if(dataResponse?.bvn !=null){
+        await SecureStorage().saveVn(dataResponse?.bvn);
+      }
     }
     setloadingNoNotif(false);
     notifyListeners();

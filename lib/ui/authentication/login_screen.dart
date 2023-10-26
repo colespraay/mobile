@@ -15,6 +15,7 @@ import 'package:spraay/ui/authentication/forgot_password_screen.dart';
 import 'package:spraay/ui/dashboard/dashboard_screen.dart';
 import 'package:spraay/utils/local_authentication.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/utils/secure_storage.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -42,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
     credentialsProvider=context.watch<AuthProvider>();
   }
 
+  String password="";
   @override
   void initState() {
     setState(() {
@@ -51,6 +53,12 @@ class _LoginScreenState extends State<LoginScreen> {
       firstBtn=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1):"";
       _textField1Focus = FocusNode();
       _textField2Focus = FocusNode();
+    });
+
+    SecureStorage().getPassword().then((value){
+      if(value.isNotEmpty){
+       setState(() {password=value;});
+      }
     });
   }
 
@@ -199,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (isAuthenticated) {
       //if authenticated, login
-      Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context, MySharedPreference.getPass(), MySharedPreference.getPhoneNumber());
+      Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context,password, MySharedPreference.getPhoneNumber());
 
     }
     else {

@@ -109,14 +109,6 @@ class _RateExperienceState extends State<RateExperience> {
           GestureDetector(
             onTap:(){
               _updateCounter();
-              // count=count+1;
-
-
-
-              // print("count");
-
-
-
             },
               child: Image.asset("images/$img.png", width: 180.w, height: 270.h,)),
 

@@ -5,6 +5,7 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/view_model/auth_provider.dart';
+import 'package:spraay/view_model/event_provider.dart';
 
 class SprayDetail extends StatefulWidget {
   String? response_amount, response_transactiondate, response_eventId,response_transactRef;
@@ -87,7 +88,10 @@ class _SprayDetailState extends State<SprayDetail> {
             Navigator.pop(context);
             Navigator.pop(context);
             Navigator.pop(context);
+
             Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+            Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+            Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
 
           },
           child: Center(child: Text("Home", style: TextStyle(color: CustomColors.sWhiteColor, fontWeight: FontWeight.w700, fontSize:16.sp, fontFamily: 'Bold',),)),

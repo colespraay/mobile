@@ -14,12 +14,14 @@ import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/services/api_services.dart';
+import 'package:spraay/ui/home/fund_wallet.dart';
 import 'package:spraay/ui/others/payment_receipt.dart';
 import 'package:spraay/ui/others/spray/spray_detail.dart';
 import 'package:spraay/ui/others/spray/topup_spray.dart';
 import 'package:spraay/models/join_event_model.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
+import 'package:spraay/view_model/event_provider.dart';
 
 
 class SprayScreen extends StatefulWidget {
@@ -316,9 +318,20 @@ class _SprayScreenState extends State<SprayScreen>{
             Expanded(
               child: CustomButton(
                   onTap: () {
-                    Navigator.push(context, FadeRoute(page: TopUpSpray()));
+                    // TopUpSpray
+                    // Navigator.push(context, FadeRoute(page: FundWallet()));
+
+
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+                    Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+                    Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
+
+
                   },
-                  buttonText: 'Top up', borderRadius: 30.r,height: 45.h,
+                  buttonText: 'Home', borderRadius: 30.r,height: 45.h,
                   buttonColor: CustomColors.sPrimaryColor500),
             ),
           ],
