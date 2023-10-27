@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +11,7 @@ import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/home/transaction_detail.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/ui/wallet/bar_graph/bar_graph.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/event_provider.dart';
 
 class ChatView extends StatefulWidget {
@@ -21,10 +24,42 @@ class ChatView extends StatefulWidget {
 class _ChatViewState extends State<ChatView> {
 
   EventProvider? eventProvider;
+
+
+  int? _total,_income,_expense;
+
+  bool _isloading=false;
+  filterHistory(String filter) async{
+    setState(() {_isloading=true;});
+    var result = await apiResponse.historySummaryFilter(MySharedPreference.getToken(), filter);
+    if (result['error'] == true) {
+      log("ChatView screen: ${result['message']}");
+    }
+    else {
+      setState(() {
+        _total= result["total"];
+        _income= result["income"];
+        _expense= result["expense"];
+      });
+
+    }
+
+    setState(() {_isloading=false;});
+  }
+
   @override
   void didChangeDependencies() {
     eventProvider=context.watch<EventProvider>();
     super.didChangeDependencies();
+  }
+
+
+  @override
+  void initState() {
+    filterHistory("LAST_6_MONTHS");
+
+    Provider.of<EventProvider>(context, listen: false).fetchGraphHistoryApi();
+    super.initState();
   }
 
   @override
@@ -33,7 +68,7 @@ class _ChatViewState extends State<ChatView> {
       shrinkWrap: true,
       // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SprayBarGraph(),
+        SprayBarGraph(eventProvider),
         height30,
         buildContainer(),
         height20,
@@ -41,9 +76,9 @@ class _ChatViewState extends State<ChatView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(child: buildRowContainer(title: 'Income', content: '₦7,980,00', color: CustomColors.sSuccessColor)),
+            Expanded(child: buildRowContainer(title: 'Income', content: _isloading?"...": '₦${_income??0}', color: CustomColors.sSuccessColor)),
             SizedBox(width: 25.w,),
-            Expanded(child: buildRowContainer(title: 'Expense', content: '₦7,980,00', color: CustomColors.sErrorColor))
+            Expanded(child: buildRowContainer(title: 'Expense', content:  _isloading?"...": '₦${_expense??0}', color: CustomColors.sErrorColor))
 
           ],
         ),
@@ -68,7 +103,7 @@ class _ChatViewState extends State<ChatView> {
         children: [
           SizedBox(
             width: 180.w,
-              child: Text("N1,515,890", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700))),
+              child: Text( _isloading?"...": "₦${_total??0}", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 30.sp, fontWeight: FontWeight.w700, fontFamily: "PlusJakartaSans"))),
 
           SizedBox(width: 8.w,),
           Expanded(child: buildGender())
@@ -111,6 +146,7 @@ class _ChatViewState extends State<ChatView> {
       }).toList(),
       onChanged: (String? newValue) {
         // thirdVal=newValue??"";
+        filterHistory(newValue!.replaceAll(" ", "_").toUpperCase());
       },
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),

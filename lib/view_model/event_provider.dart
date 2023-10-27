@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/current_user.dart';
+import 'package:spraay/models/graph_history_model.dart';
 import 'package:spraay/models/notification_model.dart';
 import 'package:spraay/models/recent_recipient_models.dart';
 import 'package:spraay/models/registered_user_model.dart';
@@ -257,6 +258,22 @@ class EventProvider extends ChangeNotifier{
       // errorCherryToast(context, apiResponse.errorMessage??"");
     }else{
       userHorizontalScrool=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+  //graphHistoryApi
+  List<DatumGraphHistory> ?datum_graph_histories;
+  fetchGraphHistoryApi() async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.graphHistoryApi(MySharedPreference.getToken());
+    if(apiResponse.error==true){
+      datum_graph_histories=[];
+      print("No Category for event=${apiResponse.errorMessage??""}");
+      // errorCherryToast(context, apiResponse.errorMessage??"");
+    }else{
+      datum_graph_histories=apiResponse.data?.data??[];
     }
     setloadingNoNotif(false);
     notifyListeners();

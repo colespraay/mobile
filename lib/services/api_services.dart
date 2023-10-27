@@ -12,6 +12,7 @@ import 'package:spraay/models/category_list_model.dart';
 import 'package:spraay/models/current_user.dart';
 import 'package:spraay/models/data_model.dart';
 import 'package:spraay/models/events_models.dart';
+import 'package:spraay/models/graph_history_model.dart';
 import 'package:spraay/models/join_event_model.dart';
 import 'package:spraay/models/list_of_banks_model.dart';
 import 'package:spraay/models/login_response.dart';
@@ -403,6 +404,35 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     return result;
   }
 
+  Future<Map<String, dynamic>> historySummaryFilter(String token ,String filter)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("$url/transaction/history-summary/$filter"),
+          headers:{"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["total"] =jsonResponse["total"];
+        result["income"] =jsonResponse["income"];
+        result["expense"] =jsonResponse["expense"];
+
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
 
   Future<ApiResponse<UserResponse>> userDetailApi(String mytoken, String uid){
     return http.get(Uri.parse("$url/user/$uid"),
@@ -419,6 +449,23 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       return ApiResponse<UserResponse>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
     });
   }
+
+
+  Future<ApiResponse<GraphHistoryModel>> graphHistoryApi(String mytoken){
+    return http.get(Uri.parse("$url/transaction/graph/history-summary"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        final note1=GraphHistoryModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<GraphHistoryModel>(data: note1);
+      }else{
+        return ApiResponse<GraphHistoryModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      return ApiResponse<GraphHistoryModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+    });
+  }
+
 
   Future<Map<String, dynamic>> updateProfile(String email, String userId, String firstName, String lastName, String gender)async{
     Map<String, dynamic> result = {};
