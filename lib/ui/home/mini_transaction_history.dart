@@ -37,7 +37,7 @@ class MiniTransactionHistory extends StatelessWidget {
       return AnimationLimiter(
         child: ListView.builder(
             shrinkWrap: true,
-            itemCount:  transactionList!.length<5? transactionList!.length : 5,
+            itemCount: transactionList!.length<5? transactionList!.length : 5,
             itemBuilder:(context, int position){
               return SlideListAnimationWidget(
                 position: position,

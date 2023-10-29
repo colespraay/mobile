@@ -183,66 +183,68 @@ class _ChatViewState extends State<ChatView> {
         ],
       ),);
     }else{
-      return MiniTransactionHistory(transactionList:eventProvider?.transactionList,);
-    // return ListView.builder(
-    //     shrinkWrap: true,
-    //     itemCount: eventProvider!.transactionList!.length,
-    //     physics: NeverScrollableScrollPhysics(),
-    //     itemBuilder:(context, int position){
-    //       return InkWell(
-    //         onTap: (){
-    //           Navigator.push(context, FadeRoute(page: TransactionDetail(eventProvider?.transactionList?[position])));
-    //
-    //         },
-    //         child: Column(
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             Row(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: [
-    //                 Container(
-    //                   width: 40.w,
-    //                   height: 40.h,
-    //                   decoration: BoxDecoration(color: CustomColors.sDarkColor3, shape: BoxShape.circle,
-    //                       image: DecorationImage(image: AssetImage("images/cash_png.png"), fit: BoxFit.fill,)
-    //                   ),
-    //                 ),
-    //
-    //                 SizedBox(width: 10.w,),
-    //
-    //                 Expanded(
-    //                   child: SizedBox(
-    //                     width: 175.w,
-    //                     child: Column(
-    //                       crossAxisAlignment: CrossAxisAlignment.start,
-    //                       children: [
-    //                         Text(eventProvider?.transactionList?[position].narration??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400),),
-    //                         height4,
-    //                         Text("${DateFormat.MMMd().format(eventProvider!.transactionList![position].dateCreated!)}, ${DateFormat.jm().format(eventProvider!.transactionList![position].dateCreated!)}",
-    //                           style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
-    //                       ],
-    //                     ),
-    //                   ),
-    //                 ),
-    //
-    //                 Column(
-    //                   crossAxisAlignment: CrossAxisAlignment.end,
-    //                   children: [
-    //                     Text("${eventProvider?.transactionList?[position].type=="Debit"?"-":"+"} ₦${eventProvider?.transactionList?[position].amount??0}", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700,
-    //                         color:eventProvider?.transactionList?[position].type=="Debit"? CustomColors.sErrorColor: CustomColors.sSuccessColor, fontFamily: "PlusJakartaSans")),
-    //
-    //                     Text("${DateFormat.jm().format(eventProvider!.transactionList![position].dateCreated!)}",
-    //                       style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
-    //
-    //                   ],
-    //                 ),
-    //               ],
-    //             ),
-    //             height10,
-    //           ],
-    //         ),
-    //       );
-    //     });
+      // return MiniTransactionHistory(transactionList:eventProvider?.transactionList,);
+
+
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: eventProvider!.transactionList!.length <5? eventProvider!.transactionList!.length: 5,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder:(context, int position){
+          return InkWell(
+            onTap: (){
+              Navigator.push(context, FadeRoute(page: TransactionDetail(eventProvider?.transactionList?[position])));
+
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 40.w,
+                      height: 40.h,
+                      decoration: BoxDecoration(color: CustomColors.sDarkColor3, shape: BoxShape.circle,
+                          image: DecorationImage(image: AssetImage("images/cash_png.png"), fit: BoxFit.fill,)
+                      ),
+                    ),
+
+                    SizedBox(width: 10.w,),
+
+                    Expanded(
+                      child: SizedBox(
+                        width: 175.w,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(eventProvider?.transactionList?[position].narration??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400,fontFamily: "LightPlusJakartaSans"),),
+                            height4,
+                            Text("${DateFormat.MMMd().format(eventProvider!.transactionList![position].dateCreated!)}, ${DateFormat.jm().format(eventProvider!.transactionList![position].dateCreated!)}",
+                              style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text("${eventProvider?.transactionList?[position].type=="Debit"?"-":"+"} ₦${eventProvider?.transactionList?[position].amount??0}", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700,
+                            color:eventProvider?.transactionList?[position].type=="Debit"? CustomColors.sErrorColor: CustomColors.sSuccessColor, fontFamily: "PlusJakartaSans")),
+
+                        Text("${DateFormat.jm().format(eventProvider!.transactionList![position].dateCreated!)}",
+                          style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
+
+                      ],
+                    ),
+                  ],
+                ),
+                height10,
+              ],
+            ),
+          );
+        });
     }
   }
 
