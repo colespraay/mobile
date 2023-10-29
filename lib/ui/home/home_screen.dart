@@ -16,6 +16,7 @@ import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/home/event_slidder.dart';
 import 'package:spraay/ui/home/fund_wallet.dart';
+import 'package:spraay/ui/home/mini_transaction_history.dart';
 import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/ui/profile/user_profile/edit_profile.dart';
@@ -199,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         height16,
 
-        Expanded(child: eventProvider?.transactionList==null? ShimmerList(): TransactionHistory(transactionList:eventProvider?.transactionList,))
+        Expanded(child: eventProvider?.transactionList==null? ShimmerList(): MiniTransactionHistory(transactionList:eventProvider?.transactionList,))
       ],
     );
   }

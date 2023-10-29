@@ -9,6 +9,7 @@ import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/navigations/scale_transition.dart';
 import 'package:spraay/ui/home/event_slidder.dart';
 import 'package:spraay/ui/home/fund_wallet.dart';
+import 'package:spraay/ui/home/mini_transaction_history.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/ui/wallet/withdrawal/withdrawal.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
@@ -139,7 +140,7 @@ class _WalletViewState extends State<WalletView> {
         ),
         height16,
 
-        Expanded(child: TransactionHistory(transactionList:eventProvider?.transactionList))
+        Expanded(child: MiniTransactionHistory(transactionList:eventProvider?.transactionList))
       ],
     );
   }
