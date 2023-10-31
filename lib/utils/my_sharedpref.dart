@@ -39,6 +39,10 @@ class MySharedPreference{
   static Future saveVAccNumber(String virtualAccountNumber) async {_preferences?.setString('virtualAccountNumber', virtualAccountNumber);}
   static String getVAccNumber()  {return _preferences?.getString('virtualAccountNumber')??"";}
 
+
+  static Future saveVBankName(String bank_nam) async {_preferences?.setString('bank_nam', bank_nam);}
+  static String getVBankName()  {return _preferences?.getString('bank_nam')??"";}
+
   static Future saveWalletBalance(String walletBalance) async {_preferences?.setString('walletBalance', walletBalance);}
   static String getWalletBalance()  {return _preferences?.getString('walletBalance')??"";}
 

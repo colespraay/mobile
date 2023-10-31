@@ -286,6 +286,8 @@ class AuthProvider extends ChangeNotifier{
       errorCherryToast(context, result['message']);
     }
     else {
+      await SecureStorage().saveVn(bvn);
+
       popupDialog(context: context, title: "Identity Verified", content: "Yaay!!! You can now enjoy all the features of Spray App!",
           buttonTxt: 'Let’s get started',
           onTap: () {
@@ -317,6 +319,8 @@ class AuthProvider extends ChangeNotifier{
 
       await MySharedPreference.saveVAccName(result["virtualAccountName"].toString());
       await MySharedPreference.saveVAccNumber(result["virtualAccountNumber"].toString());
+      await MySharedPreference.saveVBankName(result["bankName"].toString());
+
 
       await SecureStorage().saveVn(result["bvn"]);
       // await MySharedPreference.saveCheckBvn(result["bvn"].toString());
@@ -350,6 +354,8 @@ class AuthProvider extends ChangeNotifier{
       await MySharedPreference.saveProfilePicture(result["profileImageUrl"]);
       await MySharedPreference.saveVAccName(result["virtualAccountName"].toString());
       await MySharedPreference.saveVAccNumber(result["virtualAccountNumber"].toString());
+      await MySharedPreference.saveVBankName(result["bankName"].toString());
+
 
       Navigator.push(context, FadeRoute(page: ChangeTransactionPin()));
 
