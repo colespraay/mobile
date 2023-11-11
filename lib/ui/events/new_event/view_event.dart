@@ -130,7 +130,7 @@ class _ViewEventState extends State<ViewEvent> {
             height16,
             CustomButton(
                 onTap: () {
-                  Navigator.push(context, SlideLeftRoute(page: PhoneContacts()));
+                  Navigator.pushReplacement(context, SlideLeftRoute(page: PhoneContacts()));
                 },
                 buttonText: 'Share this event', borderRadius: 30.r,width: 380.w,
                 buttonColor: CustomColors.sDarkColor3),

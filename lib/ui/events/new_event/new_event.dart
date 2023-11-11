@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -138,12 +139,34 @@ class _NewEventState extends State<NewEvent> {
             setState(() {secondVal=value;});
           },
           onTap: ()async {
-            TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context, initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
+
+            TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context,
+                builder: (context, childWidget) {
+                  return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+                    child: childWidget!,
+                  );
+                },
+                initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
+
+
+            // TimeOfDay? newSelectedTime = await showRoundedTimePicker(
+            //     context: context,
+            //     theme:  ThemeData.dark(useMaterial3: true),
+            //     initialTime: TimeOfDay.now(),
+            //     locale: Locale('en', 'US')
+            // );
+
             setState(() {
               _openPickupTime = newSelectedTime == null ? TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))) : newSelectedTime;
               timeController.text=_openPickupTime?.format(context)??"";
               secondVal=_openPickupTime?.format(context)??"";
-            });},
+            });
+
+
+
+
+            },
         ),
 
 

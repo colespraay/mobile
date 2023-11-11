@@ -70,11 +70,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void didChangeDependencies() {
-
-    // Timer(Duration(seconds: 4), ()=> Navigator.pushReplacement(context, FadeRoute(page: ScreenDirection())));
-
-
+    super.didChangeDependencies();
     Timer(Duration(seconds: 4), ()=> Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ScreenDirection())));
-
   }
 }

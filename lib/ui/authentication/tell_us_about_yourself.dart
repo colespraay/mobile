@@ -197,7 +197,7 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Profile Information", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
+            Text("Choose Spray tag", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
             Text("Step  2 of 2", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sGreyScaleColor50)),
           ],
         ),

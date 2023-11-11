@@ -71,9 +71,7 @@ class _ProfileUiState extends State<ProfileUi> {
         height40,
         InkWell(
           onTap:(){
-            // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>ViewProfile(imageUrl:  credentialsProvider?.dataResponse?.profileImageUrl??"")   ));
             Navigator.push(context,FadeRoute(page:ViewProfile(imageUrl:  credentialsProvider?.dataResponse?.profileImageUrl??"") ));
-
           },
             child: Hero(tag: "hero_image",
             child: buildCircularNetworkImage(imageUrl: credentialsProvider?.dataResponse?.profileImageUrl??"", radius: 70.r))),

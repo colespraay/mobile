@@ -91,7 +91,8 @@ AppBar buildAppBar({required BuildContext context, String ?title,
   return AppBar(
     backgroundColor: backgroundColor??Colors.transparent,
     elevation: 0,
-    systemOverlayStyle: SystemUiOverlayStyle(statusBarBrightness: statusBarBrightness??Brightness.dark, statusBarIconBrightness:statusBarIconBrightness?? Brightness.light,statusBarColor: Colors.transparent),
+    systemOverlayStyle: SystemUiOverlayStyle(statusBarBrightness: statusBarBrightness??Brightness.dark,
+        statusBarIconBrightness:statusBarIconBrightness?? Brightness.light,statusBarColor: Colors.transparent),
 
     centerTitle: true,
     leading: GestureDetector(
@@ -311,7 +312,7 @@ popupWithTwoBtnDialog({ required BuildContext context, required String title, re
 
 PreferredSize appBarSize({double ? height, Color? overlaycolor}){
   return PreferredSize(preferredSize: Size.fromHeight(height??16.h), child: AppBar(
-    systemOverlayStyle: SystemUiOverlayStyle(statusBarBrightness: Brightness.dark, statusBarIconBrightness: Brightness.light,statusBarColor: Colors.transparent),
+    systemOverlayStyle: const SystemUiOverlayStyle(statusBarBrightness: Brightness.dark, statusBarIconBrightness: Brightness.light,statusBarColor: Colors.transparent),
     backgroundColor:overlaycolor?? Colors.transparent, elevation: 0,),);
 
 }
