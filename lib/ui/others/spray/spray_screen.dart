@@ -75,7 +75,7 @@ class _SprayScreenState extends State<SprayScreen>{
 
     }else{
 
-      Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+      Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
 
       setState(() {
         _isDismissHandAfterSpraying=true;
@@ -326,9 +326,8 @@ class _SprayScreenState extends State<SprayScreen>{
                     Navigator.pop(context);
                     Navigator.pop(context);
                     Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
-                    Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+                    Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
                     Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
-
 
                   },
                   buttonText: 'Home', borderRadius: 30.r,height: 45.h,

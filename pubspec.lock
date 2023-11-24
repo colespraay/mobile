@@ -928,6 +928,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  rich_text_widget:
+    dependency: "direct main"
+    description:
+      name: rich_text_widget
+      sha256: "7c8714158c22602c6f9a85efaf583b8eeb7b8db50f91035fe8896f5fe9c85647"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.7"
   rxdart:
     dependency: transitive
     description:

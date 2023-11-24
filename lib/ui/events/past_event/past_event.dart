@@ -112,6 +112,7 @@ class _PastEventState extends State<PastEvent> {
                           event_date: DateFormat('yyyy-MM-dd').format(datum.eventDate!), eventTime: datum.time??"", eventVenue:datum.venue??"",
                           eventCategory: datum.category??"", eventdescription: datum.eventDescription??"",
                           event_CoverImage: datum.eventCoverImage??"", eventId: datum.id??"", tag:datum.user?.userTag??"", lat: datum.eventGeoCoordinates?.latitude.toString()??"", long: datum.eventGeoCoordinates?.longitude.toString()??"",
+                          eventCode: datum.eventCode??"",
                         )));
                         // Navigator.push(context, FadeRoute(page: EventDetails(fromPage: '', eventname: '', event_date: '',
                         //   eventTime: '', eventVenue: '', eventCategory: '', eventdescription: '', event_CoverImage: '',

@@ -28,7 +28,7 @@ class DasboardScreen extends StatefulWidget {
 
 class _DasboardScreenState extends State<DasboardScreen> {
 
-  List<Widget> _widgetOption = [
+  final List<Widget> _widgetOption = [
     HomeScreen(),
     EventsScreen(),
     SizedBox.shrink(),//empty page between
@@ -55,7 +55,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
             backgroundColor: Color(0xffD3F701),
             onPressed: () {
               _choseFABModal().then((value){
-                Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+                Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
               });
             },
             child: SvgPicture.asset("images/add_icon.svg"),

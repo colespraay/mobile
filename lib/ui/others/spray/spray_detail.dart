@@ -84,13 +84,13 @@ class _SprayDetailState extends State<SprayDetail> {
         color: Colors.transparent,
         child: InkWell(
           onTap: (){
-            Navigator.pop(context);
+            // Navigator.pop(context);
             Navigator.pop(context);
             Navigator.pop(context);
             Navigator.pop(context);
 
             Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
-            Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+            Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
             Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
 
           },

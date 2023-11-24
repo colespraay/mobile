@@ -75,16 +75,19 @@ class TransactionHistory extends StatelessWidget {
                             ),
                           ),
 
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text("${transactionList?[position].type=="Debit"?"-":"+"} ₦${transactionList?[position].amount??0}", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700,
-                                  color:transactionList?[position].type=="Debit"? CustomColors.sErrorColor: CustomColors.sSuccessColor, fontFamily: "PlusJakartaSans")),
+                          SizedBox(
+                            width: 110.w,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text("${transactionList?[position].type=="Debit"?"-":"+"} ₦${transactionList?[position].amount??0}", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700,
+                                    color:transactionList?[position].type=="Debit"? CustomColors.sErrorColor: CustomColors.sSuccessColor, fontFamily: "PlusJakartaSans",overflow: TextOverflow.ellipsis,), maxLines: 1,),
 
-                              Text("${DateFormat.jm().format(transactionList![position].dateCreated!)}",
-                                style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
+                                Text("${DateFormat.jm().format(transactionList![position].dateCreated!)}",
+                                  style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),textAlign: TextAlign.center,),
 
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),

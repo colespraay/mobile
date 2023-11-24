@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
@@ -14,6 +15,7 @@ import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/events/edit_event.dart';
 import 'package:spraay/ui/events/google_map_location.dart';
 import 'package:spraay/ui/events/new_event/contacts/phone_contacts.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/event_provider.dart';
 
 class ViewEvent extends StatefulWidget {
@@ -24,11 +26,37 @@ class ViewEvent extends StatefulWidget {
 }
 
 class _ViewEventState extends State<ViewEvent> {
+  String totalPeopleInvited="0";
+  String totalRsvp="0";
+  bool _loadTAmt=false;
+  _fetchtotalPeopleInvitedEndpoint() async{
+    setState(() {_loadTAmt=true;});
+    var result = await apiResponse.totalPeopleInvitedApi(MySharedPreference.getToken(), eventProvider?.eventId??"");
+    if (result['error'] == true) {
+      print("_fetchtotalPeopleInvitedEndpoint error${result['message']}");
+    }
+    else {
+      setState(() {
+        totalPeopleInvited=result["totalPeopleInvited"].toString();
+        totalRsvp=result["totalRsvp"].toString();
+      });
+    }
+    setState(() {_loadTAmt=false;});
+  }
 
+  @override
+  void initState() {
+
+    super.initState();
+  }
   EventProvider? eventProvider;
+  //totalPeopleInvitedApi
   @override
   void didChangeDependencies() {
     eventProvider=context.watch<EventProvider>();
+    if(eventProvider?.eventId !=null || eventProvider?.eventId !=""){
+      _fetchtotalPeopleInvitedEndpoint();
+    }
     super.didChangeDependencies();
   }
 
@@ -45,8 +73,13 @@ class _ViewEventState extends State<ViewEvent> {
             },
               child: Padding(padding:  EdgeInsets.only(right: 18.w), child: SvgPicture.asset("images/edit.svg"),)),
 
-          Padding(padding:  EdgeInsets.only(right: 18.w), child: SvgPicture.asset("images/arrow_svg.svg"),),
-
+          GestureDetector(
+            onTap:()async{
+              final box = context.findRenderObject() as RenderBox?;
+              await Share.share("Hello, I am inviting you to ${eventProvider?.eventname??""} ${eventProvider?.eventCategory??""}. Kindly download the Spraay App www.spraay.ng to confirm your attendance. Your private invitation code is ${eventProvider?.eventCode??""}",
+                sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+            },
+              child: Padding(padding:  EdgeInsets.only(right: 18.w), child: SvgPicture.asset("images/arrow_svg.svg"),)),
         ]),
         body:  ListView(
           padding: horizontalPadding,
@@ -60,9 +93,7 @@ class _ViewEventState extends State<ViewEvent> {
                   child: Container(
                     width: double.infinity,
                     height: 455.h,
-                    decoration: BoxDecoration(
-                      color: CustomColors.sPrimaryColor500,
-                    ),
+                    decoration: const BoxDecoration(color: CustomColors.sPrimaryColor500,),
                     child: CachedNetworkImage(
                       width: double.infinity,
                       height: 455.h,
@@ -113,6 +144,76 @@ class _ViewEventState extends State<ViewEvent> {
             Text(eventProvider?.eventdescription??"",
                 style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor50) ),
 
+            height30,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 120.w,
+                  height: 120.h,
+                  decoration: BoxDecoration(
+                      color: const Color(0xff7664FF),
+                      borderRadius: BorderRadius.all(Radius.circular(10.r))
+                  ),
+                  child: Stack(
+                    children: [
+
+                      Positioned(
+                          top: 16.h,
+                          left: 4.w,
+                          right: 4.w,
+                          child: Text(_loadTAmt?"...":  "$totalPeopleInvited", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp,
+                              fontWeight: FontWeight.w700, color: CustomColors.sWhiteColor, fontFamily: "SemiPlusJakartaSans") )),
+
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: Text("Invited\nGuest", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor) ),
+                        ),
+                      ),
+
+                      Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Image.asset("images/msk.png", width: 30.w,))
+
+                    ],
+                  ),
+                ),
+                SizedBox(width: 28.w,),
+                Container(
+                  width: 120.w,
+                  height: 120.h,
+                  decoration: BoxDecoration(
+                      color: const Color(0xff7664FF),
+                      borderRadius: BorderRadius.all(Radius.circular(10.r))
+                  ),
+                  child: Stack(
+                    children: [
+
+                      Positioned(
+                          top: 16.h,
+                          left: 4.w,
+                          right: 4.w,
+                          child: Text(_loadTAmt?"...":  "$totalRsvp", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w700, color: CustomColors.sWhiteColor, fontFamily: "SemiPlusJakartaSans") )),
+
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: Text("Expected\nGuest", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor) ),
+                        ),
+                      ),
+                      Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Image.asset("images/msk.png", width: 30.w,))
+                    ],
+                  ),
+                ),
+              ],
+            ),
             height30,
             buildCode(),
 

@@ -169,6 +169,7 @@ class _EditProfileState extends State<EditProfile> {
 
         CustomizedTextField(textEditingController:fullNameController, keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,hintTxt: "Full name",focusNode: _textField1Focus,
+          readOnly: true,
           prefixIcon: Padding(
             padding:  EdgeInsets.only(right: 8.w, left: 10.w),
             child: SvgPicture.asset("images/profile.svg", ),
@@ -181,6 +182,7 @@ class _EditProfileState extends State<EditProfile> {
         height16,
         CustomizedTextField(textEditingController:lastNameController, keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,hintTxt: "Last name",focusNode: _textFieldLastFocus,
+          readOnly: true,
           prefixIcon: Padding(
             padding:  EdgeInsets.only(right: 8.w, left: 10.w),
             child: SvgPicture.asset("images/profile.svg", ),
@@ -194,6 +196,7 @@ class _EditProfileState extends State<EditProfile> {
 
         CustomizedTextField(textEditingController:emailController, keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,hintTxt: "Email",focusNode: _textField2Focus,
+          readOnly: true,
           prefixIcon: Padding(
             padding:  EdgeInsets.only(right: 8.w, left: 10.w),
             child: SvgPicture.asset("images/email.svg", color: CustomColors.sWhiteColor,),

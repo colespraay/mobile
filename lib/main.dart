@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         useInheritedMediaQuery: true,
         builder:(context, child)=>  MaterialApp(
-          title: 'Spray',
+          title: 'Spraay',
           navigatorKey: _navigatorKey,
           debugShowCheckedModeBanner: false,
           theme: ThemeData(

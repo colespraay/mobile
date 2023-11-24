@@ -41,7 +41,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
                 children: [
                   height16,
-                   Text("Welcome to Spray App!",
+                   Text("Welcome to Spraay App!",
                     style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 24.sp),textAlign: TextAlign.center,),
                   height34,
                   Image.asset("images/spraay_phon.png", height: 570.h,),

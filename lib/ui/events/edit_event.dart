@@ -11,7 +11,10 @@ import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/models/category_list_model.dart';
+import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/events/dummy_search.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 import 'package:spraay/view_model/event_provider.dart';
 import 'package:path/path.dart' as baseImg;
@@ -36,6 +39,9 @@ class _EditEventState extends State<EditEvent> {
   TextEditingController venueController=TextEditingController();
   TextEditingController descriptionController=TextEditingController();
   TextEditingController categoryController=TextEditingController();
+  TextEditingController txtCategoryController=TextEditingController();
+
+
 
   final GlobalKey<FormState> _myKey = GlobalKey<FormState>();
   bool _isObscure = true;
@@ -49,6 +55,8 @@ class _EditEventState extends State<EditEvent> {
   FocusNode? _textField5Focus;
   FocusNode? _textField6Focus;
   TimeOfDay ?_openPickupTime;
+  FocusNode? _textField7Focus;
+
 
   String coverImage="";
   String eventId="";
@@ -72,6 +80,7 @@ class _EditEventState extends State<EditEvent> {
       _textField4Focus = FocusNode();
       _textField5Focus=FocusNode();
       _textField6Focus=FocusNode();
+      _textField7Focus=FocusNode();
     });
 
   }
@@ -91,6 +100,7 @@ class _EditEventState extends State<EditEvent> {
     _textField4Focus?.dispose();
     _textField5Focus?.dispose();
     _textField6Focus?.dispose();
+    _textField7Focus?.dispose();
     super.dispose();
   }
 
@@ -101,6 +111,24 @@ class _EditEventState extends State<EditEvent> {
     super.didChangeDependencies();
   }
 
+
+
+  bool _loadEvent=false;
+  final _debouncer = Debouncer(milliseconds: 1500);
+  fetchEventCategoryEnteredApi(String eventName) async{
+    setState(() {_loadEvent=true;});
+    var result=await ApiServices().eventCategoryEntered(eventName, MySharedPreference.getToken());
+    if(result['error'] == true){
+      print("Error: ${result["message"]}");
+    }else{
+      setState(() {
+        categoryController.text=result["categoryId"];
+        thirdVal=result["categoryId"];
+      });
+      // result["categoryName"];
+    }
+    setState(() {_loadEvent=false;});
+  }
 
 
   int step=1;
@@ -159,22 +187,29 @@ class _EditEventState extends State<EditEvent> {
 
           },
         ),
-
-
         height16,
-        // CustomizedTextField(
-        //   textEditingController:venueController, keyboardType: TextInputType.text,
-        //   textInputAction: TextInputAction.next,hintTxt: "Venue",focusNode: _textField5Focus,
-        //   onChanged:(value){
-        //     setState(() {fiveVal=value;});
-        //   },
-        // ),
-
         DummyMapSearch(venueController: venueController, query: fiveVal, textField5Focus: _textField5Focus),
 
 
         height16,
         buildCategory(),
+        _isOtherTrue?  Padding(
+          padding:  EdgeInsets.only(top: 16.h),
+          child: CustomizedTextField(textEditingController:txtCategoryController, keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.done,hintTxt: "Enter category",focusNode: _textField7Focus,
+            onChanged:(value){
+              _debouncer.run(() {
+                if(value.isNotEmpty){
+                  fetchEventCategoryEnteredApi(value);
+                }else{
+
+                }
+                //perform search here
+              });
+
+            },
+          ),
+        ) : const SizedBox.shrink(),
 
         height16,
         CustomizedTextField(
@@ -226,22 +261,31 @@ class _EditEventState extends State<EditEvent> {
 
 
 
+  bool _isOtherTrue=false;
   Widget buildCategory(){
-    return DropdownButtonFormField<String>(
+    return DropdownButtonFormField<CategoryDatum>(
       iconEnabledColor: CustomColors.sDisableButtonColor,
       isDense: false,
       dropdownColor: Color(0xff212121),
       focusNode: _textField3Focus,
-      items: eventProvider?.dataList.map((String value) {
-        return DropdownMenuItem<String>(
+      items: eventProvider?.dataList.map((CategoryDatum value) {
+        return DropdownMenuItem<CategoryDatum>(
           value: value,
-          child: Text(value, style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
+          child: Text(value.name??"", style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
               fontSize: 14.sp, fontWeight: FontWeight.w500), ),
         );
       }).toList(),
-      onChanged: (String? newValue) {
-        categoryController.text=newValue??"";
-        thirdVal=newValue??"";
+      onChanged: (CategoryDatum? newValue) {
+
+        if(newValue?.name=="OTHER"){
+          setState(() {_isOtherTrue=true;});
+
+        }else{
+          setState(() {_isOtherTrue=false;});
+          categoryController.text=newValue?.id??"";
+          thirdVal=newValue?.id??"";
+        }
+
       },
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),

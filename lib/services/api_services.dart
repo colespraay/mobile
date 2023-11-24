@@ -603,7 +603,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
 
   Future<ApiResponse<CategoryListModel>> categoryListApi(String mytoken,){
-    return http.get(Uri.parse("$url/event/get/event-categories"),
+    return http.get(Uri.parse("$url/event-category?status=true"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
       if(response.statusCode ==200){
         // final body=json.decode(response.body);
@@ -625,12 +625,12 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
     try{
       var response=await http.post(Uri.parse("$url/event"),
-          body: jsonEncode({"eventName": eventName, "eventDescription": eventDescription, "venue":venue, "eventDate":eventDate,"time":time,"category":category,
+          body: jsonEncode({"eventName": eventName, "eventDescription": eventDescription, "venue":venue, "eventDate":eventDate,"time":time,"eventCategoryId":category,
           "eventCoverImage": eventCoverImage,"eventGeoCoordinates": {"longitude": longitude, "latitude": latitude} }),
           headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
       int statusCode = response.statusCode;
 
-      log("responseData=${response.body}");
+      log("createEventresponseData=${response.body}");
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];
@@ -644,7 +644,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
         result["time"] =jsonResponse["data"]["time"];
         result["venue"] =jsonResponse["data"]["venue"];
 
-        result["category"] =jsonResponse["data"]["category"];
+        result["category"] =jsonResponse["data"]["eventCategory"]["name"];
         result["eventCoverImage"] =jsonResponse["data"]["eventCoverImage"];
 
         result["latitude"] =jsonResponse["data"]["eventGeoCoordinates"]["latitude"];
@@ -706,6 +706,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
 
+  //event-category
   Future<Map<String, dynamic>> sendInvite(String eventId,String mytoken, List<String> userIds)async{
     Map<String, dynamic> result = {};
     try{
@@ -732,6 +733,40 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     catch(e){
       print("object${e.toString()}");
       result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+
+  Future<Map<String, dynamic>> eventCategoryEntered(String eventName,String mytoken)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.post(Uri.parse("$url/event-category"),
+          body: jsonEncode({"name": eventName}),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("eventCategoryEnteredAPPI=${response.body}");
+
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["categoryId"] =jsonResponse["data"]["id"];
+        result["categoryName"] =jsonResponse["data"]["name"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";
+      result['error'] = true;
+    }
     return result;
   }
 
@@ -804,12 +839,13 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.patch(Uri.parse("$url/event"),
           body: jsonEncode({"eventName": eventName, "eventDescription": eventDescription, "venue": venue, "eventDate": eventDate,
-            "time": time, "category": category,"eventCoverImage":eventCoverImage, "eventId": eventId,"eventStatus": "UPCOMING","eventGeoCoordinates": {"longitude": longitude, "latitude": latitude},
+            "time": time, "eventCategoryId": category,"eventCoverImage":eventCoverImage, "eventId": eventId,"eventStatus": "UPCOMING","eventGeoCoordinates": {"longitude": longitude, "latitude": latitude},
             "status": true}),
           headers: {"Accept":"application/json", 'Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
+        //        result["category"] =jsonResponse["data"]["eventCategory"]["name"];
         result["message"] =jsonResponse["message"];
         result['error'] = false;
       }
@@ -1140,6 +1176,65 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+  Future<Map<String, dynamic>> totalPeopleInvitedApi(String mytoken, String eventID)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("$url/event/event-summary/$eventID"),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("ressssp=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+
+        result["totalPeopleInvited"] =jsonResponse["data"]["totalPeopleInvited"];
+        result["totalRsvp"] =jsonResponse["data"]["totalRsvp"];
+        result['error'] = false;
+      }
+      else{
+        var jsonResponse=convert.jsonDecode(response.body);
+        result["message"]= jsonResponse["message"];
+        result['error'] = true;
+      }
+
+    }
+    on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
+    on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
+    on FormatException{result["message"] = "invalid format";result['error'] = true;}
+    catch(e){
+      print("object${e.toString()}");
+      result["message"] = "Something went wrong";result['error'] = true;}
+    return result;
+  }
+
+  Future<Map<String, dynamic>> totalAmtSprayedApi(String mytoken, String eventID)async{
+    Map<String, dynamic> result = {};
+    try{
+      var response=await http.get(Uri.parse("$url/event-spraay/total-amount-sprayed-at-event/$eventID"),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      log("ressssp=${response.body}");
+      if (statusCode == 200 || statusCode==201) {
+        var jsonResponse=convert.jsonDecode(response.body);
+
+        result["total"] =jsonResponse["total"];
         result['error'] = false;
       }
       else{

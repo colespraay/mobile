@@ -33,7 +33,7 @@ dependencies:
   barcode_widget: ^2.0.4
   screenshot: ^2.1.0
   path_provider: ^2.1.0
-  share_plus: ^7.1.0
+  share_plus: ^7.2.1
   url_launcher: ^6.1.12
   whatsapp_unilink: ^2.1.0
   dotted_border: ^2.0.0+3
@@ -60,6 +60,7 @@ dependencies:
   document_file_save_plus: ^2.0.0
   flutter_secure_storage: ^9.0.0
   flutter_rounded_date_picker: ^3.0.4
+  rich_text_widget: ^0.2.7
 #  flutter_media_downloader: ^0.0.1
 
 #  overlay_loader_with_app_icon: ^0.0.3

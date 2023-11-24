@@ -71,9 +71,9 @@ class _WalletViewState extends State<WalletView> {
       child: Container(
         width: double.infinity,
         height: 200.h,
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.only(left: 18.w, right: 56.w),
         margin: EdgeInsets.zero,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: CustomColors.sPrimaryColor500,
           image: DecorationImage(
             image: AssetImage('images/pattern_endd.png'),
@@ -82,7 +82,7 @@ class _WalletViewState extends State<WalletView> {
         ),
         child: Center(
           child: SizedBox(
-            width: 275.w,
+            // width: 275.w,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -92,15 +92,11 @@ class _WalletViewState extends State<WalletView> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Expanded(
-                    //   child: Text(_isObscure?'N${amount.replaceAll(RegExp(r"."), "*")}':
-                    //   "N${currrency.format(double.parse(amount))}" ,
-                    //       style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700)),
-                    // ),
+
                     Expanded(
                       child: Text(_isObscure?'${MySharedPreference.getWalletBalance().replaceAll(RegExp(r"."), "*")}':
                       "₦${currrency.format(double.parse(MySharedPreference.getWalletBalance()))}" ,
-                          style: CustomTextStyle.kTxtBold.copyWith(fontSize: 30.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans")),
+                          style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans")),
                     ),
                     GestureDetector(
                         onTap: (){

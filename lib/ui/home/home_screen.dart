@@ -39,8 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    super.initState();
     _isObscure=Provider.of<HomeProvider>(context, listen: false).hideWalletvalue??false;
-    Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+    Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
     Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
     Provider.of<EventProvider>(context, listen: false).fetchNotificationApi();
 
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height26,
               Text("Events for you", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
               height10,
-              EventSlidder(),
+              const EventSlidder(),
               height26,
               Expanded(child: buildTransactionList())
 
@@ -126,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         width: double.infinity,
         height: 200.h,
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.only(left: 18.w, right: 56.w),
         margin: EdgeInsets.zero,
         decoration: const BoxDecoration(
           color: CustomColors.sPrimaryColor500,
@@ -137,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         child: Center(
           child: SizedBox(
-            width: 275.w,
+            // width: 275.w,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -147,11 +148,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Text("N200,000.00", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700) ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Text(_isObscure?'${MySharedPreference.getWalletBalance().replaceAll(RegExp(r"."), "*")}':
                       "₦${currrency.format(double.parse(MySharedPreference.getWalletBalance()))}" ,
-                        style: CustomTextStyle.kTxtBold.copyWith(fontSize: 30.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans"),maxLines: 2, overflow: TextOverflow.ellipsis,),
+                        style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans"),maxLines: 2, overflow: TextOverflow.ellipsis,),
                     ),
                     GestureDetector(
                         onTap: (){

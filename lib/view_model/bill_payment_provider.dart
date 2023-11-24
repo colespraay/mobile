@@ -33,7 +33,7 @@ class BillPaymentProvider extends ChangeNotifier {
     }else{
       if (context.mounted){
 
-        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
         Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
 
         popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
@@ -68,7 +68,7 @@ class BillPaymentProvider extends ChangeNotifier {
     }else{
       if (context.mounted){
 
-        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
         Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
 
         popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
@@ -104,7 +104,7 @@ class BillPaymentProvider extends ChangeNotifier {
     }else{
       if (context.mounted){
 
-        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
         Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
 
         popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
@@ -142,7 +142,7 @@ class BillPaymentProvider extends ChangeNotifier {
     }else{
       if (context.mounted){
 
-        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
         Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
 
         popupWithTwoBtnDialog(context: context, title: "Top-up Successful",

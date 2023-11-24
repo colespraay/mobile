@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
+import 'package:spraay/models/category_list_model.dart';
 import 'package:spraay/models/current_user.dart';
 import 'package:spraay/models/graph_history_model.dart';
 import 'package:spraay/models/notification_model.dart';
@@ -36,13 +37,12 @@ class EventProvider extends ChangeNotifier{
   ApiServices service=ApiServices();
   String mytoken=MySharedPreference.getToken();
 
-  List<String> dataList=[];
+  List<CategoryDatum> dataList=[];
   fetchCategoryListApi(BuildContext context) async{
     setloadingNoNotif(true);
     var apiResponse=await service.categoryListApi(mytoken);
     if(apiResponse.error==true){
       print("No Category for event=${apiResponse.errorMessage??""}");
-      // errorCherryToast(context, apiResponse.errorMessage??"");
     }else{
       dataList=apiResponse.data?.data??[];
     }
@@ -180,7 +180,7 @@ class EventProvider extends ChangeNotifier{
 
 
       if (context.mounted){
-        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
         Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
 
         popupWithTwoBtnDialog(context: context, title: "Transaction successful",

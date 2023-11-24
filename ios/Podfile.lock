@@ -2,6 +2,8 @@ PODS:
   - document_file_save_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_secure_storage (6.0.0):
+    - Flutter
   - flutter_udid (0.0.1):
     - Flutter
     - SAMKeychain
@@ -50,6 +52,7 @@ PODS:
 DEPENDENCIES:
   - document_file_save_plus (from `.symlinks/plugins/document_file_save_plus/ios`)
   - Flutter (from `Flutter`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - flutter_udid (from `.symlinks/plugins/flutter_udid/ios`)
   - fluttercontactpicker (from `.symlinks/plugins/fluttercontactpicker/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
@@ -77,6 +80,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/document_file_save_plus/ios"
   Flutter:
     :path: Flutter
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
   flutter_udid:
     :path: ".symlinks/plugins/flutter_udid/ios"
   fluttercontactpicker:
@@ -109,6 +114,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   document_file_save_plus: 913d440d8b611ae19add4522ed578e3ed1483a2f
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
   flutter_udid: 0848809dbed4c055175747ae6a45a8b4f6771e1c
   fluttercontactpicker: d582836dea6b5d489f3d259f35d7817ae82ee5e6
   fluttertoast: 31b00dabfa7fb7bacd9e7dbee580d7a2ff4bf265

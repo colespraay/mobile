@@ -370,7 +370,7 @@ class AuthProvider extends ChangeNotifier{
   ApiServices service=ApiServices();
   String mytoken=MySharedPreference.getToken();
   DataResponse? dataResponse;
-  fetchUserDetailApi(BuildContext context) async{
+  fetchUserDetailApi() async{
     setloadingNoNotif(true);
     var apiResponse=await service.userDetailApi(mytoken, MySharedPreference.getUId());
     if(apiResponse.error==true){
@@ -397,7 +397,7 @@ class AuthProvider extends ChangeNotifier{
       popupDialog(context: context, title: "Profile updated",
           content: "You have successfully update your profile",
           buttonTxt: "Great!", onTap: (){
-            fetchUserDetailApi(context);
+            fetchUserDetailApi();
             Navigator.pop(context);
             Navigator.pop(context);
 
@@ -415,7 +415,7 @@ class AuthProvider extends ChangeNotifier{
       errorCherryToast(context, result['message']);
     }
     else {
-      fetchUserDetailApi(context);
+      fetchUserDetailApi();
     }
     setloading(false);
   }

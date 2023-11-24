@@ -50,7 +50,7 @@ class _ProfileUiState extends State<ProfileUi> {
               }
             }),
             _buildListTile(svg_img: 'lock_outline', title: 'Account Security', onTap: ()=>Navigator.push(context,SlideLeftRoute(page: AccountSecurity())) ),
-            _buildListTile(svg_img: 'bell', title: 'Notification', onTap: ()=>Navigator.push(context,SlideLeftRoute(page: ProfileNotification())).then((value) => Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context))
+            _buildListTile(svg_img: 'bell', title: 'Notification', onTap: ()=>Navigator.push(context,SlideLeftRoute(page: ProfileNotification())).then((value) => Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi())
             ),
             _buildListTile(svg_img: 'Info_Square', title: 'Support and Help Center', onTap: ()=> Navigator.push(context,SlideLeftRoute(page: HelpAndSupportScreen())) ),
             _buildListTile(svg_img: 'dload', title: 'Download Account Statement', onTap: ()=>Navigator.push(context,SlideLeftRoute(page: DownloadAccountUi())) ),
@@ -161,6 +161,6 @@ class _ProfileUiState extends State<ProfileUi> {
 
   @override
   void initState() {
-    Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi(context);
+    Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
   }
 }

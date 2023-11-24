@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_udid/flutter_udid.dart';
 import 'package:provider/provider.dart';
+import 'package:rich_text_widget/rich_text_widget.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
@@ -61,7 +62,6 @@ class _CreateAccountState extends State<CreateAccount> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     credentialsProvider=context.watch<AuthProvider>();
-
   }
 
   String firstBtn="";
@@ -148,8 +148,30 @@ class _CreateAccountState extends State<CreateAccount> {
                     Navigator.push(context, SlideUpRoute(page: LoginScreen()));
                   },
                     child: buildTwoTextWidget(title: "Already have an account?", content: " Sign in")),
-                height34,
+                height90,
+                Center(
+                  child: SizedBox(
+                    width: 350.w,
+                    child: RichTextWidget(
+                      Text('By clicking “Sign up”, you agree to Spraay’s Terms of Service and Privacy Policy',
+                        style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sWhiteColor),textAlign: TextAlign.center,
+                      ),textAlign: TextAlign.center,
+                      // rich text list
+                      richTexts: [
+                        BaseRichText("Terms of Service", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sPrimaryColor400,),
+                          onTap:(){
+                          },
+                        ),
+                        BaseRichText("Privacy Policy", style:  CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sPrimaryColor400),
+                          onTap:(){
+                          },
+                        ),
 
+                      ],
+                    ),
+                  ),
+                ),
+                height34,
 
               ],
             ),

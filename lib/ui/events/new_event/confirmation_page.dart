@@ -48,16 +48,22 @@ class _EventConfirmationPageState extends State<EventConfirmationPage> {
               height22,
               Center(
                 child: QrImageView(
-                  data: eventProvider?.eventCode??"",
+                  data:eventProvider?.eventCode??"",
                   backgroundColor: CustomColors.sWhiteColor,
                   version: QrVersions.auto,
                   size: 220.r,
-                  gapless: false,
-                  embeddedImage: AssetImage('images/s_biglogo.png'),
-                  embeddedImageStyle: QrEmbeddedImageStyle(size: Size(76.w, 76.h),
-                  ),
+                  gapless: true,
+                  errorCorrectionLevel: QrErrorCorrectLevel.H,
+                  embeddedImage: const AssetImage('images/s_biglogo.png'),
+                  embeddedImageStyle: QrEmbeddedImageStyle(size: Size(70.w, 70.h),),
                 ),
               ),
+
+              // QrImageView(
+              //   data: codeLink,//codeLink
+              //   version: QrVersions.auto,
+              //   size: 170.r,
+              // ),
 
 
               height26,

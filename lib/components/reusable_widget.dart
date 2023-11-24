@@ -433,6 +433,18 @@ toastMessage(String titile){
   );
 }
 
+toastMsg(String titile){
+  Fluttertoast.showToast(
+      msg: titile,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM_RIGHT,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Color(0x405B45FF),
+      textColor: Colors.white,
+      fontSize: 16.0
+  );
+}
+
 
 
 class EmptyListLotie extends StatefulWidget {

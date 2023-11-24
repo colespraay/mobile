@@ -11,10 +11,13 @@ import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/models/category_list_model.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
+import 'package:spraay/services/api_services.dart';
 import 'package:spraay/services/location_service.dart';
 import 'package:spraay/ui/events/dummy_search.dart';
 import 'package:spraay/ui/events/new_event/confirmation_page.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/event_provider.dart';
 import 'package:path/path.dart' as baseImg;
 
@@ -31,6 +34,7 @@ class _NewEventState extends State<NewEvent> {
   TextEditingController fullNameController=TextEditingController();
   TextEditingController venueController=TextEditingController();
   TextEditingController categoryController=TextEditingController();
+  TextEditingController txtCategoryController=TextEditingController();
   TextEditingController dobController=TextEditingController();
   TextEditingController descriptionController=TextEditingController();
   TextEditingController timeController=TextEditingController();
@@ -46,6 +50,8 @@ class _NewEventState extends State<NewEvent> {
   FocusNode? _textField4Focus;
   FocusNode? _textField5Focus;
   FocusNode? _textField6Focus;
+
+  FocusNode? _textField7Focus;
 
   EventProvider? eventProvider;
   @override
@@ -66,7 +72,7 @@ class _NewEventState extends State<NewEvent> {
       _textField4Focus = FocusNode();
       _textField5Focus=FocusNode();
       _textField6Focus=FocusNode();
-
+      _textField7Focus=FocusNode();
     });
   }
 
@@ -85,7 +91,27 @@ class _NewEventState extends State<NewEvent> {
     _textField4Focus?.dispose();
     _textField5Focus?.dispose();
     _textField6Focus?.dispose();
+    _textField7Focus?.dispose();
     super.dispose();
+  }
+
+
+  bool _loadEvent=false;
+  final _debouncer = Debouncer(milliseconds: 1500);
+
+  fetchEventCategoryEnteredApi(String eventName) async{
+    setState(() {_loadEvent=true;});
+    var result=await ApiServices().eventCategoryEntered(eventName, MySharedPreference.getToken());
+    if(result['error'] == true){
+      print("Error: ${result["message"]}");
+    }else{
+      setState(() {
+        categoryController.text=result["categoryId"];
+        thirdVal=result["categoryId"];
+      });
+      // result["categoryName"];
+    }
+    setState(() {_loadEvent=false;});
   }
 
 
@@ -183,6 +209,26 @@ class _NewEventState extends State<NewEvent> {
 
         height16,
         buildCategory(),
+        _isOtherTrue?  Padding(
+          padding:  EdgeInsets.only(top: 16.h),
+          child: CustomizedTextField(textEditingController:txtCategoryController, keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.done,hintTxt: "Enter category",focusNode: _textField7Focus,
+            onChanged:(value){
+              _debouncer.run(() {
+                if(value.isNotEmpty){
+                  fetchEventCategoryEnteredApi(value);
+                }else{
+                  // setState(() {
+                  //   widget.query="";
+                  //   dataList=[];
+                  // });
+                }
+                //perform search here
+              });
+
+              },
+          ),
+        ) : const SizedBox.shrink(),
 
         height16,
         CustomizedTextField(
@@ -212,6 +258,7 @@ class _NewEventState extends State<NewEvent> {
                     context, fullNameController.text, descriptionController.text, venueController.text,
                     dobController.text, timeController.text, categoryController.text, eventProvider!.file_url,eventProvider?.new_longitude.toString()??"0.00",
                     eventProvider?.new_latitude.toString()??"0.00");
+
                 // Navigator.push(context, SlideLeftRoute(page: EventConfirmationPage()));
 
               }
@@ -221,8 +268,6 @@ class _NewEventState extends State<NewEvent> {
                 && eventProvider!.file_url.isNotEmpty) ? CustomColors.sPrimaryColor500:
             CustomColors.sDisableButtonColor),
         height34,
-
-
 
       ],
     );
@@ -247,23 +292,32 @@ class _NewEventState extends State<NewEvent> {
     }
   }
 
-  List<String> categorylist=["Cat1", "Cat2"];
+  bool _isOtherTrue=false;
   Widget buildCategory(){
-    return DropdownButtonFormField<String>(
+    return DropdownButtonFormField<CategoryDatum>(
       iconEnabledColor: CustomColors.sDisableButtonColor,
       isDense: false,
       dropdownColor: Color(0xff212121),
       focusNode: _textField3Focus,
-      items: eventProvider?.dataList.map((String value) {
-        return DropdownMenuItem<String>(
+      items: eventProvider?.dataList.map((CategoryDatum value) {
+        return DropdownMenuItem<CategoryDatum>(
           value: value,
-          child: Text(value, style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
+          child: Text(value.name??"", style: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
               fontSize: 14.sp, fontWeight: FontWeight.w500), ),
         );
       }).toList(),
-      onChanged: (String? newValue) {
-        categoryController.text=newValue??"";
-        thirdVal=newValue??"";
+      onChanged: (CategoryDatum? newValue) {
+        if(newValue?.name=="OTHER"){
+          print("True");
+          setState(() {_isOtherTrue=true;});
+
+        }else{
+          print("False");
+         setState(() {_isOtherTrue=false;});
+          categoryController.text=newValue?.id??"";
+          thirdVal=newValue?.id??"";
+        }
+
       },
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
@@ -289,7 +343,7 @@ class _NewEventState extends State<NewEvent> {
         onTap:(){
           _getFromGallery();
         },
-          child: Center(child: SvgPicture.asset("images/img_avtar.svg",  width: 180.w,
+          child: Center(child: SvgPicture.asset("images/img_upl.svg",  width: 180.w,
             height: 174.h,)));
     }
     return Center(

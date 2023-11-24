@@ -80,8 +80,6 @@ class _PhoneContactsState extends State<PhoneContacts> {
 
                       }
 
-
-
                       // Navigator.push(context, SlideLeftRoute(page: EventConfirmationPage()));
 
                     },

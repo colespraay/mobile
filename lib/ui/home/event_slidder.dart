@@ -190,6 +190,7 @@ class _EventSlidderState extends State<EventSlidder> {
             event_date: DateFormat('yyyy-MM-dd').format(list[itemIndex].eventDate!), eventTime: list[itemIndex].time??"", eventVenue: list[itemIndex].venue??"",
             eventCategory: list[itemIndex].category??"", eventdescription: list[itemIndex].eventDescription??"",
             event_CoverImage: list[itemIndex].eventCoverImage??"", eventId: list[itemIndex].id??"", tag: list[itemIndex].user?.userTag??"", lat: list[itemIndex].eventGeoCoordinates?.latitude.toString()??"", long: list[itemIndex].eventGeoCoordinates?.longitude.toString()??"",
+            eventCode: list[itemIndex].eventCode??"",
           )));
 
         },
