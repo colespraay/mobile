@@ -10,7 +10,6 @@ import 'package:spraay/services/api_services.dart';
 
 
 bool isLoading=false;
-String url="https://spraay-api-577f3dc0a0fe.herokuapp.com";
 ApiServices apiResponse=ApiServices();
 
 

@@ -40,12 +40,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
     credentialsProvider=context.watch<AuthProvider>();
   }
 
   String password="";
   @override
   void initState() {
+    super.initState();
     setState(() {
       checkedValue= MySharedPreference.getRemember()==1?true:false;
 
@@ -72,7 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  bool _loading=false;
   @override
   Widget build(BuildContext context) {
     return  LoadingOverlayWidget(
@@ -137,9 +138,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomButton(
                     onTap: () {
                       if( firstBtn.isNotEmpty && secondBtn.isNotEmpty){
-                        setState(() {
-                          _loading=true;
-                        });
 
                         Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context, passwordController.text, "0${phoneController.text}");
 

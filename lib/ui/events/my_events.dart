@@ -106,7 +106,8 @@ class _MyEventsState extends State<MyEvents> {
                       onTap:(){
                         Navigator.push(context, FadeRoute(page: EditEvent(fromPage: "", eventname:datum.eventName??"",
                           event_date: DateFormat('yyyy-MM-dd').format(datum.eventDate!), eventTime: datum.time??"", eventVenue: datum.venue??"",
-                          eventCategory: datum.category??"", eventdescription: datum.eventDescription??"", event_CoverImage: datum.eventCoverImage??"", eventId: datum.id??"",)));
+                          eventCategory: datum.category??"", eventdescription: datum.eventDescription??"", event_CoverImage: datum.eventCoverImage??"", eventId: datum.id??"",
+                        eventCode: datum.eventCode??"",)));
 
                         },
                       child: buildStatus(title: "Edit Details", color:CustomColors.sPrimaryColor500, ))

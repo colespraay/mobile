@@ -14,6 +14,7 @@ import 'package:spraay/components/modal_buttom.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/ui/events/new_event/contacts/phone_contacts.dart';
 import 'package:spraay/ui/home/event_slidder.dart';
 import 'package:spraay/ui/home/fund_wallet.dart';
 import 'package:spraay/ui/home/mini_transaction_history.dart';

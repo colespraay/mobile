@@ -41,7 +41,7 @@ dependencies:
   fl_chart: ^0.64.0
   qr_flutter: ^4.1.0
   fluttertoast: ^8.2.2
-#  contacts_service: ^0.6.3
+  contacts_service: ^0.6.3
   permission_handler: ^11.0.1
   lottie: ^2.6.0
   appinio_swiper: ^2.0.2

@@ -332,7 +332,7 @@ class AuthProvider extends ChangeNotifier{
       sessionStateStream.add(SessionState.startListening);
 
 
-      Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(context, FadeRoute(page: const DasboardScreen()),(Route<dynamic> route) => false);
 
     }
     setloading(false);

@@ -27,6 +27,7 @@ import 'package:spraay/models/user_saved_bank_model.dart';
 import 'package:spraay/services/api_response.dart';
 class ApiServices{
 
+  String url="https://spraay-api-577f3dc0a0fe.herokuapp.com";
 
   Future<Map<String, dynamic>> logIn(String phoneNumber, String password)async{
     Map<String, dynamic> result = {};
@@ -714,7 +715,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
           body: jsonEncode({"eventId": eventId, "userIds": userIds,}),
           headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
       int statusCode = response.statusCode;
-      log("ressssp=${response.body}");
+      // log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];

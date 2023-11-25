@@ -166,22 +166,22 @@ class _NewEventState extends State<NewEvent> {
           },
           onTap: ()async {
 
-            TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context,
-                builder: (context, childWidget) {
-                  return MediaQuery(
-                    data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-                    child: childWidget!,
-                  );
-                },
-                initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
+            // TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context,
+            //     builder: (context, childWidget) {
+            //       return MediaQuery(
+            //         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            //         child: childWidget!,
+            //       );
+            //     },
+            //     initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
 
 
-            // TimeOfDay? newSelectedTime = await showRoundedTimePicker(
-            //     context: context,
-            //     theme:  ThemeData.dark(useMaterial3: true),
-            //     initialTime: TimeOfDay.now(),
-            //     locale: Locale('en', 'US')
-            // );
+            TimeOfDay? newSelectedTime = await showRoundedTimePicker(
+                context: context,
+                theme:  ThemeData.dark(useMaterial3: true),
+                initialTime: TimeOfDay.now(),
+                locale: const Locale('en', 'US')
+            );
 
             setState(() {
               _openPickupTime = newSelectedTime == null ? TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))) : newSelectedTime;
@@ -190,6 +190,7 @@ class _NewEventState extends State<NewEvent> {
             });
 
 
+            print("timePM=${ timeController.text}");
 
 
             },

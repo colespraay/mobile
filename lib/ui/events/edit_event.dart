@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
@@ -22,9 +24,9 @@ import 'package:path/path.dart' as baseImg;
 
 class EditEvent extends StatefulWidget {
 
-  String fromPage,eventname,event_date,eventTime,eventVenue,eventCategory, eventdescription, event_CoverImage,eventId;
+  String fromPage,eventname,event_date,eventTime,eventVenue,eventCategory, eventdescription, event_CoverImage,eventId,eventCode;
    EditEvent({required this.fromPage, required this.eventname, required this.event_date, required this.eventTime, required this.eventVenue,
-     required this.eventCategory, required this.eventdescription, required this.event_CoverImage, required this.eventId});
+     required this.eventCategory, required this.eventdescription, required this.event_CoverImage, required this.eventId, required this.eventCode});
 
   @override
   State<EditEvent> createState() => _EditEventState();
@@ -137,7 +139,16 @@ class _EditEventState extends State<EditEvent> {
     return  LoadingOverlayWidget(
       loading: eventProvider?.loading??false,
       child: Scaffold(
-          appBar: buildAppBar(context: context, title:"Edit Event" ),
+          appBar: buildAppBar(context: context, title:"Edit Event",
+          action: [
+            GestureDetector(
+                onTap:()async{
+                  final box = context.findRenderObject() as RenderBox?;
+                  await Share.share("Hello, I am inviting you to ${widget.eventname??""} ${widget.eventCategory??""}. Kindly download the Spraay App www.spraay.ng to confirm your attendance. Your private invitation code is ${widget.eventCode??""}",
+                      sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+                },
+                child: Padding(padding:  EdgeInsets.only(right: 18.w), child: SvgPicture.asset("images/arrow_svg.svg"),)),
+          ]),
           body: Form(
             key: _myKey,
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -177,7 +188,16 @@ class _EditEventState extends State<EditEvent> {
             setState(() {secondVal=value;});
           },
           onTap: ()async {
-            TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context, initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
+
+            // TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context,
+            //     initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
+            TimeOfDay? newSelectedTime = await showRoundedTimePicker(
+                context: context,
+                theme:  ThemeData.dark(useMaterial3: true),
+                initialTime: TimeOfDay.now(),
+                locale: const Locale('en', 'US')
+            );
+
             setState(() {
               _openPickupTime = newSelectedTime == null ? TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))) : newSelectedTime;
               secondVal=_openPickupTime?.format(context)??"";

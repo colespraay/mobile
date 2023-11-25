@@ -69,7 +69,8 @@ class _ViewEventState extends State<ViewEvent> {
               Navigator.push(context, SlideUpRoute(page:  EditEvent(fromPage: 'view_event', eventname:eventProvider?.eventname??"", event_date:eventProvider?.event_date??"",
                   eventTime: eventProvider?.eventTime??"",
                   eventVenue: eventProvider?.eventVenue??"", eventCategory: eventProvider?.eventCategory??"",
-                  eventdescription: eventProvider?.eventdescription??"",event_CoverImage: eventProvider?.event_CoverImage??"", eventId: eventProvider?.eventId??"",)));
+                  eventdescription: eventProvider?.eventdescription??"",event_CoverImage: eventProvider?.event_CoverImage??"", eventId: eventProvider?.eventId??"",
+                  eventCode: eventProvider?.eventCode??"")));
             },
               child: Padding(padding:  EdgeInsets.only(right: 18.w), child: SvgPicture.asset("images/edit.svg"),)),
 
@@ -224,7 +225,7 @@ class _ViewEventState extends State<ViewEvent> {
                     eventTime: eventProvider?.eventTime??"",
                     eventVenue: eventProvider?.eventVenue??"", eventCategory: eventProvider?.eventCategory??"",
                     eventdescription: eventProvider?.eventdescription??"",event_CoverImage: eventProvider?.event_CoverImage??"",
-                  eventId: eventProvider?.eventId??"")));
+                  eventId: eventProvider?.eventId??"", eventCode: eventProvider?.eventCode??"")));
                 },
                 buttonText: "Edit this Event", borderRadius: 30.r,width: 380.w,
                 buttonColor:  CustomColors.sPrimaryColor500),
