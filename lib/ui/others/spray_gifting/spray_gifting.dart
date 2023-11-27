@@ -53,7 +53,7 @@ class _SprayGiftingState extends State<SprayGifting> {
                 height26,
                 TextFormField(
                   controller: phoneController,
-                  autofocus: true,
+                  autofocus: false,
                   keyboardType: TextInputType.number,
                   style: CustomTextStyle.kTxtBold.copyWith(color: CustomColors.sGreyScaleColor100, fontSize: 40.sp, fontWeight: FontWeight.bold),
                   onChanged:(value){

@@ -22,6 +22,7 @@ import 'package:spraay/models/recent_recipient_models.dart';
 import 'package:spraay/models/recipient_model.dart';
 import 'package:spraay/models/registered_user_model.dart';
 import 'package:spraay/models/transaction_models.dart';
+import 'package:spraay/models/user_name_with_phone_contact_model.dart';
 import 'package:spraay/models/user_profile.dart';
 import 'package:spraay/models/user_saved_bank_model.dart';
 import 'package:spraay/services/api_response.dart';
@@ -686,6 +687,25 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
     }).catchError((e){
       return ApiResponse<RegisteredUserModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+    });
+  }
+
+
+  Future<ApiResponse<UserPhoneWithNameContactModel>> userContactApi(String mytoken, List<Map<String, String?>> user_contacts){
+    return http.post(Uri.parse("$url/user/find-contacts/filtered-by-contacts"),
+        body: jsonEncode({"contacts":user_contacts}),
+        headers:{'Accept' : 'application/json','Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).then((response){
+
+      if(response.statusCode ==200 || response.statusCode ==201){
+        // final body=json.decode(response.body);
+        final note1=UserPhoneWithNameContactModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<UserPhoneWithNameContactModel>(data: note1);
+      }else{
+        return ApiResponse<UserPhoneWithNameContactModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      return ApiResponse<UserPhoneWithNameContactModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
     });
   }
 

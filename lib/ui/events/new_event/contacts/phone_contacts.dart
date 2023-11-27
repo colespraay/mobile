@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/registered_user_model.dart';
+import 'package:spraay/models/user_name_with_phone_contact_model.dart';
 import 'package:spraay/ui/events/new_event/contacts/custom_class.dart';
 import 'package:spraay/view_model/event_provider.dart';
 
@@ -42,56 +45,6 @@ class _PhoneContactsState extends State<PhoneContacts> {
       child: SafeArea(
         child: Scaffold(
           appBar: buildAppBar(context: context, title: "Share Event"),
-          // body: Stack(
-          //   children: [
-          //     Positioned(
-          //       left: 0.w,
-          //       right: 0.w,
-          //       top: 1.h,
-          //       bottom: 1.h,
-          //       child: ListView.builder(
-          //         shrinkWrap: true,
-          //         itemCount: eventProvider?.userInformationList.length,
-          //         itemBuilder: (BuildContext context, int index) {
-          //           // CustomContact _contact = _uiCustomContacts[index];
-          //           // var _phonesList = _contact.contact.phones!.toList();
-          //
-          //           return Padding(
-          //             padding:  EdgeInsets.only(bottom: 10.h),
-          //             child: _buildListTile(eventProvider?.userInformationList[index], index),
-          //           );
-          //         },
-          //       ),
-          //     ),
-          //
-          //     Positioned(
-          //       left: 24.w,
-          //       right: 24.w,
-          //       bottom: 24.h,
-          //       child: CustomButton(
-          //           onTap: () {
-          //
-          //             //selectedIndex is the list of userID
-          //
-          //             if(selectedIndex.isNotEmpty){
-          //               selectedIndex.forEach((element) {
-          //                 print("studentid=${element}");
-          //               });
-          //
-          //               eventProvider?.fetchSendInviteApi(context, eventProvider?.eventId??"", selectedIndex, selectedName);
-          //
-          //
-          //             }
-          //
-          //             // Navigator.push(context, SlideLeftRoute(page: EventConfirmationPage()));
-          //
-          //           },
-          //           buttonText: 'Send(${selectedIndex.length})', borderRadius: 30.r,width: 380.w,
-          //           buttonColor:selectedIndex.isNotEmpty? CustomColors.sPrimaryColor500: CustomColors.sDisableButtonColor),
-          //     ),
-          //   ],
-          // ),
-
           body: Builder(
             builder: (context) {
               if(_isLoading==true){
@@ -110,15 +63,23 @@ class _PhoneContactsState extends State<PhoneContacts> {
              else{
                 return Stack(
                   children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: _uiCustomContacts.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        CustomContact _contact = _uiCustomContacts[index];
-                        var _phonesList = _contact.contact.phones!.toList();
 
-                        return _buildListTile(_contact, _phonesList);
-                      },
+                    Positioned(
+                      left: 0.w,
+                      right: 0.w,
+                      top: 1.h,
+                      bottom: 1.h,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: eventProvider?.userPhoneContactData.length,
+                        itemBuilder: (BuildContext context, int index) {
+
+                          return Padding(
+                            padding:  EdgeInsets.only(bottom: 10.h),
+                            child: _buildListTile(eventProvider?.userPhoneContactData[index], index),
+                          );
+                        },
+                      ),
                     ),
 
                     Positioned(
@@ -128,33 +89,17 @@ class _PhoneContactsState extends State<PhoneContacts> {
                       child: CustomButton(
                           onTap: () {
 
-                            if(selectedName.isNotEmpty){
-                              // print("selectedNameeee=${selectedName[0]}");
-                              _phoneNumberList.forEach((element) {
-                                print("phoneNumber=${element.replaceAll(" ", "").replaceAll("+234", "0").replaceAll("-", "")}");
-                              });
+                            if(selectedIndex.isNotEmpty){
 
-                              // eventProvider?.fetchSendInviteApi(context, eventProvider?.eventId??"", selectedIndex, selectedName);
-
-                              // popupDialog(context: context, title: "Invites successfully sent!", content: "You have successfully sent ${selectedName[0]} and ${selectedName.length-1} others an invite to your event!",
-                              //     buttonTxt: 'Home',
-                              //     onTap: () {
-                              //       Navigator.pop(context);
-                              //       Navigator.pop(context);
-                              //       Navigator.pop(context);
-                              //       Navigator.pop(context);
-                              //     }, png_img: 'verified');
+                              eventProvider?.fetchSendInviteApi(context, eventProvider?.eventId??"", selectedIndex, selectedName);
 
                             }
 
-
-
-                            // Navigator.push(context, SlideLeftRoute(page: EventConfirmationPage()));
-
                           },
-                          buttonText: 'Send(${selectedName.length})', borderRadius: 30.r,width: 380.w,
-                          buttonColor:selectedName.isNotEmpty? CustomColors.sPrimaryColor500: CustomColors.sDisableButtonColor),
+                          buttonText: 'Send(${selectedIndex.length})', borderRadius: 30.r,width: 380.w,
+                          buttonColor:selectedIndex.isNotEmpty? CustomColors.sPrimaryColor500: CustomColors.sDisableButtonColor),
                     ),
+
                   ],
                 );
               }
@@ -166,33 +111,39 @@ class _PhoneContactsState extends State<PhoneContacts> {
     );
   }
 
+
+
+
   List<String> selectedIndex = [];
   List<String> selectedName = [];
 
-  ListTile _buildListTile(CustomContact contact, List<Item> phonesList) {
+  ListTile _buildListTile(UserPhoneWithNameContactDatum? userInformationList, int position) {
     return ListTile(
       leading:  CircleAvatar(
         radius: 28.r,
-        backgroundColor: CustomColors.sTransparentPurplecolor,
-        child:  Center(child: Text(getInitials(contact.contact.displayName??""), style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400))),
+        child: CachedNetworkImage(
+          width: 28.w,
+          height: 28.h,
+          imageUrl:userInformationList?.profileImageUrl??"",
+          placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+          errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+        ),
       ),
 
-      title: Text(contact.contact.displayName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp,
+      title: Text("${userInformationList?.firstName??""} ${userInformationList?.lastName??""}", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp,
           fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor),),
 
       trailing: Checkbox(
           activeColor: CustomColors.sPrimaryColor500,
-          value: selectedIndex.contains(contact.contact.displayName??""/*userInformationList?.id??""*/),
+          value: selectedIndex.contains(userInformationList?.id??""),
           onChanged: (bool? value) {
             setState(() {
-              if (selectedIndex.contains(contact.contact.displayName??""/*userInformationList?.id??""*/)) {
-                selectedIndex.remove(contact.contact.displayName??""/*userInformationList?.id??""*/); //
-                selectedName.remove(contact.contact.displayName??""/*userInformationList?.firstName??""*/);
-                _phoneNumberList.remove(contact.contact.phones?[0].value??"");
+              if (selectedIndex.contains(userInformationList?.id??"")) {
+                selectedIndex.remove(userInformationList?.id??""); //
+                selectedName.remove(userInformationList?.firstName??"");
               } else {
-                selectedIndex.add(contact.contact.displayName??""/*userInformationList?.id??""*/);
-                selectedName.add(contact.contact.displayName??""/*userInformationList?.firstName??""*/);
-                _phoneNumberList.add(contact.contact.phones?[0].value??"");
+                selectedIndex.add(userInformationList?.id??"");
+                selectedName.add(userInformationList?.firstName??"");
 
               }
             });
@@ -201,14 +152,10 @@ class _PhoneContactsState extends State<PhoneContacts> {
     );
   }
 
-  //permissions
   Future<void> _askPermissions() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
       refreshContacts();
-      // if (routeName != null) {
-      //   Navigator.of(context).pushNamed(routeName);
-      // }
     } else {
       _handleInvalidPermissions(permissionStatus);
     }
@@ -242,6 +189,8 @@ bool _isSelectedContactsView = false;
 List<String> _phoneNumberList=[];
 List<CustomContact> _myselectedContacts = [];
 
+// List<UserPhoneWithNameContact> userPhoneWithNameContacts=[];
+List<Map<String, String?>> userPhoneWithNameContacts=[];
 
 
 refreshContacts() async {
@@ -256,8 +205,14 @@ void _populateContacts(Iterable<Contact> contacts) {
   _allContacts = _contacts.map((contact) => CustomContact(contact: contact)).toList();
   setState(() {
     _uiCustomContacts = _allContacts;
+
+    userPhoneWithNameContacts= _allContacts.map((contact) => {
+      'name': contact.contact.displayName?.replaceAll(" ", "").replaceAll("+234", "0").replaceAll("-", "")??"",
+      'phoneNumber': contact.contact.phones!.isEmpty?"": contact.contact.phones?[0].value?.replaceAll(" ", "").replaceAll("+234", "0").replaceAll("-", "")??"",}).toList();
     _isLoading = false;
   });
+
+  Provider.of<EventProvider>(context, listen: false).fetchUserContactApi(userPhoneWithNameContacts);
 }
 
 }

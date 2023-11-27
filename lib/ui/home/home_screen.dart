@@ -79,7 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
               height20,
               buildWalletContainer(),
               height26,
-              Text("Events for you", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
+              GestureDetector(
+                onTap:(){
+                  // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const PhoneContacts()));
+                },
+                  child: Text("Events for you", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) )),
               height10,
               const EventSlidder(),
               height26,

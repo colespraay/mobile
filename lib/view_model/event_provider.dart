@@ -13,6 +13,7 @@ import 'package:spraay/models/notification_model.dart';
 import 'package:spraay/models/recent_recipient_models.dart';
 import 'package:spraay/models/registered_user_model.dart';
 import 'package:spraay/models/transaction_models.dart';
+import 'package:spraay/models/user_name_with_phone_contact_model.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/services/api_services.dart';
@@ -116,6 +117,21 @@ class EventProvider extends ChangeNotifier{
       // errorCherryToast(context, apiResponse.errorMessage??"");
     }else{
       userInformationList= apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+
+  List<UserPhoneWithNameContactDatum> userPhoneContactData=[];
+  fetchUserContactApi(List<Map<String, String?>> user_contacts) async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.userContactApi(mytoken, user_contacts);
+    if(apiResponse.error==true){
+      userPhoneContactData=[];
+      // errorCherryToast(context, apiResponse.errorMessage??"");
+    }else{
+      userPhoneContactData= apiResponse.data?.data??[];
     }
     setloadingNoNotif(false);
     notifyListeners();
