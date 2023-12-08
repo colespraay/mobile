@@ -299,9 +299,9 @@ class AuthProvider extends ChangeNotifier{
   }
 
 
-  fetchLoginEndpoint( context,String password,String phoneNumber) async{
+  fetchLoginEndpoint( context,String password,String phoneNumber,String deviceId) async{
     setloading(true);
-    var result = await apiResponse.logIn(phoneNumber, password);
+    var result = await apiResponse.logIn(phoneNumber, password,deviceId);
     if (result['error'] == true) {
       errorCherryToast(context, result['message']);
     }
@@ -338,9 +338,9 @@ class AuthProvider extends ChangeNotifier{
     setloading(false);
   }
 
-  fetchConfLoginEndpoint(context,String password,String phoneNumber) async{
+  fetchConfLoginEndpoint(context,String password,String phoneNumber, String deviceId) async{
     setloading(true);
-    var result = await apiResponse.logIn(phoneNumber, password);
+    var result = await apiResponse.logIn(phoneNumber, password, deviceId);
     if (result['error'] == true) {
       errorCherryToast(context, result['message']);
     }

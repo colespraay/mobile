@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_udid/flutter_udid.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -107,9 +108,6 @@ Divider dividerWidget=Divider(color: CustomColors.sGreyScaleColor800,);
  }
 
 
-// String getInitials(String account_name) => account_name.isNotEmpty
-//     ? account_name.trim().split(' ').map((l) => l[0]).take(2).join() : '';
-
 String getInitials(String account_name) => account_name.isNotEmpty
     ? account_name.trim().split(RegExp(' +')).map((s) => s[0]).take(2).join() : '';
 
@@ -141,6 +139,15 @@ void sharePdfFile(BuildContext context ,Uint8List data, String title)async{
    sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
   );
  }
+}
+
+Future<String?> getId() async {
+ String udid;
+ try {
+  udid = await FlutterUdid.udid;
+ } on PlatformException {udid = 'Failed to get UDID.';}
+
+ return udid;
 }
 
 

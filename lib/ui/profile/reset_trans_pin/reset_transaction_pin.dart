@@ -86,9 +86,10 @@ class _ResetTransactionPinState extends State<ResetTransactionPin> {
                 height60,
 
                 CustomButton(
-                    onTap: () {
+                    onTap: () async{
+                      String? deviceId = await getId();
                       if( firstBtn.isNotEmpty ){
-                        Provider.of<AuthProvider>(context, listen: false).fetchConfLoginEndpoint(context, passwordController.text, credentialsProvider?.dataResponse?.phoneNumber??"");
+                        Provider.of<AuthProvider>(context, listen: false).fetchConfLoginEndpoint(context, passwordController.text, credentialsProvider?.dataResponse?.phoneNumber??"",deviceId??"");
                       }
                     },
                     buttonText: 'Continue', borderRadius: 30.r,width: 380.w,

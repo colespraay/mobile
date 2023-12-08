@@ -136,10 +136,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ))):SizedBox.shrink(),
 
                 CustomButton(
-                    onTap: () {
+                    onTap: () async{
+
+                      String? deviceId = await getId();
                       if( firstBtn.isNotEmpty && secondBtn.isNotEmpty){
 
-                        Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context, passwordController.text, "0${phoneController.text}");
+                        Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context, passwordController.text, "0${phoneController.text}",deviceId??"");
 
                       }
                     },
@@ -202,10 +204,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   local_auth()async {
     bool isAuthenticated = await Authentication.authenticateWithBiometrics();
+    String? deviceId = await getId();
 
     if (isAuthenticated) {
       //if authenticated, login
-      Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context,password, MySharedPreference.getPhoneNumber());
+      Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context,password, MySharedPreference.getPhoneNumber(),deviceId??"");
 
     }
     else {

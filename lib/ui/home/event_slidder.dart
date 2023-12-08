@@ -188,7 +188,7 @@ class _EventSlidderState extends State<EventSlidder> {
           // Navigator.push(context, FadeRoute(page: EventDetails()));
           Navigator.push(context, FadeRoute(page: EventDetails(fromPage: "", eventname:list[itemIndex].eventName??"",
             event_date: DateFormat('yyyy-MM-dd').format(list[itemIndex].eventDate!), eventTime: list[itemIndex].time??"", eventVenue: list[itemIndex].venue??"",
-            eventCategory: list[itemIndex].category??"", eventdescription: list[itemIndex].eventDescription??"",
+            eventCategory: list[itemIndex].eventCategory?.name??"", eventdescription: list[itemIndex].eventDescription??"",
             event_CoverImage: list[itemIndex].eventCoverImage??"", eventId: list[itemIndex].id??"", tag: list[itemIndex].user?.userTag??"", lat: list[itemIndex].eventGeoCoordinates?.latitude.toString()??"", long: list[itemIndex].eventGeoCoordinates?.longitude.toString()??"",
             eventCode: list[itemIndex].eventCode??"",
           )));
@@ -220,7 +220,7 @@ class _EventSlidderState extends State<EventSlidder> {
                 SizedBox(width: 6.w,),
                 Expanded(
                   child: Padding(
-                    padding:  EdgeInsets.only(right: 16.w, top: 16.h, bottom: 0.h),
+                    padding:  EdgeInsets.only(right: 16.w, top: 8.h, bottom: 0.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -238,9 +238,6 @@ class _EventSlidderState extends State<EventSlidder> {
 
                         height8,
                         buildStatus(title: "View Details", color:CustomColors.sGreenColor500, )
-
-
-
                       ],
                     ),
                   ),
@@ -284,8 +281,8 @@ class _EventSlidderState extends State<EventSlidder> {
           initialPage: 0,
           enableInfiniteScroll: false,
           reverse: false,
-          autoPlayInterval: Duration(seconds: 4),
-          autoPlayAnimationDuration: Duration(milliseconds: 700),
+          autoPlayInterval: const Duration(seconds: 5),
+          autoPlayAnimationDuration: const Duration(milliseconds: 700),
           autoPlayCurve: Curves.fastOutSlowIn,
           scrollDirection: Axis.horizontal
       ),

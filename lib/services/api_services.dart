@@ -29,11 +29,11 @@ import 'package:spraay/services/api_response.dart';
 class ApiServices{
 
   String url="https://spraay-api-577f3dc0a0fe.herokuapp.com";
-
-  Future<Map<String, dynamic>> logIn(String phoneNumber, String password)async{
+  Future<Map<String, dynamic>> logIn(String phoneNumber, String password, String deviceId)async{
     Map<String, dynamic> result = {};
     try{
-      var response=await http.post(Uri.parse("$url/auth/login/phone-number"), body:{"phoneNumber":phoneNumber, "password":password},
+      // print("deviceIddeviceId=${deviceId}");
+      var response=await http.post(Uri.parse("$url/auth/login/phone-number"), body:{"phoneNumber":phoneNumber, "password":password,"deviceId":deviceId},
           headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
       // int statusCode = response.statusCode;
       // print("Resbody statusCode==${response.statusCode}");
@@ -890,6 +890,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   Future<ApiResponse<EventsModel>> eventsList(String mytoken, String userId){
     return http.get(Uri.parse("$url/event?userId=$userId"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+
       if(response.statusCode ==200){
         // final body=json.decode(response.body);
         final note1=EventsModel.fromJson(jsonDecode(response.body));
@@ -998,6 +999,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   Future<ApiResponse<CurrentUserModel>> currentUser(String mytoken){
     return http.get(Uri.parse("$url/event/events-for-current-user"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+
       if(response.statusCode ==200){
         // final body=json.decode(response.body);
         final note1=CurrentUserModel.fromJson(jsonDecode(response.body));

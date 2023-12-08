@@ -1,4 +1,6 @@
 PODS:
+  - contacts_service (0.2.2):
+    - Flutter
   - document_file_save_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -50,6 +52,7 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - contacts_service (from `.symlinks/plugins/contacts_service/ios`)
   - document_file_save_plus (from `.symlinks/plugins/document_file_save_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
@@ -76,6 +79,8 @@ SPEC REPOS:
     - Toast
 
 EXTERNAL SOURCES:
+  contacts_service:
+    :path: ".symlinks/plugins/contacts_service/ios"
   document_file_save_plus:
     :path: ".symlinks/plugins/document_file_save_plus/ios"
   Flutter:
@@ -112,6 +117,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca
   document_file_save_plus: 913d440d8b611ae19add4522ed578e3ed1483a2f
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be

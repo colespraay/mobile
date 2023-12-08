@@ -102,15 +102,44 @@ class _MyEventsState extends State<MyEvents> {
                     ],
                   ),
                   height8,
-                  GestureDetector(
-                      onTap:(){
-                        Navigator.push(context, FadeRoute(page: EditEvent(fromPage: "", eventname:datum.eventName??"",
-                          event_date: DateFormat('yyyy-MM-dd').format(datum.eventDate!), eventTime: datum.time??"", eventVenue: datum.venue??"",
-                          eventCategory: datum.category??"", eventdescription: datum.eventDescription??"", event_CoverImage: datum.eventCoverImage??"", eventId: datum.id??"",
-                        eventCode: datum.eventCode??"",)));
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                            onTap:(){
 
-                        },
-                      child: buildStatus(title: "Edit Details", color:CustomColors.sPrimaryColor500, ))
+                              Navigator.push(context, FadeRoute(page: EventDetails(
+                                fromPage:datum.eventStatus??"", eventname:datum.eventName??"",
+                                event_date: DateFormat('yyyy-MM-dd').format(datum.eventDate!), eventTime: datum.time??"", eventVenue:datum.venue??"",
+                                eventCategory: datum.eventCategory?.name??"", eventdescription: datum.eventDescription??"",
+                                event_CoverImage: datum.eventCoverImage??"", eventId: datum.id??"", tag:datum.user?.userTag??"",
+                                lat: datum.eventGeoCoordinates?.latitude.toString()??"",
+                                long: datum.eventGeoCoordinates?.longitude.toString()??"",
+                                eventCode: datum.eventCode??"",
+                              )));
+
+                              // Navigator.push(context, FadeRoute(page: EventDetails(fromPage: '', eventname: '', event_date: '', eventTime: '', eventVenue: '', eventCategory: '', eventdescription: '', event_CoverImage: '', eventId: '', tag: '', lat: '', long: '',)));
+                            },
+                            child: buildStatus(title: "View", color:CustomColors.sDarkColor3)),
+                      ),
+
+
+                      SizedBox(width: 10.w,),
+
+                      Expanded(
+                        child: GestureDetector(
+                            onTap:(){
+                              Navigator.push(context, FadeRoute(page: EditEvent(fromPage: "", eventname:datum.eventName??"",
+                                event_date: DateFormat('yyyy-MM-dd').format(datum.eventDate!), eventTime: datum.time??"", eventVenue: datum.venue??"",
+                                eventCategory: datum.eventCategory?.name??"", eventdescription: datum.eventDescription??"", event_CoverImage: datum.eventCoverImage??"", eventId: datum.id??"",
+                              eventCode: datum.eventCode??"",)));
+
+                              },
+                            child: buildStatus(title: "Edit", color:CustomColors.sPrimaryColor500, )),
+                      ),
+                    ],
+                  )
 
 
 

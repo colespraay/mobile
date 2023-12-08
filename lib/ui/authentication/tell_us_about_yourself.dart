@@ -197,12 +197,12 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Choose Spray tag", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
+            Text("Choose Spraay tag", style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 24.sp, color: CustomColors.sGreyScaleColor50)),
             Text("Step  2 of 2", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sGreyScaleColor50)),
           ],
         ),
         Divider(color: CustomColors.sGreyScaleColor300,),
-        Text("Choose a Spray tag. This allows you\nreceive money", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
+        Text("Choose a Spraay tag. This allows you\nreceive money", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
         height40,
 
         CustomizedTextField(textEditingController:sprayTagController, keyboardType: TextInputType.text,

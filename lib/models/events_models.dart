@@ -48,10 +48,14 @@ class Datum {
   DateTime? eventDate;
   String? time;
   String? venue;
-  String? category;
+  String? eventTag;
+  String? eventCategoryId;
+  String? eventStatus;
   String? eventCoverImage;
   String? userId;
+  EventGeoCoordinates? eventGeoCoordinates;
   User? user;
+  EventCategory? eventCategory;
   List<EventInvite>? eventInvites;
 
   Datum({
@@ -66,10 +70,14 @@ class Datum {
     this.eventDate,
     this.time,
     this.venue,
-    this.category,
+    this.eventTag,
+    this.eventCategoryId,
+    this.eventStatus,
     this.eventCoverImage,
     this.userId,
+    this.eventGeoCoordinates,
     this.user,
+    this.eventCategory,
     this.eventInvites,
   });
 
@@ -85,10 +93,14 @@ class Datum {
     eventDate: json["eventDate"] == null ? null : DateTime.parse(json["eventDate"]),
     time: json["time"],
     venue: json["venue"],
-    category: json["category"],
+    eventTag: json["eventTag"],
+    eventCategoryId: json["eventCategoryId"],
+    eventStatus: json["eventStatus"],
     eventCoverImage: json["eventCoverImage"],
     userId: json["userId"],
+    eventGeoCoordinates: json["eventGeoCoordinates"] == null ? null : EventGeoCoordinates.fromJson(json["eventGeoCoordinates"]),
     user: json["user"] == null ? null : User.fromJson(json["user"]),
+    eventCategory: json["eventCategory"] == null ? null : EventCategory.fromJson(json["eventCategory"]),
     eventInvites: json["eventInvites"] == null ? [] : List<EventInvite>.from(json["eventInvites"]!.map((x) => EventInvite.fromJson(x))),
   );
 
@@ -104,11 +116,71 @@ class Datum {
     "eventDate": "${eventDate!.year.toString().padLeft(4, '0')}-${eventDate!.month.toString().padLeft(2, '0')}-${eventDate!.day.toString().padLeft(2, '0')}",
     "time": time,
     "venue": venue,
-    "category": category,
+    "eventTag": eventTag,
+    "eventCategoryId": eventCategoryId,
+    "eventStatus": eventStatus,
     "eventCoverImage": eventCoverImage,
     "userId": userId,
+    "eventGeoCoordinates": eventGeoCoordinates?.toJson(),
     "user": user?.toJson(),
+    "eventCategory": eventCategory?.toJson(),
     "eventInvites": eventInvites == null ? [] : List<dynamic>.from(eventInvites!.map((x) => x.toJson())),
+  };
+}
+
+class EventCategory {
+  String? id;
+  bool? status;
+  DateTime? dateCreated;
+  DateTime? dateUpdated;
+  String? name;
+  dynamic userId;
+
+  EventCategory({
+    this.id,
+    this.status,
+    this.dateCreated,
+    this.dateUpdated,
+    this.name,
+    this.userId,
+  });
+
+  factory EventCategory.fromJson(Map<String, dynamic> json) => EventCategory(
+    id: json["id"],
+    status: json["status"],
+    dateCreated: json["dateCreated"] == null ? null : DateTime.parse(json["dateCreated"]),
+    dateUpdated: json["dateUpdated"] == null ? null : DateTime.parse(json["dateUpdated"]),
+    name: json["name"],
+    userId: json["userId"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "status": status,
+    "dateCreated": dateCreated?.toIso8601String(),
+    "dateUpdated": dateUpdated?.toIso8601String(),
+    "name": name,
+    "userId": userId,
+  };
+}
+
+class EventGeoCoordinates {
+  String? longitude;
+  String? latitude;
+
+  EventGeoCoordinates({
+    this.longitude,
+    this.latitude,
+  });
+
+  factory EventGeoCoordinates.fromJson(Map<String, dynamic> json) => EventGeoCoordinates(
+    longitude: json["longitude"],
+    latitude: json["latitude"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "longitude": longitude,
+    "latitude": latitude,
   };
 }
 
@@ -163,19 +235,24 @@ class User {
   DateTime? dateUpdated;
   String? email;
   String? phoneNumber;
+  String? formattedPhoneNumber;
   String? firstName;
   String? lastName;
+  String? walletBalance;
   String? uniqueVerificationCode;
   bool? isNewUser;
-  Role? role;
+  String? role;
   String? deviceId;
-  AuthProvider? authProvider;
+  String? authProvider;
   String? profileImageUrl;
-  dynamic bvn;
-  dynamic virtualAccountName;
-  dynamic virtualAccountNumber;
-  dynamic bankName;
+  String? bvn;
+  dynamic bankCustomerId;
+  String? virtualAccountName;
+  String? virtualAccountNumber;
+  String? bankName;
   String? gender;
+  String? flutterwaveUserKey;
+  String? flutterwaveNarration;
   DateTime? dob;
   String? userTag;
   String? transactionPin;
@@ -193,8 +270,10 @@ class User {
     this.dateUpdated,
     this.email,
     this.phoneNumber,
+    this.formattedPhoneNumber,
     this.firstName,
     this.lastName,
+    this.walletBalance,
     this.uniqueVerificationCode,
     this.isNewUser,
     this.role,
@@ -202,10 +281,13 @@ class User {
     this.authProvider,
     this.profileImageUrl,
     this.bvn,
+    this.bankCustomerId,
     this.virtualAccountName,
     this.virtualAccountNumber,
     this.bankName,
     this.gender,
+    this.flutterwaveUserKey,
+    this.flutterwaveNarration,
     this.dob,
     this.userTag,
     this.transactionPin,
@@ -224,19 +306,24 @@ class User {
     dateUpdated: json["dateUpdated"] == null ? null : DateTime.parse(json["dateUpdated"]),
     email: json["email"],
     phoneNumber: json["phoneNumber"],
+    formattedPhoneNumber: json["formattedPhoneNumber"],
     firstName: json["firstName"],
     lastName: json["lastName"],
+    walletBalance: json["walletBalance"],
     uniqueVerificationCode: json["uniqueVerificationCode"],
     isNewUser: json["isNewUser"],
-    role: roleValues.map[json["role"]]!,
+    role: json["role"],
     deviceId: json["deviceId"],
-    authProvider: authProviderValues.map[json["authProvider"]]!,
+    authProvider: json["authProvider"],
     profileImageUrl: json["profileImageUrl"],
     bvn: json["bvn"],
+    bankCustomerId: json["bankCustomerId"],
     virtualAccountName: json["virtualAccountName"],
     virtualAccountNumber: json["virtualAccountNumber"],
     bankName: json["bankName"],
     gender: json["gender"],
+    flutterwaveUserKey: json["flutterwaveUserKey"],
+    flutterwaveNarration: json["flutterwaveNarration"],
     dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
     userTag: json["userTag"],
     transactionPin: json["transactionPin"],
@@ -255,19 +342,24 @@ class User {
     "dateUpdated": dateUpdated?.toIso8601String(),
     "email": email,
     "phoneNumber": phoneNumber,
+    "formattedPhoneNumber": formattedPhoneNumber,
     "firstName": firstName,
     "lastName": lastName,
+    "walletBalance": walletBalance,
     "uniqueVerificationCode": uniqueVerificationCode,
     "isNewUser": isNewUser,
-    "role": roleValues.reverse[role],
+    "role": role,
     "deviceId": deviceId,
-    "authProvider": authProviderValues.reverse[authProvider],
+    "authProvider": authProvider,
     "profileImageUrl": profileImageUrl,
     "bvn": bvn,
+    "bankCustomerId": bankCustomerId,
     "virtualAccountName": virtualAccountName,
     "virtualAccountNumber": virtualAccountNumber,
     "bankName": bankName,
     "gender": gender,
+    "flutterwaveUserKey": flutterwaveUserKey,
+    "flutterwaveNarration": flutterwaveNarration,
     "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
     "userTag": userTag,
     "transactionPin": transactionPin,
@@ -278,32 +370,4 @@ class User {
     "displayWalletBalance": displayWalletBalance,
     "enableFaceId": enableFaceId,
   };
-}
-
-enum AuthProvider {
-  LOCAL
-}
-
-final authProviderValues = EnumValues({
-  "LOCAL": AuthProvider.LOCAL
-});
-
-enum Role {
-  CUSTOMER
-}
-
-final roleValues = EnumValues({
-  "CUSTOMER": Role.CUSTOMER
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }
