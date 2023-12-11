@@ -1,8 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/services/firebase_services.dart';
 import 'package:spraay/splash_screen.dart';
 import 'package:spraay/ui/authentication/login_screen.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
@@ -11,10 +13,14 @@ import 'package:spraay/view_model/bill_payment_provider.dart';
 import 'package:spraay/view_model/event_provider.dart';
 import 'package:spraay/view_model/home_provider.dart';
 import 'package:spraay/view_model/transaction_provider.dart';
+import 'firebase_options.dart';
 
 Future main()async {
   WidgetsFlutterBinding.ensureInitialized();
   await MySharedPreference.init();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+  await FirebaseService().initNotifications();
+
   runApp(
       MultiProvider(
           providers: [

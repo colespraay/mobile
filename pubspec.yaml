@@ -61,6 +61,9 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   flutter_rounded_date_picker: ^3.0.4
   rich_text_widget: ^0.2.7
+  firebase_core: ^2.24.2
+  firebase_messaging: ^14.7.8
+  flutter_local_notifications: ^16.2.0
 #  flutter_media_downloader: ^0.0.1
 
 #  overlay_loader_with_app_icon: ^0.0.3

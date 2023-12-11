@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "45187346066",
+    "project_id": "spraay-app",
+    "storage_bucket": "spraay-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45187346066:android:deb8c57478735fc3a1804b",
+        "android_client_info": {
+          "package_name": "com.app.spraay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfLRwrtOHm_jg7cUkOdZr2ubfNkFTbR1E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

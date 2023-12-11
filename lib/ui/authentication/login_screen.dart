@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,6 +40,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   AuthProvider? credentialsProvider;
 
+  String fcm_token="";
+  void getDeviceToken()async{
+    await FirebaseMessaging.instance.getToken().then((token){
+      setState(() {fcm_token=token??"";});
+
+      log("FCM==$token");
+
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -48,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    getDeviceToken();
     setState(() {
       checkedValue= MySharedPreference.getRemember()==1?true:false;
 
