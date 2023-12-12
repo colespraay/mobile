@@ -301,6 +301,7 @@ class AuthProvider extends ChangeNotifier{
 
   fetchLoginEndpoint( context,String password,String phoneNumber,String deviceId) async{
     setloading(true);
+    // print("deviceId=$deviceId");
     var result = await apiResponse.logIn(phoneNumber, password,deviceId);
     if (result['error'] == true) {
       errorCherryToast(context, result['message']);

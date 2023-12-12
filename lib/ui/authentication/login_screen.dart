@@ -151,10 +151,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomButton(
                     onTap: () async{
 
-                      String? deviceId = await getId();
+                      // String? deviceId = await getId();
                       if( firstBtn.isNotEmpty && secondBtn.isNotEmpty){
 
-                        Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context, passwordController.text, "0${phoneController.text}",deviceId??"");
+                        Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context, passwordController.text, "0${phoneController.text}",fcm_token);
 
                       }
                     },
@@ -221,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (isAuthenticated) {
       //if authenticated, login
-      Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context,password, MySharedPreference.getPhoneNumber(),deviceId??"");
+      Provider.of<AuthProvider>(context, listen: false).fetchLoginEndpoint(context,password, MySharedPreference.getPhoneNumber(),fcm_token);
 
     }
     else {
