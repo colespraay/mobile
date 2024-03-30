@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/image_title_models.dart';
 import 'package:spraay/ui/others/bill_payments/cable_sub/cable_subscription.dart';
 import 'package:spraay/ui/others/bill_payments/data/data_top_up.dart';
+import 'package:spraay/view_model/bill_payment_provider.dart';
 
 import '../../../navigations/scale_transition.dart';
 import 'bill_payment_detail.dart';
@@ -19,6 +21,15 @@ class BillPaymentScreen extends StatefulWidget {
 }
 
 class _BillPaymentScreenState extends State<BillPaymentScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<BillPaymentProvider>(context,listen: false).fetchAirtimeTopUpList();
+    Provider.of<BillPaymentProvider>(context,listen: false).fetchCableTvListList();
+    Provider.of<BillPaymentProvider>(context,listen: false).fetchEletricityProvidersApiList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -73,7 +84,6 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
 
             else if(e.value.title=="Electricity"){
               Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
-
             }
 
             else{
@@ -99,5 +109,6 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
       ),
     );
   }
+
 
 }

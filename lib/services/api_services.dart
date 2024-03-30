@@ -8,6 +8,8 @@ import 'dart:convert' as convert;
 import 'package:http_parser/http_parser.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
+import 'package:spraay/models/airtime_topup_model.dart';
+import 'package:spraay/models/cable_tv_model.dart';
 import 'package:spraay/models/category_list_model.dart';
 import 'package:spraay/models/current_user.dart';
 import 'package:spraay/models/data_model.dart';
@@ -16,8 +18,10 @@ import 'package:spraay/models/graph_history_model.dart';
 import 'package:spraay/models/join_event_model.dart';
 import 'package:spraay/models/list_of_banks_model.dart';
 import 'package:spraay/models/login_response.dart';
+import 'package:spraay/models/new_data_plan.dart';
 import 'package:spraay/models/notification_model.dart';
 import 'package:spraay/models/ongoing_event_model.dart';
+import 'package:spraay/models/pre_post_model.dart';
 import 'package:spraay/models/recent_recipient_models.dart';
 import 'package:spraay/models/recipient_model.dart';
 import 'package:spraay/models/registered_user_model.dart';
@@ -34,7 +38,7 @@ class ApiServices{
     try{
       // print("deviceIddeviceId=${deviceId}");
       var response=await http.post(Uri.parse("$url/auth/login/phone-number"), body:{"phoneNumber":phoneNumber, "password":password,"deviceId":deviceId},
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       // int statusCode = response.statusCode;
       // print("Resbody statusCode==${response.statusCode}");
 
@@ -92,7 +96,7 @@ class ApiServices{
   Map<String, dynamic> result = {};
   try{
     var response=await http.post(Uri.parse("$url/user/sign-up/phone-number"), body: {"password":password, "phoneNumber":phoneNumber,"deviceId":deviceId},
-        headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+        headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
     int statusCode = response.statusCode;
     log("registerresponse==${response.body}");
     if (statusCode == 200 || statusCode == 201) {
@@ -122,7 +126,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   Map<String, dynamic> result = {};
   try{
     var response=await http.get(Uri.parse("$url/user/verification/verify-signup-code/$uniqueVerificationCode"),
-        headers: {"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(Duration(seconds: 30));
+        headers: {"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(const Duration(seconds: 30));
     int statusCode = response.statusCode;
     if (statusCode == 200 || statusCode==201) {
       var jsonResponse=convert.jsonDecode(response.body);
@@ -148,7 +152,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.patch(Uri.parse("$url/user"),
           body: {"userId": userId,"bvn": bvn,},
-          headers: {"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -174,7 +178,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/user/resend-otp-code/$userID"),
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("messagedddre=${response.body}");
 
@@ -202,7 +206,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.patch(Uri.parse("$url/user"),
           body: {"email": email, "userId": userId, "firstName": firstName, "lastName": lastName, "gender": gender, "dob": dob,},
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -229,7 +233,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.patch(Uri.parse("$url/user"),
           body: {"userTag": userTag, "userId": userId},
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -255,7 +259,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.patch(Uri.parse("$url/user"),
           body: {"transactionPin": transactionPin, "userId": userId},
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -280,7 +284,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/user/verification/initiate-forgot-password-flow/$emailAddress"),
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -305,7 +309,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/user/verification/resend-otp-code/phone/$phoneNumber"),
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("messageresponse=${response.body}");
       if (statusCode == 200 || statusCode==201) {
@@ -333,7 +337,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/user/verification/verify-otp/$uniqueVerificationCode"),
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -359,7 +363,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.post(Uri.parse("$url/user/verification/change-password"),
           body: {"uniqueVerificationCode": uniqueVerificationCode, "newPassword": newPassword},
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -385,7 +389,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.post(Uri.parse("$url/user/change-account-password"),
           body: {"currentPassword": currentPassword, "newPassword": newPassword},
-          headers:{"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(Duration(seconds: 30));
+          headers:{"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -410,7 +414,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/transaction/history-summary/$filter"),
-          headers:{"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(Duration(seconds: 30));
+          headers:{"Accept":"application/json", "Authorization": "Bearer $token"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -453,6 +457,73 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
 
+  Future<ApiResponse<AirtimeTopUpModelModel>> airtimeDataTopUpApi(String mytoken){
+    return http.get(Uri.parse("$url/bill/airtime-providers"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=AirtimeTopUpModelModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<AirtimeTopUpModelModel>(data: note1);
+      }else{
+        return ApiResponse<AirtimeTopUpModelModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      return ApiResponse<AirtimeTopUpModelModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+    });
+  }
+
+
+  Future<ApiResponse<CableTvModel>> cableTvModelApi(String mytoken){
+    return http.get(Uri.parse("$url/bill/cable-providers"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=CableTvModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<CableTvModel>(data: note1);
+      }else{
+        return ApiResponse<CableTvModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      return ApiResponse<CableTvModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+    });
+  }
+
+
+  Future<ApiResponse<CableTvModel>> eletricityProvidersApi(String mytoken){
+    return http.get(Uri.parse("$url/bill/electricity-providers"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=CableTvModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<CableTvModel>(data: note1);
+      }else{
+        return ApiResponse<CableTvModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      return ApiResponse<CableTvModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+    });
+  }
+
+  //PreOrPostPaidModel
+  Future<ApiResponse<PreOrPostPaidModel>> prePostApi(String mytoken, String merchantPublicId){
+    return http.get(Uri.parse("$url/bill/merchants/find-plans/$merchantPublicId"),
+        headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
+      if(response.statusCode ==200){
+        // final body=json.decode(response.body);
+        final note1=PreOrPostPaidModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<PreOrPostPaidModel>(data: note1);
+      }else{
+        return ApiResponse<PreOrPostPaidModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+      // else if(response.statusCode==400){return ApiResponse<UserResponse>( error: true, errorMessage: 'Something went wrong');}
+    }).catchError((e){
+      return ApiResponse<PreOrPostPaidModel>(error: true, errorMessage: 'Something went wrong_${e.toString()}');
+    });
+  }
+
   Future<ApiResponse<GraphHistoryModel>> graphHistoryApi(String mytoken){
     return http.get(Uri.parse("$url/transaction/graph/history-summary"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
@@ -474,7 +545,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.patch(Uri.parse("$url/user"),
           body: {"email": email, "userId": userId, "firstName": firstName, "lastName": lastName, "gender": gender},
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -517,7 +588,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
       var response=await http.patch(Uri.parse("$url/user"),
           body: jsonEncode(data),
-          headers: {"Accept":"application/json",'Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -581,7 +652,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.patch(Uri.parse("$url/user"),
           body: {"profileImageUrl": profileImageUrl, "userId": userId},
-          headers: {"Accept":"application/json"}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -629,7 +700,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       var response=await http.post(Uri.parse("$url/event"),
           body: jsonEncode({"eventName": eventName, "eventDescription": eventDescription, "venue":venue, "eventDate":eventDate,"time":time,"eventCategoryId":category,
           "eventCoverImage": eventCoverImage,"eventGeoCoordinates": {"longitude": longitude, "latitude": latitude} }),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
 
       log("createEventresponseData=${response.body}");
@@ -733,7 +804,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.post(Uri.parse("$url/event-invite"),
           body: jsonEncode({"eventId": eventId, "userIds": userIds,}),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       // log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
@@ -763,7 +834,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.post(Uri.parse("$url/event-category"),
           body: jsonEncode({"name": eventName}),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("eventCategoryEnteredAPPI=${response.body}");
 
@@ -797,7 +868,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.post(Uri.parse("$url/gifting/send-gift"),
           body: jsonEncode({"amount": amount, "receiverTag": receiverTag, "transactionPin": transactionPin}),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
@@ -827,7 +898,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/user/find-by-tag/$userTag"),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
@@ -862,7 +933,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
           body: jsonEncode({"eventName": eventName, "eventDescription": eventDescription, "venue": venue, "eventDate": eventDate,
             "time": time, "eventCategoryId": category,"eventCoverImage":eventCoverImage, "eventId": eventId,"eventStatus": "UPCOMING","eventGeoCoordinates": {"longitude": longitude, "latitude": latitude},
             "status": true}),
-          headers: {"Accept":"application/json", 'Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json", 'Authorization' : 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
@@ -934,27 +1005,27 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
 
-  Future<ApiResponse<DataPlanModel>> findPlanByProvider(String mytoken, String provider){
+  Future<ApiResponse<NewDataPlanModel>> findPlanByProvider(String mytoken, String provider){
     return http.get(Uri.parse("$url/bill/data-purchase/find-plans/$provider"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
       if(response.statusCode ==200){
-        final note1=DataPlanModel.fromJson(jsonDecode(response.body));
-        return ApiResponse<DataPlanModel>(data: note1);
+        final note1=NewDataPlanModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<NewDataPlanModel>(data: note1);
       }else{
-        return ApiResponse<DataPlanModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
+        return ApiResponse<NewDataPlanModel>( error: true, errorMessage: jsonDecode(response.body)['message']);
       }
     }).catchError((e){
       if(e.toString().contains("SocketException")){
-        return ApiResponse<DataPlanModel>(error: true, errorMessage: 'Error in network connection');
+        return ApiResponse<NewDataPlanModel>(error: true, errorMessage: 'Error in network connection');
 
       }else{
-        return ApiResponse<DataPlanModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+        return ApiResponse<NewDataPlanModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
       }
     });
   }
 
   Future<ApiResponse<DataPlanModel>> findCablePlanByProvider(String mytoken, String provider){
-    return http.get(Uri.parse("$url/bill/cable-purchase/provider-options/$provider"),
+    return http.get(Uri.parse("$url/bill/merchants/find-plans/$provider"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
       if(response.statusCode ==200){
         final note1=DataPlanModel.fromJson(jsonDecode(response.body));
@@ -971,6 +1042,8 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       }
     });
   }
+
+
 
 
   Future<ApiResponse<OngoingEventModel>> pastEventsList(String mytoken){
@@ -1024,7 +1097,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
       var response=await http.post(Uri.parse("$url/event-rsvp"),
           body: jsonEncode({"eventId": eventId, "status": status}),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
@@ -1050,10 +1123,11 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
   Future<Map<String, dynamic>> sprayEvent(String eventId,String mytoken, String amount, String transactionPin)async{
     Map<String, dynamic> result = {};
+    log("eventId=$eventId, amount=$amount, transactionPin=$transactionPin");
     try{
       var response=await http.post(Uri.parse("$url/event-spraay"),
           body: jsonEncode({"amount": amount, "eventId": eventId, "transactionPin":transactionPin}),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
@@ -1085,7 +1159,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/user/verify/transaction-pin/$transactionPin"),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
@@ -1115,7 +1189,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       var response=await http.post(Uri.parse("$url/user-account"),
           body: jsonEncode({"bankCode": bankCode, "accountNumber": accountNumber}),
 
-          headers:  {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers:  {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
@@ -1144,21 +1218,21 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
 
   Future<Map<String, dynamic>> withdrawalApi(String mytoken, String bankName, String accountNumber, String bankCode, String transactionPin, String amount)async{
+    // log("withdrawalApiAmt=${amount} bankName=$bankName, accountNumber=$accountNumber, bankCode=$bankCode, transactionPin=$transactionPin");
+
     Map<String, dynamic> result = {};
     try{
       var response=await http.post(Uri.parse("$url/withdrawal"),
           body: jsonEncode({"bankName": bankName, "bankCode": bankCode, "accountNumber": accountNumber, "transactionPin": transactionPin, "amount": amount}),
 
-          headers:  {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers:  {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
 
 
 
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
-        log("messagewithdrawalApi==${jsonResponse}");
-
-
+        // log("messagewithdrawalApi==${jsonResponse}");
 
         result["message"]= jsonResponse["message"];
     result["transactionId"]= jsonResponse["data"]["transactionId"];
@@ -1193,9 +1267,9 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/user/account/check-balance-before-debit/$amount"),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
-      log("ressssp=${response.body}");
+      // log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];
@@ -1221,9 +1295,9 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/event/event-summary/$eventID"),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
-      log("ressssp=${response.body}");
+      // log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
 
@@ -1251,7 +1325,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("$url/event-spraay/total-amount-sprayed-at-event/$eventID"),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       log("ressssp=${response.body}");
       if (statusCode == 200 || statusCode==201) {
@@ -1277,23 +1351,23 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
 
-  Future<Map<String, dynamic>> airtimePurchaseApi(String mytoken, String provider, String phoneNumber,String amount,String transactionPin )async{
+  Future<Map<String, dynamic>> airtimePurchaseApi(String mytoken, String providerId, String phoneNumber,String amount,String transactionPin )async{
     Map<String, dynamic> result = {};
     try{
       var response=await http.post(Uri.parse("$url/bill/airtime-purchase"),
 
-          body: jsonEncode( {"provider": provider, "phoneNumber": phoneNumber, "amount": amount, "transactionPin": transactionPin}),
+          body: jsonEncode( {"providerId": providerId, "phoneNumber": phoneNumber, "amount": amount, "transactionPin": transactionPin}),
 
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
 
         result["message"] =jsonResponse["message"];
-    result["phoneNumber"] =jsonResponse["data"]["phoneNumber"];
-    result["provider"] =jsonResponse["data"]["provider"];
-    result["dateCreated"] =jsonResponse["data"]["dateCreated"];
-        result["transactionId"] =jsonResponse["data"]["transactionId"];
+        result["phoneNumber"] =jsonResponse["data"]["user"]["phoneNumber"];
+        // result["provider"] =jsonResponse["data"]["provider"];
+        result["dateCreated"] =jsonResponse["data"]["dateCreated"];
+        result["transactionId"] =""/*jsonResponse["data"]["transactionId"]*/;
 
         result['error'] = false;
       }
@@ -1317,19 +1391,20 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
       String plan, String billerName)async{
     Map<String, dynamic> result = {};
     try{
-      var response=await http.post(Uri.parse("$url/bill/electricity-unit-purchase"),
-          body: jsonEncode( {"provider": provider, "meterNumber": meterNumber, "amount": amount, "transactionPin": transactionPin, "plan":plan, "billerName":billerName}),
 
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+      var response=await http.post(Uri.parse("$url/bill/electricity-unit-purchase"),
+          body: jsonEncode( {"providerId": provider, "meterNumber": meterNumber, "amount": amount, "transactionPin": transactionPin, "merchantPlan":plan /*,"billerName":billerName*/}),
+
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
 
         result["message"] =jsonResponse["message"];
         result["phoneNumber"] =jsonResponse["data"]["meterNumber"];
-        result["provider"] =jsonResponse["data"]["provider"];
+        // result["provider"] =jsonResponse["data"]["provider"];
         result["dateCreated"] =jsonResponse["data"]["dateCreated"];
-        result["transactionId"] =jsonResponse["data"]["transactionId"];
+        result["transactionId"] =jsonResponse["data"]["transaction"]["id"];
 
         result['error'] = false;
       }
@@ -1350,21 +1425,21 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
 
-  Future<Map<String, dynamic>> dataPurchaseApi(String mytoken, String provider, String phoneNumber,String dataPlanId,String transactionPin )async{
+  Future<Map<String, dynamic>> dataPurchaseApi(String mytoken, String provider, String phoneNumber,String dataPlanId,String transactionPin,String dataSubCode )async{
     Map<String, dynamic> result = {};
     try{
       var response=await http.post(Uri.parse("$url/bill/data-purchase"),
-          body: jsonEncode({"provider": provider, "phoneNumber": phoneNumber, "dataPlanId": int.parse(dataPlanId), "transactionPin": transactionPin}),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          body: jsonEncode({"providerId": dataSubCode, "phoneNumber": phoneNumber, "dataPlanId": int.parse(dataPlanId), "transactionPin": transactionPin}),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
 
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];
-        result["phoneNumber"] =jsonResponse["data"]["phoneNumber"];
-        result["provider"] =jsonResponse["data"]["provider"];
+        result["phoneNumber"] =jsonResponse["data"]["user"]["phoneNumber"];
+        // result["provider"] =jsonResponse["data"]["provider"];
         result["dateCreated"] =jsonResponse["data"]["dateCreated"];
-        result["transactionId"] =jsonResponse["data"]["transactionId"];
+        result["transactionId"] =jsonResponse["data"]["user"]["transactions"][0]["reference"];
 
         result['error'] = false;
       }
@@ -1384,23 +1459,24 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     return result;
   }
 
-  Future<Map<String, dynamic>> cablePurchaseApi(String mytoken, String provider, String phoneNumber,String dataPlanId,String transactionPin, String amount)async{
+  Future<Map<String, dynamic>> cablePurchaseApi(String mytoken, String provider, String phoneNumber,String dataPlanId,String transactionPin, String amount,
+      String cableCode)async{
     Map<String, dynamic> result = {};
     try{
 
       var response=await http.post(Uri.parse("$url/bill/cable-purchase"),
-          body: jsonEncode({"provider": provider, "smartCardNumber": phoneNumber, "cablePlanId": int.parse(dataPlanId),
+          body: jsonEncode({"providerId": cableCode, "smartCardNumber": phoneNumber, "cablePlanId": dataPlanId,
             "transactionPin": transactionPin, "amount":amount}),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
 
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];
         result["phoneNumber"] =jsonResponse["data"]["smartCardNumber"];
-        result["provider"] =jsonResponse["data"]["provider"];
+        result["provider"] =jsonResponse["data"]["providerId"];
         result["dateCreated"] =jsonResponse["data"]["dateCreated"];
-        result["transactionId"] =jsonResponse["data"]["transactionId"];
+        result["transactionId"] =jsonResponse["data"]["user"]["transactions"][0]["reference"];
 
         result['error'] = false;
       }
@@ -1421,19 +1497,20 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
   }
 
 
-  Future<Map<String, dynamic>> verifyElectricityUnitPurchaseApi(String mytoken, String provider,
-      String meterNumber,String amount,String plan )async{
+  Future<Map<String, dynamic>> verifyElectricityUnitPurchaseApi(String mytoken, String provider, String meterNumber,String amount,String plan )async{
     Map<String, dynamic> result = {};
+
     try{
       var response=await http.post(Uri.parse("$url/bill/electricity-unit-purchase/verify"),
-          body: jsonEncode({"provider": provider, "meterNumber": meterNumber, "amount": amount, "plan": plan}),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          body: jsonEncode({"providerId": provider, "meterNumber": meterNumber, "amount": amount, "merchantPlan": plan}),
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
 
       if (statusCode == 200 || statusCode==201) {
         var jsonResponse=convert.jsonDecode(response.body);
         result["message"] =jsonResponse["message"];
         result["billerName"] =jsonResponse["data"]["billerName"];
+        result["name"] =jsonResponse["data"]["name"];
         result['error'] = false;
       }
       else{
@@ -1447,7 +1524,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
     on FormatException{result["message"] = "invalid format";result['error'] = true;}
     catch(e){
-      print("object${e.toString()}");
+      // print("object${e.toString()}");
       result["message"] = "Something went wrong";result['error'] = true;}
     return result;
   }
@@ -1470,7 +1547,6 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
       }else{
         return ApiResponse<JoinEventModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
-
       }
     });
   }
@@ -1478,10 +1554,10 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
 
 
   Future<ApiResponse<TransactionModels>> transactionListApi(String mytoken, String userId){
+
     return http.get(Uri.parse("$url/transaction?userId=$userId"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
       if(response.statusCode ==200){
-        // final body=json.decode(response.body);
         final note1=TransactionModels.fromJson(jsonDecode(response.body));
         return ApiResponse<TransactionModels>(data: note1);
       }else{
@@ -1504,6 +1580,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     return http.get(Uri.parse("$url/wallet/list-of-banks"),
         headers:{'accept' : 'application/json','Authorization' : 'Bearer $mytoken'}).then((response){
       if(response.statusCode ==200){
+        // log("listOfBankApimessage=${response.body}");
         // final body=json.decode(response.body);
         final note1=ListOfBankModel.fromJson(jsonDecode(response.body));
         return ApiResponse<ListOfBankModel>(data: note1);
@@ -1571,7 +1648,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     Map<String, dynamic> result = {};
     try{
       var response=await http.get(Uri.parse("https://spraay-api-577f3dc0a0fe.herokuapp.com/transaction/download-receipt/$transactionListID"),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
 
       print("statusCodestatusCode11=${statusCode}");
@@ -1607,7 +1684,7 @@ Future<Map<String, dynamic>> registerVerifyCode(String uniqueVerificationCode, S
     try{
 
       var response=await http.get(Uri.parse("$url/transaction/export-soa?startDate=$startDate&endDate=$endDate"),
-          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(Duration(seconds: 30));
+          headers: {"Accept":"application/json",'Authorization' : 'Bearer $mytoken','Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
 
       print("statusCodestatusCode11=${statusCode}");

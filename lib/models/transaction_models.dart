@@ -10,33 +10,29 @@ String transactionModelsToJson(TransactionModels data) => json.encode(data.toJso
 
 class TransactionModels {
   bool? success;
-  int? code;
   String? message;
+  int? code;
   List<DatumTransactionModel>? data;
-  PaginationControl? paginationControl;
 
   TransactionModels({
     this.success,
-    this.code,
     this.message,
+    this.code,
     this.data,
-    this.paginationControl,
   });
 
   factory TransactionModels.fromJson(Map<String, dynamic> json) => TransactionModels(
     success: json["success"],
-    code: json["code"],
     message: json["message"],
+    code: json["code"],
     data: json["data"] == null ? [] : List<DatumTransactionModel>.from(json["data"]!.map((x) => DatumTransactionModel.fromJson(x))),
-    paginationControl: json["paginationControl"] == null ? null : PaginationControl.fromJson(json["paginationControl"]),
   );
 
   Map<String, dynamic> toJson() => {
     "success": success,
-    "code": code,
     "message": message,
+    "code": code,
     "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
-    "paginationControl": paginationControl?.toJson(),
   };
 }
 
@@ -45,14 +41,17 @@ class DatumTransactionModel {
   bool? status;
   DateTime? dateCreated;
   DateTime? dateUpdated;
-  int? amount;
-  int? currentBalanceBeforeTransaction;
+  double? amount;
+  double? currentBalanceBeforeTransaction;
   String? narration;
   String? reference;
   String? type;
   String? transactionDate;
   String? createdTime;
   String? createdDate;
+  String? userId;
+  dynamic receiverUserId;
+  String? transactionStatus;
 
   DatumTransactionModel({
     this.id,
@@ -67,6 +66,9 @@ class DatumTransactionModel {
     this.transactionDate,
     this.createdTime,
     this.createdDate,
+    this.userId,
+    this.receiverUserId,
+    this.transactionStatus,
   });
 
   factory DatumTransactionModel.fromJson(Map<String, dynamic> json) => DatumTransactionModel(
@@ -74,14 +76,17 @@ class DatumTransactionModel {
     status: json["status"],
     dateCreated: json["dateCreated"] == null ? null : DateTime.parse(json["dateCreated"]),
     dateUpdated: json["dateUpdated"] == null ? null : DateTime.parse(json["dateUpdated"]),
-    amount: json["amount"],
-    currentBalanceBeforeTransaction: json["currentBalanceBeforeTransaction"],
+    amount: json["amount"]?.toDouble(),
+    currentBalanceBeforeTransaction: json["currentBalanceBeforeTransaction"]?.toDouble(),
     narration: json["narration"],
     reference: json["reference"],
     type: json["type"],
     transactionDate: json["transactionDate"],
     createdTime: json["createdTime"],
     createdDate: json["createdDate"],
+    userId: json["userId"],
+    receiverUserId: json["receiverUserId"],
+    transactionStatus: json["transactionStatus"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -97,41 +102,8 @@ class DatumTransactionModel {
     "transactionDate": transactionDate,
     "createdTime": createdTime,
     "createdDate": createdDate,
-  };
-}
-
-class PaginationControl {
-  int? currentPage;
-  int? totalPages;
-  int? pageSize;
-  int? totalCount;
-  bool? hasPrevious;
-  bool? hasNext;
-
-  PaginationControl({
-    this.currentPage,
-    this.totalPages,
-    this.pageSize,
-    this.totalCount,
-    this.hasPrevious,
-    this.hasNext,
-  });
-
-  factory PaginationControl.fromJson(Map<String, dynamic> json) => PaginationControl(
-    currentPage: json["currentPage"],
-    totalPages: json["totalPages"],
-    pageSize: json["pageSize"],
-    totalCount: json["totalCount"],
-    hasPrevious: json["hasPrevious"],
-    hasNext: json["hasNext"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "currentPage": currentPage,
-    "totalPages": totalPages,
-    "pageSize": pageSize,
-    "totalCount": totalCount,
-    "hasPrevious": hasPrevious,
-    "hasNext": hasNext,
+    "userId": userId,
+    "receiverUserId": receiverUserId,
+    "transactionStatus": transactionStatus,
   };
 }

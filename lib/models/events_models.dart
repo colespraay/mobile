@@ -238,7 +238,7 @@ class User {
   String? formattedPhoneNumber;
   String? firstName;
   String? lastName;
-  String? walletBalance;
+  dynamic walletBalance;
   String? uniqueVerificationCode;
   bool? isNewUser;
   String? role;

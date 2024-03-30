@@ -57,6 +57,11 @@ class _JoinEventOtpState extends State<JoinEventOtp> {
 
 
     }else{
+
+      // //remove this
+      // Navigator.pushReplacement(context, SlideUpRoute(page: SprayScreen(cash: widget.cash, totalAmount: 1000, noteQuantity: 5,
+      //   unitAmount: 200, eventModelData: widget.eventModelData, transactionPin: transactionPin,)));
+
       Navigator.pushReplacement(context, SlideUpRoute(page: SprayScreen(cash: widget.cash, totalAmount: widget.totalAmount, noteQuantity: widget.noteQuantity.toInt(),
         unitAmount: widget.unitAmount, eventModelData: widget.eventModelData, transactionPin: transactionPin,)));
 

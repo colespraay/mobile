@@ -4,14 +4,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/data_model.dart';
+import 'package:spraay/models/new_data_plan.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/others/bill_payments/pin_for_bill_payment.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/bill_payment_provider.dart';
 
 class DataTopUp extends StatefulWidget {
   String title;
@@ -115,7 +118,7 @@ class _DataTopUpState extends State<DataTopUp> {
                   if(secondBtn.isEmpty){
                     cherryToastInfo(context, "Info!", "Select provider and plan");
                   }else{
-                    fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text,);
+                    fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text,dataSubCode);
                   }
 
                 }
@@ -131,38 +134,45 @@ class _DataTopUpState extends State<DataTopUp> {
   }
 
 
-  List <String> cableList=["mtn","9_mobile","airtel","glo"];
+  // List <String> cableList=["mtn","9_mobile","airtel","glo"];
   int airtimePosition=-1;
   String imageAirtime="";
+  String dataSubCode="";
+
   Widget buildHorizontalContainer(){
     return Center(
-      child: StatefulBuilder(
-        builder: (BuildContext context, StateSetter setStates) {
-          return Wrap(
-            alignment: WrapAlignment.start,
-            runAlignment: WrapAlignment.center,
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            children: cableList.asMap().entries.map((e) => GestureDetector(
-              onTap:(){
-                setStates(() {
-                  airtimePosition = e.key;//position
-                  imageAirtime=e.value;
-                });
+      child:  Consumer<BillPaymentProvider>(
+        builder: (context,dataProvider,widget)  {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setStates) {
+              return Wrap(
+                alignment: WrapAlignment.start,
+                runAlignment: WrapAlignment.center,
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                children: dataProvider.airtimeTopUpList.asMap().entries.map((e) => GestureDetector(
+                  onTap:(){
+                    setStates(() {
+                      airtimePosition = e.key;//position
+                      imageAirtime=e.value.name=="9Mobile"?"9_mobile":e.value.name!.toLowerCase();
+                      dataSubCode= e.value.code??"";
+                    });
 
-                fetchGetDataPlanListList(context,  imageAirtime.replaceAll("_", "").toUpperCase(),setState );
+                    fetchGetDataPlanListList(context,  dataSubCode/*imageAirtime.replaceAll("_", "").toUpperCase()*/,setState );
 
-              },
-              child: Container(
-                margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color:airtimePosition==e.key?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
-                  // borderRadius: BorderRadius.all(Radius.circular(8.r))
-                ),
-                child: SvgPicture.asset("images/${e.value}.svg", width: 70.w, height: 70.h,),
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color:airtimePosition==e.key?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
+                      // borderRadius: BorderRadius.all(Radius.circular(8.r))
+                    ),
+                    child: SvgPicture.asset("images/${e.value.name=="9Mobile"?"9_mobile":e.value.name!.toLowerCase()}.svg", width: 70.w, height: 70.h,),
 
-              ),
-            ) ).toList(),
+                  ),
+                ) ).toList(),
+              );
+            }
           );
         }
       ),
@@ -192,7 +202,7 @@ class _DataTopUpState extends State<DataTopUp> {
 
 
   bool _isLoading=false;
-  fetchCheckbalanceBeforeWithdrawingApiPinApi(BuildContext context ,String amount) async{
+  fetchCheckbalanceBeforeWithdrawingApiPinApi(BuildContext context ,String amount, String dataSubCode) async{
     setState(() {_isLoading=true;});
     var result=await ApiServices().checkbalanceBeforeWithdrawingApi(MySharedPreference.getToken(), amount.replaceAll(",", ""));
     if(result['error'] == true){
@@ -206,7 +216,7 @@ class _DataTopUpState extends State<DataTopUp> {
     }else{
       if(context.mounted){
         Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime, amount: amount,
-          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,dataPlanId: dataPlanId)));
+          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,dataPlanId: dataPlanId,dataSubCode:dataSubCode,)));
       }
     }
 
@@ -214,8 +224,8 @@ class _DataTopUpState extends State<DataTopUp> {
   }
 
 
-  DataPlan ?dataPlan;
-  List<DataPlan> getVDataPlans=[];
+  NewDataPlan ?dataPlan;
+  List<NewDataPlan> getVDataPlans=[];
   bool loadingVplans= false;
   String dataPlanId="";
 
@@ -240,25 +250,25 @@ class _DataTopUpState extends State<DataTopUp> {
       return  CustomizedTextField(hintTxt:"No Plan", readOnly: true, focusNode: _textField3Focus,);
     }
     else{
-      return DropdownButtonFormField<DataPlan>(
+      return DropdownButtonFormField<NewDataPlan>(
         iconEnabledColor: CustomColors.sDisableButtonColor,
         focusColor: CustomColors.sDarkColor2,
         dropdownColor:CustomColors.sDarkColor2,
         isDense: false,
-        items: getVDataPlans.map((DataPlan value) {
-          return DropdownMenuItem<DataPlan>(
+        items: getVDataPlans.map((NewDataPlan value) {
+          return DropdownMenuItem<NewDataPlan>(
             value: value,
             child: SizedBox(
                 width: 290.w,
-                child: Text(value.billerName?.replaceAll("?", "")??"", style: CustomTextStyle.kTxtRegular.copyWith(color:CustomColors.sWhiteColor, fontSize: 14.sp), )),
+                child: Text(value.serviceName?.replaceAll("?", "")??"", style: CustomTextStyle.kTxtRegular.copyWith(color:CustomColors.sWhiteColor, fontSize: 14.sp), )),
           );
         }).toList(),
-        onChanged: (DataPlan? newValue) {
+        onChanged: (NewDataPlan? newValue) {
           dataPlan=newValue!;
         setState(() {
-          amtController.text=newValue.amount.toString()??"0.00";
-          secondBtn=newValue.amount.toString()??"0.00";
-          dataPlanId=newValue.id.toString();
+          amtController.text=newValue.servicePrice.toString()??"0.00";
+          secondBtn=newValue.servicePrice.toString()??"0.00";
+          dataPlanId=newValue.serviceId.toString();
 
         });
         },
@@ -270,10 +280,10 @@ class _DataTopUpState extends State<DataTopUp> {
             fillColor: CustomColors.sDarkColor2,
             filled: true,
             errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
-            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
-            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+            enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
             hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
-            focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:Color(0xff0166F4), width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
+            focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:const Color(0xff0166F4), width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
         ),
       );
     }

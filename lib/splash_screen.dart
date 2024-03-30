@@ -18,7 +18,6 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
 
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -49,7 +48,6 @@ class _SplashScreenState extends State<SplashScreen> {
           SizedBox(width: 10.w,),
           Column(
             children: AnimationConfiguration.toStaggeredList(
-              // duration: const Duration(milliseconds: 2000),
               duration: const Duration(milliseconds: 2500),
               childAnimationBuilder: (widget) => SlideAnimation(
                 horizontalOffset: -100.0,
@@ -69,8 +67,20 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    Timer(Duration(seconds: 4), ()=> Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ScreenDirection())));
+  void initState() {
+    _startTime();
+    super.initState();
   }
+  _startTime()async{
+    // Future.delayed(const Duration(milliseconds: 4000), ()=> Navigator.pushNamedAndRemoveUntil(context, Pages.home, (route) => false));
+    Future.delayed(const Duration(seconds: 4), ()=> Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ScreenDirection())));
+
+  }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   // Timer(const Duration(seconds: 4), ()=> Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ScreenDirection())));
+  //
+  // }
 }

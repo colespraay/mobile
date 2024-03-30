@@ -56,19 +56,10 @@ class _WithdrawalState extends State<Withdrawal> {
                   FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                   NumberTextInputFormatter()
                 ],
-                decoration: new InputDecoration(
+                decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(vertical: 0.1.h, horizontal: 0),
-
-                  // prefixIconConstraints: BoxConstraints(minWidth: 30.w, minHeight: 10.h,),
-
                   prefixText: "₦",
                   prefixStyle:  CustomTextStyle.kTxtBold.copyWith(color: CustomColors.sGreyScaleColor100, fontSize: 40.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans"),
-
-                  // prefixIcon: Padding(
-                  //   padding:  EdgeInsets.only(right: 5.w, left: 2.w, top: 4.h),
-                  //   child: Text("N", style: CustomTextStyle.kTxtBold.copyWith(
-                  //       color: CustomColors.sGreyScaleColor100, fontSize: 38.sp, fontWeight: FontWeight.bold),),
-                  // ) ,
                 ),
 
               ),

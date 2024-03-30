@@ -100,7 +100,7 @@ extension StringExtension on String {
 
 }
 
-Divider dividerWidget=Divider(color: CustomColors.sGreyScaleColor800,);
+Divider dividerWidget=const Divider(color: CustomColors.sGreyScaleColor800,);
 
  //17 April, 2:48 PM
  String dateTimeFormat(String value){

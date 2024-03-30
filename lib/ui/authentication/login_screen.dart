@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
@@ -45,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     await FirebaseMessaging.instance.getToken().then((token){
       setState(() {fcm_token=token??"";});
 
-      log("FCM==$token");
+      // log("FCM==$token");
 
     });
   }
@@ -86,6 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
     phoneController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height22,
                 GestureDetector(
                   onTap:(){
-                    Navigator.push(context, SlideUpRoute(page: ForgotPasswordScreen()));
+                    Navigator.push(context, SlideUpRoute(page: const ForgotPasswordScreen()));
                   },
                   child: Text("Forgot the password?",
                     style: CustomTextStyle.kTxtSemiBold.copyWith(fontWeight: FontWeight.w500, fontSize: 16.sp, color: CustomColors.sGreyScaleColor700 ),textAlign: TextAlign.center,),
@@ -174,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 GestureDetector(
                   onTap:(){
-                    Navigator.push(context, SlideLeftRoute(page: CreateAccount()));
+                    Navigator.push(context, SlideLeftRoute(page: const CreateAccount()));
                   },
                     child: buildTwoTextWidget(title: "Don’t have an account?", content: " Sign up")),
                 height34,

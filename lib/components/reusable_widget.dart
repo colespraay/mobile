@@ -163,13 +163,13 @@ class CustomizedTextField extends StatelessWidget {
         // contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 0),
 
 
-        suffixIconConstraints: BoxConstraints(minWidth: 19, minHeight: 19,),
-        prefixIconConstraints: prefixIcon==null? BoxConstraints(minWidth: 10, minHeight: 0,):  BoxConstraints(minWidth: 19, minHeight: 19,),
+        suffixIconConstraints: const BoxConstraints(minWidth: 19, minHeight: 19,),
+        prefixIconConstraints: prefixIcon==null? const BoxConstraints(minWidth: 10, minHeight: 0,):  const BoxConstraints(minWidth: 19, minHeight: 19,),
 
-        prefixIcon:prefixIcon?? SizedBox.shrink(),
-        suffixIcon: surffixWidget ?? SizedBox.shrink(),
-        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
-        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+        prefixIcon:prefixIcon?? const SizedBox.shrink(),
+        suffixIcon: surffixWidget ?? const SizedBox.shrink(),
+        enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
         hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
 
         fillColor:focusNode!.hasFocus? CustomColors.sTransparentPurplecolor :
@@ -325,9 +325,8 @@ void cherryToastInfo(BuildContext context,String titlemsg, String dsc){
     borderRadius: 12,
     shadowColor: Colors.transparent,
     backgroundColor: CustomColors.sDarkColor3,
-    animationDuration: Duration(milliseconds: 1000),
+    animationDuration: const Duration(milliseconds: 1000),
     autoDismiss: true,
-    displayTitle: true,
     toastPosition: Position.top,
     animationType: AnimationType.fromTop,
   ).show(context);
@@ -340,10 +339,9 @@ void errorCherryToast(BuildContext context,String errordsc){
     shadowColor: Colors.transparent,
     borderRadius: 8,
     enableIconAnimation: true,
-    displayTitle: true,
     description: Text(errordsc, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp),),
     animationType: AnimationType.fromTop,
-    animationDuration: Duration(milliseconds: 1000),
+    animationDuration: const Duration(milliseconds: 1000),
     autoDismiss: true,
 
     // layout: ToastLayout.ltr,
@@ -357,10 +355,9 @@ void successCherryToast(BuildContext context,String errordsc){
     shadowColor: Colors.transparent,
     borderRadius: 8,
     enableIconAnimation: true,
-    displayTitle: true,
     description: Text(errordsc, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp),),
     animationType: AnimationType.fromTop,
-    animationDuration: Duration(milliseconds: 1000),
+    animationDuration: const Duration(milliseconds: 1000),
     autoDismiss: true,
   ).show(context);
 }
@@ -615,9 +612,8 @@ class ShimmerCustomeGrid extends StatelessWidget {
 
 class Debouncer {
   final int milliseconds;
-  VoidCallback? action;
+  // VoidCallback? action;
   Timer? _timer;
-
   Debouncer({required this.milliseconds});
 
   run(VoidCallback action) {
@@ -634,8 +630,8 @@ Widget buildCircularNetworkImage({required String imageUrl, required double radi
     child: CachedNetworkImage(
       imageUrl:imageUrl,
       imageBuilder: (context, imageProvider) => Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(image: imageProvider, fit: BoxFit.cover,),),),
-      placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-      errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+      placeholder: (context, url) => const Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+      errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
     ),
   );
 }
@@ -662,7 +658,7 @@ class ShimmerList extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container( width: 50.w, height: 50.h,
-                        decoration: BoxDecoration(color: CustomColors.sWhiteColor,shape: BoxShape.circle,/* borderRadius: BorderRadius.all(Radius.circular(18.r))*/)),
+                        decoration: const BoxDecoration(color: CustomColors.sWhiteColor,shape: BoxShape.circle,/* borderRadius: BorderRadius.all(Radius.circular(18.r))*/)),
                     SizedBox(width: 8.w,),
 
                     Expanded(
@@ -673,11 +669,11 @@ class ShimmerList extends StatelessWidget {
                           children: [
                             Container(
                               width:double.infinity, height: 10.h,
-                              padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
+                              padding: const EdgeInsets.all(1.5), decoration: const BoxDecoration(color: CustomColors.sWhiteColor,),),
                             height10,
                             Container(
                               width:120.w, height: 8.h,
-                              padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
+                              padding: const EdgeInsets.all(1.5), decoration: const BoxDecoration(color: CustomColors.sWhiteColor,),),
 
                           ],
                         ),

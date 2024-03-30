@@ -57,8 +57,8 @@ class _EventsScreenState extends State<EventsScreen> {
                 child: PageView(
                   controller: _pageController=PageController(initialPage: 0),
                   onPageChanged: onChangedFunction,
-                  physics: NeverScrollableScrollPhysics(),
-                  children: [
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: const [
                     OngoingEvent(),
                     MyEvents(),
                     PastEvent()

@@ -79,8 +79,8 @@ class SprayBarGraph extends StatelessWidget {
               // alignment: BarChartAlignment.spaceBetween,
               titlesData: FlTitlesData(
                 show: true,
-                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, getTitlesWidget: bottomTitles)),
                 leftTitles: AxisTitles(sideTitles: SideTitles(
                   showTitles: true,
@@ -97,7 +97,7 @@ class SprayBarGraph extends StatelessWidget {
                       width: 24.w,
                       borderRadius:BorderRadius.zero,
                       toY: data.totalAmount!.toDouble(),
-                      gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xffAB9FFF), Color(0xff5B45FF)]),
+                      gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xffAB9FFF), Color(0xff5B45FF)]),
                     )
                   ])).toList()
           ),

@@ -3,19 +3,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/models/cable_tv_model.dart';
 import 'package:spraay/models/cashspray_model.dart';
+import 'package:spraay/models/pre_post_model.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/navigations/SlideUpRoute.dart';
 import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/others/bill_payments/pin_for_bill_payment.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/bill_payment_provider.dart';
 
 class PayBilDetail extends StatefulWidget {
   String title;
-   PayBilDetail({required this.title});
+   PayBilDetail({super.key, required this.title});
 
   @override
   State<PayBilDetail> createState() => _PayBilDetailState();
@@ -75,6 +79,8 @@ class _PayBilDetailState extends State<PayBilDetail> {
         height45,
         widget.title=="Airtime Top-up"? buildHorizontalContainer() : buildElectricityDropDown(),
         height20,
+        widget.title !="Airtime Top-up"? _buildPostPaidWidget():Container(),
+        height20,
         CustomizedTextField(textEditingController:phoneController, keyboardType: TextInputType.phone,
           maxLength: 11,
           textInputAction: TextInputAction.next,hintTxt: widget.title=="Airtime Top-up"? "Enter Phone Number": "Meter Number" ,focusNode: _textField1Focus,
@@ -93,14 +99,12 @@ class _PayBilDetailState extends State<PayBilDetail> {
                 firstBtn=phoneController.text;
               });
 
-
-
             },
             child: Padding(
               padding:  EdgeInsets.only(right: 10.w),
               child: SvgPicture.asset("images/contact_profile.svg"),
             ),
-          ) : SizedBox.shrink(),
+          ) : const SizedBox.shrink(),
         ),
         height22,
         CustomizedTextField(textEditingController:amtController, keyboardType: TextInputType.number,
@@ -126,7 +130,7 @@ class _PayBilDetailState extends State<PayBilDetail> {
                   if(airtimePosition<0){
                     cherryToastInfo(context, "Info!", "Select provider");
                   }else{
-                    fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text);
+                    fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text,airtimeDataCode);
                   }
                   
                 }
@@ -143,34 +147,40 @@ class _PayBilDetailState extends State<PayBilDetail> {
   }
 
 
-  List <String> cableList=["mtn","9_mobile","airtel","glo"];
+  // List <String> cableList=["mtn","9_mobile","airtel","glo"];
   int airtimePosition=-1;
   String imageAirtime="";
+  String airtimeDataCode="";
   Widget buildHorizontalContainer(){
     return Center(
-      child: Wrap(
-        alignment: WrapAlignment.start,
-        runAlignment: WrapAlignment.center,
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: cableList.asMap().entries.map((e) => GestureDetector(
-          onTap:(){
-            setState(() {
-               airtimePosition = e.key;//position
-               imageAirtime=e.value;
-            });
+      child: Consumer<BillPaymentProvider>(
+        builder: (context,dataProvider,widget) {
+          return Wrap(
+            alignment: WrapAlignment.start,
+            runAlignment: WrapAlignment.center,
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: dataProvider.airtimeTopUpList.asMap().entries.map((e) => GestureDetector(
+              onTap:(){
+                setState(() {
+                   airtimePosition = e.key;//position
+                   imageAirtime=e.value.name=="9Mobile"?"9_mobile":e.value.name!.toLowerCase();
+                   airtimeDataCode= e.value.code??"";
+                });
 
-          },
-          child: Container(
-            margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-                border: Border.all(color:airtimePosition==e.key?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
-                // borderRadius: BorderRadius.all(Radius.circular(8.r))
-            ),
-            child: SvgPicture.asset("images/${e.value}.svg", width: 70.w, height: 70.h,),
+              },
+              child: Container(
+                margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                    border: Border.all(color:airtimePosition==e.key?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
+                    // borderRadius: BorderRadius.all(Radius.circular(8.r))
+                ),
+                child: SvgPicture.asset("images/${e.value.name=="9Mobile"?"9_mobile":e.value.name!.toLowerCase() }.svg", width: 70.w, height: 70.h,),
 
-          ),
-        ) ).toList(),
+              ),
+            ) ).toList(),
+          );
+        }
       ),
     );
   }
@@ -187,7 +197,7 @@ class _PayBilDetailState extends State<PayBilDetail> {
         children: [
           SvgPicture.asset("images/$img.svg", width: 20.w, height: 20.h,),
           SizedBox(width: 4.w,),
-          Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0xffEEECFF)) ),
+          Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: const Color(0xffEEECFF)) ),
 
         ],
       ),
@@ -216,8 +226,8 @@ class _PayBilDetailState extends State<PayBilDetail> {
           padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
           margin: EdgeInsets.only(right: 16.w, bottom: 16.h),
           decoration: BoxDecoration(
-              color:index_pos==e.key? CustomColors.sPrimaryColor500: Color(0x40335EF7),
-              border: Border.all(color:index_pos==e.key? Colors.transparent: Color(0xffFAFAFA)),
+              color:index_pos==e.key? CustomColors.sPrimaryColor500: const Color(0x40335EF7),
+              border: Border.all(color:index_pos==e.key? Colors.transparent: const Color(0xffFAFAFA)),
               borderRadius: BorderRadius.all(Radius.circular(8.r))
           ),
           child: FittedBox(child: Text("₦${e.value.toString()}", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w700, color: CustomColors.sWhiteColor, fontFamily: "SemiPlusJakartaSans") )),
@@ -229,7 +239,7 @@ class _PayBilDetailState extends State<PayBilDetail> {
 
 
   bool _isLoading=false;
-  fetchCheckbalanceBeforeWithdrawingApiPinApi(BuildContext context ,String amount) async{
+  fetchCheckbalanceBeforeWithdrawingApiPinApi(BuildContext context ,String amount, String airtimeDataCode) async{
     setState(() {_isLoading=true;});
     var result=await ApiServices().checkbalanceBeforeWithdrawingApi(MySharedPreference.getToken(), amount.replaceAll(",", ""));
     if(result['error'] == true){
@@ -242,11 +252,15 @@ class _PayBilDetailState extends State<PayBilDetail> {
 
       if(context.mounted && widget.title=="Electricity"){
         //call API
-        fetchverifyElectricityUnitPurchaseApi(context, electricityProvider, phoneController.text, amount, "PREPAID");
+        if(shortPrePaidCode.isEmpty){
+          toastMessage("Select Electricity Plan");
+        }else{
+          fetchverifyElectricityUnitPurchaseApi(context, electricityProvider, phoneController.text, amount, shortPrePaidCode);
+        }
 
       }else{
         Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime, amount: amount,
-          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,)));
+          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,airtimeDataCode:airtimeDataCode)));
       }
     }
 
@@ -267,7 +281,8 @@ class _PayBilDetailState extends State<PayBilDetail> {
       if(context.mounted){
         //call API
         Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime, amount: amount,
-          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,electricityProvider: provider,billerName: result["billerName"],plan: plan,)));
+          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,electricityProvider: provider,billerName: result["billerName"],plan: plan,
+        electricUserName: result["name"],)));
 
       }
     }
@@ -277,7 +292,7 @@ class _PayBilDetailState extends State<PayBilDetail> {
 
 
 
-  List <String> electricityList=["AEDC","BEDC","EEDC","IBEDC","IKEDC","JEDC","KAEDCO","KEDCO","PHED"];
+  // List <String> electricityList=["AEDC","BEDC","EEDC","IBEDC","IKEDC","JEDC","KAEDCO","KEDCO","PHED"];
   // Widget buildHorizontalElectricity(){
   //   return SizedBox(
   //     height: 90.h,
@@ -316,44 +331,105 @@ class _PayBilDetailState extends State<PayBilDetail> {
   //   );
   // }
 
+
   String electricityProvider="";
+  String displayNameElectricity='';
   Widget buildElectricityDropDown(){
-    return DropdownButtonFormField<String>(
-      iconEnabledColor: CustomColors.sDisableButtonColor,
-      focusColor: CustomColors.sDarkColor2,
-      dropdownColor:CustomColors.sDarkColor2,
-      isDense: false,
-      items: electricityList.map((value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: SizedBox(
-              width: 290.w,
-              child: Text(value, style: CustomTextStyle.kTxtRegular.copyWith(color:CustomColors.sWhiteColor, fontSize: 14.sp), )),
+    return Consumer<BillPaymentProvider>(
+        builder: (context,dataProvider,widget)  {
+
+        return DropdownButtonFormField<CableTvDatum>(
+          iconEnabledColor: CustomColors.sDisableButtonColor,
+          focusColor: CustomColors.sDarkColor2,
+          dropdownColor:CustomColors.sDarkColor2,
+          isDense: false,
+          items: dataProvider.eletricityList.map((CableTvDatum value) {
+            return DropdownMenuItem<CableTvDatum>(
+              value: value,
+              child: SizedBox(
+                  width: 290.w,
+                  child: Text(value.displayName??"", style: CustomTextStyle.kTxtRegular.copyWith(color:CustomColors.sWhiteColor, fontSize: 14.sp), )),
+            );
+          }).toList(),
+          onChanged: (CableTvDatum? newValue) {
+            setState(() {
+              airtimePosition = 0;//position
+              imageAirtime="ekedc";
+              electricityProvider=newValue?.code??"";
+              displayNameElectricity=newValue?.displayName??"";
+            });
+
+            Provider.of<BillPaymentProvider>(context,listen: false).fetchPrePostAPIList(electricityProvider);
+          },
+          decoration: InputDecoration(
+
+            contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
+            hintText: "Choose electricity plan",
+            isDense: true,
+            fillColor: CustomColors.sDarkColor2,
+            filled: true,
+            errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
+            enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+            focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+            hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
+            focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:const Color(0xff0166F4), width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
+          ),
         );
-      }).toList(),
-      onChanged: (String? newValue) {
-
-        setState(() {
-          airtimePosition = 0;//position
-          imageAirtime="ekedc";
-          electricityProvider=newValue??"";
-        });
-      },
-      decoration: InputDecoration(
-
-        contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
-        hintText: "Choose electricity plan",
-        isDense: true,
-        fillColor: CustomColors.sDarkColor2,
-        filled: true,
-        errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
-        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
-        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
-        hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
-        focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:Color(0xff0166F4), width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
-      ),
+      }
     );
 
+  }
+
+  String shortPrePaidCode="";
+  Widget _buildPostPaidWidget(){
+    return Consumer<BillPaymentProvider>(
+        builder: (context, packageData, widget) {
+          if(packageData.loading){
+            return Center(child: Text("Loading...",style: CustomTextStyle.kTxtRegular.copyWith(color:CustomColors.sWhiteColor, fontSize: 14.sp)));
+          }
+          else if(packageData.prePostList.isEmpty){
+            return const SizedBox.shrink();
+          }else{
+            return DropdownButtonFormField<PrePostDatum>(
+              iconEnabledColor: CustomColors.sDisableButtonColor,
+              focusColor: CustomColors.sDarkColor2,
+              dropdownColor:CustomColors.sDarkColor2,
+              isDense: false,
+              items: packageData.prePostList.map((PrePostDatum value) {
+                return DropdownMenuItem<PrePostDatum>(
+                  value: value,
+                  child: SizedBox(
+                      width: 290.w,
+                      child: Text(value.name??"", style: CustomTextStyle.kTxtRegular.copyWith(color:CustomColors.sWhiteColor, fontSize: 14.sp), )),
+                );
+              }).toList(),
+              onChanged: (PrePostDatum? newValue) {
+                setState(() {
+                  shortPrePaidCode=newValue?.shortCode??"";
+                  // airtimePosition = 0;//position
+                  // imageAirtime="ekedc";
+                  // electricityProvider=newValue?.code??"";
+                  // displayNameElectricity=newValue?.displayName??"";
+                });
+
+              },
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
+                hintText: "Choose paid plan",
+                isDense: true,
+                fillColor: CustomColors.sDarkColor2,
+                filled: true,
+                errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
+                enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+                focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+                hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
+                focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:const Color(0xff0166F4), width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
+              ),
+            );
+          }
+
+        }
+    );
   }
 
 }

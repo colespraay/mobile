@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:local_session_timeout/local_session_timeout.dart';
@@ -21,6 +24,14 @@ Future main()async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   await FirebaseService().initNotifications();
 
+  // Pass all uncaught "fatal" errors from the framework to Crashlytics
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   runApp(
       MultiProvider(
           providers: [
@@ -30,20 +41,20 @@ Future main()async {
             ChangeNotifierProvider<TransactionProvider>(create: (_) => TransactionProvider()),
             ChangeNotifierProvider<BillPaymentProvider>(create: (_) => BillPaymentProvider()),
           ],
-          child:  MyApp()));
+          child:  MyApp()
+      ));
 }
 
 class MyApp extends StatelessWidget {
    MyApp({super.key});
   final _navigatorKey = GlobalKey<NavigatorState>();
   NavigatorState get _navigator => _navigatorKey.currentState!;
-
   @override
   Widget build(BuildContext context) {
 
     final sessionConfig = SessionConfig(
-      invalidateSessionForAppLostFocus:  Duration(minutes: 20),
-      invalidateSessionForUserInactivity:  Duration(minutes: 20),);
+      invalidateSessionForAppLostFocus:  const Duration(minutes: 20),
+      invalidateSessionForUserInactivity:  const Duration(minutes: 20),);
     sessionConfig.stream.listen((SessionTimeoutState timeoutEvent) {
       // stop listening, as user will already be in auth page
       Provider.of<AuthProvider>(context, listen: false).sessionStateStream.add(SessionState.stopListening);
@@ -59,7 +70,7 @@ class MyApp extends StatelessWidget {
       sessionConfig: sessionConfig,
       sessionStateStream: Provider.of<AuthProvider>(context, listen: false).sessionStateStream.stream,
       child: ScreenUtilInit(
-        designSize: Size(428, 926),
+        designSize: const Size(428, 926),
         minTextAdapt: true,
         splitScreenMode: true,
         useInheritedMediaQuery: true,

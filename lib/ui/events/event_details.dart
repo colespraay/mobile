@@ -130,8 +130,8 @@ class _EventDetailsState extends State<EventDetails> {
                               height: 455.h,
                               fit: BoxFit.cover,
                               imageUrl:widget.event_CoverImage??"",
-                              placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-                              errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                              placeholder: (context, url) => const Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                              errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
                             ),
                           ),
                         ),
@@ -144,7 +144,7 @@ class _EventDetailsState extends State<EventDetails> {
                         child: Container(
                           padding: EdgeInsets.all(16.r),
                           decoration: BoxDecoration(
-                            color: Color(0xB209090B),
+                            color: const Color(0xB209090B),
                             borderRadius: BorderRadius.all(Radius.circular(8.r))
                           ),
                           child: Column(
@@ -173,7 +173,7 @@ class _EventDetailsState extends State<EventDetails> {
                       child: buildCard()),
                   height22,
 
-                  widget.fromPage=="PAST"? buildDateAndLocContainer(title: "Completed"): SizedBox.shrink(),
+                  widget.fromPage=="PAST"? buildDateAndLocContainer(title: "Completed"): const SizedBox.shrink(),
 
                   Text("About this event", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
                   height4,

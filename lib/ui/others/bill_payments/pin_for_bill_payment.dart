@@ -18,12 +18,13 @@ import 'package:spraay/view_model/bill_payment_provider.dart';
 
 class PinForBillPayment extends StatefulWidget {
   String title, image,amount,provider,phoneController;
-  String? dataPlanId,electricityProvider,billerName,plan, cableSubscriptionId,cableName;
+  String? dataPlanId,electricityProvider,billerName,plan, cableSubscriptionId,cableName, electricUserName,airtimeDataCode,dataSubCode,cableCode;
 
 
 
    PinForBillPayment({super.key, required this.title, required this.image, required this.amount, required this.provider,
-    required this.phoneController, this.dataPlanId, this.electricityProvider, this.billerName, this.plan, this.cableSubscriptionId, this.cableName});
+    required this.phoneController, this.dataPlanId, this.electricityProvider, this.billerName, this.plan, this.cableSubscriptionId,
+     this.cableName, this.electricUserName,this.airtimeDataCode,this.dataSubCode,this.cableCode});
 
   @override
   State<PinForBillPayment> createState() => _PinForBillPaymentState();
@@ -68,7 +69,7 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
                 height34,
                 widget.title=="Electricity" || widget.cableSubscriptionId!=null ?Center(child: Image.asset("images/${widget.image}.png", width: 80.w, height: 80.h,)) : Center(child: SvgPicture.asset("images/${widget.image}.svg", width: 80.w, height: 80.h,)),
                 height20,
-                Text(widget.cableSubscriptionId!=null?"You are about to pay for ${widget.cableName} plan on IUC ${widget.phoneController}":  "You are buying ₦${widget.amount} ${widget.title.toLowerCase()} on ${widget.phoneController}",
+                Text(widget.cableSubscriptionId!=null?"You are about to pay for ${widget.cableName} plan on IUC ${widget.phoneController}":  "You are buying ₦${widget.amount} ${widget.title.toLowerCase()} on ${widget.phoneController} \n${widget.electricUserName??""}",
                     style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 21.sp, color: CustomColors.sGreyScaleColor50,
                 fontFamily: "PlusJakartaSans")),
                 height16,
@@ -85,7 +86,7 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
                         if(widget.dataPlanId !=null) {
                           //Call data purchase API
                           _billPaymentProvider?.fetchDataPurchaseApi(context, MySharedPreference.getToken(), widget.provider, widget.phoneController,
-                              widget.amount, requiredNumber, widget.image, widget.dataPlanId??"");
+                              widget.amount, requiredNumber, widget.image, widget.dataPlanId??"", widget.dataSubCode??"");
 
                         }else if(widget.electricityProvider!=null){
                           //call electricityProvider api
@@ -96,12 +97,12 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
                           //DSTV cable subscription
                           //widget.cableSubscriptionId
                           _billPaymentProvider?.fetchCablePurchaseApi(context, MySharedPreference.getToken(),widget.provider, widget.phoneController,
-                              widget.amount, requiredNumber, widget.image,widget.cableSubscriptionId!);
+                              widget.amount, requiredNumber, widget.image,widget.cableSubscriptionId!,widget.cableCode??"");
 
                         }
                         else{
                           //call airtime purchase api
-                          _billPaymentProvider?.fetchAirtimePurchaseApi(context, MySharedPreference.getToken(), widget.provider,
+                          _billPaymentProvider?.fetchAirtimePurchaseApi(context, MySharedPreference.getToken(), widget.airtimeDataCode??""/*widget.provider*/,
                               widget.phoneController,widget.amount, requiredNumber, widget.image);
 
                         }

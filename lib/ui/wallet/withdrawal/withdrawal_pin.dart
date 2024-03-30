@@ -80,7 +80,7 @@ class _WithdrawalOtpState extends State<WithdrawalOtp> {
 
                       }
                     },
-                    buttonText: 'Top up', borderRadius: 30.r,width: 380.w,
+                    buttonText: 'Withdraw', borderRadius: 30.r,width: 380.w,
                     buttonColor: requiredNumber.length==4 ? CustomColors.sPrimaryColor500:
                     CustomColors.sDisableButtonColor),
                 height34,

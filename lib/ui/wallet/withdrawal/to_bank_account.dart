@@ -21,8 +21,6 @@ class ToBankAccount extends StatefulWidget {
 
 class _ToBankAccountState extends State<ToBankAccount> {
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,19 +31,10 @@ class _ToBankAccountState extends State<ToBankAccount> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               height26,
-
               buildContainer(),
-
               height18,
-
-
-              buttonContainer(onTap: (){
-
-                  Navigator.push(context, SlideLeftRoute(page: SelectBankScreen(amount: widget.amount,)));
-
-              }),
+              buttonContainer(onTap: (){Navigator.push(context, SlideLeftRoute(page: SelectBankScreen(amount: widget.amount,)));}),
               height40,
-
             ],
           ),
         ));

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
@@ -12,6 +13,7 @@ import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/others/bill_payments/pin_for_bill_payment.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/view_model/bill_payment_provider.dart';
 
 class CableSubscriptionscreen extends StatefulWidget {
   String title;
@@ -120,7 +122,7 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
                   if(secondBtn.isEmpty){
                     cherryToastInfo(context, "Info!", "Select provider and plan");
                   }else{
-                    fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text,);
+                    fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text); //cableCode
                   }
 
                 }
@@ -136,43 +138,49 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
   }
 
   //dstv.png
-  List <String> cableList=["dstv","gotv"];
+  // List <String> cableList=["dstv","gotv","startimes"];
 
   int airtimePosition=-1;
   String imageAirtime="";
+  String cableCode="";
 
   Widget buildHorizontalContainer(){
     return Center(
-      child: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setStates) {
-            return Wrap(
-              alignment: WrapAlignment.start,
-              runAlignment: WrapAlignment.center,
-              // crossAxisAlignment: CrossAxisAlignment.start,
-              children: cableList.asMap().entries.map((e) => GestureDetector(
-                onTap:(){
+      child: Consumer<BillPaymentProvider>(
+          builder: (context,dataProvider,widget)  {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setStates) {
+                return Wrap(
+                  alignment: WrapAlignment.start,
+                  runAlignment: WrapAlignment.center,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  children: dataProvider.cableTvListList.asMap().entries.map((e) => GestureDetector(
+                    onTap:(){
 
-                  setStates(() {
-                    airtimePosition = e.key;//position
-                    imageAirtime=e.value;
-                  });
+                      setStates(() {
+                        airtimePosition = e.key;//position
+                        imageAirtime=e.value.name?.toLowerCase()??"";
+                        cableCode=e.value.code??"";
+                      });
 
-                  fetchGetDataPlanListList(context,  imageAirtime.replaceAll("_", "").toUpperCase(), setState);
+                      fetchGetDataPlanListList(context,  imageAirtime.replaceAll("_", "").toUpperCase(), setState,cableCode);
 
-                },
-                child: Container(
-                  margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color:airtimePosition==e.key?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
-                    // borderRadius: BorderRadius.all(Radius.circular(8.r))
-                  ),
-                  child: Image.asset("images/${e.value}.png", width: 70.w, height: 70.h,),
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color:airtimePosition==e.key?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
+                        // borderRadius: BorderRadius.all(Radius.circular(8.r))
+                      ),
+                      child: Image.asset("images/${e.value.name?.toLowerCase()}.png", width: 70.w, height: 70.h,),
 
-                ),
-              ) ).toList(),
-            );
-          }
+                    ),
+                  ) ).toList(),
+                );
+              }
+          );
+        }
       ),
     );
   }
@@ -212,7 +220,8 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
     }else{
       if(context.mounted){
         Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime, amount: amount,
-          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text, cableSubscriptionId: dataPlanId,cableName: cableName,)));
+          provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,
+          cableSubscriptionId: dataPlanId,cableName: cableName,cableCode: cableCode)));
       }
     }
 
@@ -227,9 +236,9 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
 
   String dataPlanId="";
   String cableName="";
-  fetchGetDataPlanListList(BuildContext context, String vendingCode, StateSetter setState) async{
+  fetchGetDataPlanListList(BuildContext context, String vendingCode, StateSetter setState, String cableCode) async{
     setState(() {loadingVplans=true;});
-    var apiData=await apiResponse.findCablePlanByProvider(MySharedPreference.getToken(), vendingCode);
+    var apiData=await apiResponse.findCablePlanByProvider(MySharedPreference.getToken(), cableCode);
     if(apiData.error==false){
       setState(() {getVDataPlans=apiData.data?.data??[];});
     }else{
@@ -256,16 +265,16 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
             value: value,
             child: SizedBox(
                 width: 290.w,
-                child: Text(value.billerName?.replaceAll("?", "")??"", style: CustomTextStyle.kTxtRegular.copyWith(color:CustomColors.sWhiteColor, fontSize: 14.sp), )),
+                child: Text(value.name?.replaceAll("?", "")??"", style: CustomTextStyle.kTxtRegular.copyWith(color:CustomColors.sWhiteColor, fontSize: 14.sp), )),
           );
         }).toList(),
         onChanged: (DataPlan? newValue) {
           dataPlan=newValue!;
           setState(() {
-            amtController.text=newValue.amount.toString()??"0.00";
-            secondBtn=newValue.amount.toString()??"0.00";
-            dataPlanId=newValue.id.toString();
-            cableName=newValue.billerName??"";
+            amtController.text=newValue.price.toString()??"0.00";
+            secondBtn=newValue.price.toString()??"0.00";
+            dataPlanId=newValue.code.toString();
+            cableName=newValue.name??"";
           });
         },
         decoration: InputDecoration(
@@ -276,10 +285,10 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
           fillColor: CustomColors.sDarkColor2,
           filled: true,
           errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
-          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
-          focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+          enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+          focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
           hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
-          focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:Color(0xff0166F4), width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
+          focusedErrorBorder: OutlineInputBorder(borderSide:  BorderSide(color:const Color(0xff0166F4), width: 0.2.w), borderRadius: BorderRadius.circular(8.r),),
         ),
       );
     }

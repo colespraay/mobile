@@ -2,6 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/reusable_widget.dart';
+import 'package:spraay/models/airtime_topup_model.dart';
+import 'package:spraay/models/cable_tv_model.dart';
+import 'package:spraay/models/pre_post_model.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/dashboard/dashboard_screen.dart';
@@ -23,9 +26,69 @@ class BillPaymentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  fetchAirtimePurchaseApi(BuildContext context ,String mytoken, String service_provider, String phoneNumber,String amount,String transactionPin,String svg_img ) async{
+  setloadingNoNotif(bool loadn) async{
+    loading = loadn;
+  }
+
+
+  List<AirtimeTopUpDatum> airtimeTopUpList=[];
+  fetchAirtimeTopUpList() async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.airtimeDataTopUpApi(MySharedPreference.getToken());
+    if(apiResponse.error==true){
+      airtimeTopUpList=[];
+    }else{
+      airtimeTopUpList=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+
+  List<CableTvDatum> cableTvListList=[];
+  fetchCableTvListList() async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.cableTvModelApi(MySharedPreference.getToken());
+    if(apiResponse.error==true){
+      cableTvListList=[];
+    }else{
+      cableTvListList=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+
+  List<CableTvDatum> eletricityList=[];
+  fetchEletricityProvidersApiList() async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.eletricityProvidersApi(MySharedPreference.getToken());
+    if(apiResponse.error==true){
+      eletricityList=[];
+    }else{
+      eletricityList=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+
+  List<PrePostDatum> prePostList=[];
+  fetchPrePostAPIList(String merchantPublicId) async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.prePostApi(MySharedPreference.getToken(),merchantPublicId);
+    if(apiResponse.error==true){
+      prePostList=[];
+    }else{
+      prePostList=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+  fetchAirtimePurchaseApi(BuildContext context ,String mytoken, String providerId, String phoneNumber,String amount,String transactionPin,String svg_img ) async{
     setloading(true);
-    var result=await service.airtimePurchaseApi(mytoken, service_provider, phoneNumber, amount.replaceAll(",", ""), transactionPin);
+    var result=await service.airtimePurchaseApi(mytoken, providerId, phoneNumber, amount.replaceAll(",", ""), transactionPin);
     if(result['error'] == true){
       if(context.mounted){
         errorCherryToast(context, result['message']);
@@ -39,7 +102,7 @@ class BillPaymentProvider extends ChangeNotifier {
         popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
             content: result["message"]/*"$phoneNumber has been credited with ₦${amount}"*/,
             buttonTxt: "Okay", onTap: (){
-              Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+              Navigator.pushAndRemoveUntil(context, FadeRoute(page: const DasboardScreen()),(Route<dynamic> route) => false);
               Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
             }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
@@ -74,7 +137,7 @@ class BillPaymentProvider extends ChangeNotifier {
         popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
             content: result["message"]/*"$phoneNumber has been credited with ₦${amount}"*/,
             buttonTxt: "Okay", onTap: (){
-              Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+              Navigator.pushAndRemoveUntil(context, FadeRoute(page: const DasboardScreen()),(Route<dynamic> route) => false);
               Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
             }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
@@ -94,9 +157,9 @@ class BillPaymentProvider extends ChangeNotifier {
 
 
   fetchDataPurchaseApi(BuildContext context ,String mytoken, String service_provider, String phoneNumber,String amount,
-      String transactionPin,String svg_img, String dataPlanId ) async{
+      String transactionPin,String svg_img, String dataPlanId,String dataSubCode ) async{
     setloading(true);
-    var result=await service.dataPurchaseApi(mytoken, service_provider, phoneNumber,dataPlanId, transactionPin);
+    var result=await service.dataPurchaseApi(mytoken, service_provider, phoneNumber,dataPlanId, transactionPin,dataSubCode);
     if(result['error'] == true){
       if(context.mounted){
         errorCherryToast(context, result['message']);
@@ -110,7 +173,7 @@ class BillPaymentProvider extends ChangeNotifier {
         popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
             content: result["message"]/*"$phoneNumber has been credited with ₦${amount}"*/,
             buttonTxt: "Okay", onTap: (){
-              Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+              Navigator.pushAndRemoveUntil(context, FadeRoute(page: const DasboardScreen()),(Route<dynamic> route) => false);
               Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
             }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
@@ -132,9 +195,9 @@ class BillPaymentProvider extends ChangeNotifier {
 
   //cablePurchaseApi
   fetchCablePurchaseApi(BuildContext context ,String mytoken, String service_provider, String phoneNumber,String amount,
-      String transactionPin,String svg_img, String dataPlanId ) async{
+      String transactionPin,String svg_img, String dataPlanId,String cableCode ) async{
     setloading(true);
-    var result=await service.cablePurchaseApi(mytoken,service_provider, phoneNumber, dataPlanId, transactionPin, amount);
+    var result=await service.cablePurchaseApi(mytoken,service_provider, phoneNumber, dataPlanId, transactionPin, amount,cableCode);
     if(result['error'] == true){
       if(context.mounted){
         errorCherryToast(context, result['message']);
@@ -148,7 +211,7 @@ class BillPaymentProvider extends ChangeNotifier {
         popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
             content: result["message"]/*"$phoneNumber has been credited with ₦${amount}"*/,
             buttonTxt: "Okay", onTap: (){
-              Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+              Navigator.pushAndRemoveUntil(context, FadeRoute(page: const DasboardScreen()),(Route<dynamic> route) => false);
               Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
             }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {

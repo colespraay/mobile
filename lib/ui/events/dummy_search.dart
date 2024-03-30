@@ -47,7 +47,6 @@ class _DummyMapSearchState extends State<DummyMapSearch> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      // shrinkWrap: true,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
 
@@ -57,7 +56,7 @@ class _DummyMapSearchState extends State<DummyMapSearch> {
           onChanged:(value){
 
             _debouncer.run(() {
-              print("objectvalue==${value}");
+              // print("objectvalue==${value}");
               if(value.isNotEmpty){
                 widget.query=value;
                 fetchSuggestionsApi(widget.query);

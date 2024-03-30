@@ -153,7 +153,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
             child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400) )),
         Spacer(),
 
-        Text(content, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w700) ),
+        Expanded(child: Text(content, style: CustomTextStyle.kTxtBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w700) )),
       ],
     );
   }

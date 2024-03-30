@@ -27,7 +27,7 @@ class _ChatViewState extends State<ChatView> {
   EventProvider? eventProvider;
 
 
-  int? _total,_income,_expense;
+  dynamic _total,_income,_expense;
 
   bool _isloading=false;
   filterHistory(String filter) async{

@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -31,7 +32,7 @@ class SprayScreen extends StatefulWidget {
   int unitAmount;
   Data? eventModelData;
   String? transactionPin;
-   SprayScreen({required this.cash, required this.totalAmount, required this.noteQuantity, required this.unitAmount, required this.eventModelData, required this.transactionPin});
+  SprayScreen({required this.cash, required this.totalAmount, required this.noteQuantity, required this.unitAmount, required this.eventModelData, required this.transactionPin});
 
   @override
   State<SprayScreen> createState() => _SprayScreenState();
@@ -42,12 +43,10 @@ class _SprayScreenState extends State<SprayScreen>{
   final AppinioSwiperController controller = AppinioSwiperController();
   double amount=0.00;
 
-
-  int? noteQuantity;
+  // int? noteQuantity;
   @override
   void initState() {
     super.initState();
-
 
   }
 
@@ -165,34 +164,10 @@ class _SprayScreenState extends State<SprayScreen>{
   bool _isDismissHandAfterSpraying=false;
 
 
-  void _swipe(int index, AppinioSwiperDirection direction) {
-    setState(() {
-      amount =amount+widget.unitAmount;
-    });
-    // log("the card was swiped to the: " + direction.name);
-  }
-
-  void _unswipe(bool unswiped) {
-    if (unswiped) {
-      // log("SUCCESS: card was unswiped");
-    } else {
-      // log("FAIL: no card left to unswipe");
-    }
-  }
-
-  void _onEnd() {
-    setState(() {_isSprayEndReached=true;});
-    if(_isSprayEndReached==true){
-      fetchSprayEventApi(context, amount.toString(), "sprayReached");
-    }
-    // log("end reached!");
-  }
-
-
   Widget buildContainer(){
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h),
-      decoration: BoxDecoration(color: Color(0xff1A1A21), borderRadius: BorderRadius.all(Radius.circular(18.r))),
+      decoration: BoxDecoration(color: const Color(0xff1A1A21), borderRadius: BorderRadius.all(Radius.circular(18.r))),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -204,8 +179,8 @@ class _SprayScreenState extends State<SprayScreen>{
                 width: 100.w, height: 140.h,
                 fit: BoxFit.cover,
                 imageUrl: widget.eventModelData?.eventCoverImage??"",
-                placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-                errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                placeholder: (context, url) => const Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
               ),
             ),
           ),          SizedBox(width: 2.w,),
@@ -256,7 +231,7 @@ class _SprayScreenState extends State<SprayScreen>{
               child: EmptyListLotie("swipe_animate")),
 
           Align(
-            alignment: Alignment.bottomCenter,
+              alignment: Alignment.bottomCenter,
               child: Image.asset("images/hand.png", height: 200.h, )),
           Positioned(
               bottom:30.h,
@@ -266,21 +241,30 @@ class _SprayScreenState extends State<SprayScreen>{
                 height:250.h,
                 width: 128.w,
                 child: AppinioSwiper(
-                  backgroundCardsCount:2,
-                  direction:  AppinioSwiperDirection.top,
-                  swipeOptions: const AppinioSwipeOptions.only(top: true),
-                  unlimitedUnswipe: true,
+                  backgroundCardCount:2,
+                  defaultDirection:  AxisDirection.up,
+                  swipeOptions: const SwipeOptions.only(up: true),
+                  allowUnlimitedUnSwipe: true,
+                  allowUnSwipe: true,
                   controller: controller,
-                  unswipe: _unswipe,
-                  onSwiping: (AppinioSwiperDirection direction) {
-                    debugPrint(direction.toString());
+                    onSwipeEnd:(int previousIndex, int targetIndex, SwiperActivity activity) {
+                    if(activity is Swipe){
+                      setState(() {amount +=widget.unitAmount;});
+
+                      // print("SwipeSwipe=#${amount}");
+
+                    }
+                    },
+                  onEnd: (){
+
+                    setState(() {_isSprayEndReached=true;});
+                    if(_isSprayEndReached==true){
+                      fetchSprayEventApi(context, "${amount+widget.unitAmount}", "sprayReached");
+                    }
                   },
-                  onSwipe: _swipe,
-                  // padding:  EdgeInsets.only(left: 25.w, right: 25.w, top: 50.h, bottom: 40.h,),
-                  onEnd: _onEnd,
-                  cardsCount: widget.noteQuantity,
-                  cardsBuilder: (BuildContext context, int index) {
-                    return Image.asset("images/${widget.cash}.png", width: 128.w, height: 250.h,);
+                  cardCount: widget.noteQuantity,
+                  cardBuilder: (BuildContext context, int index) {
+                    return Center(child: Image.asset("images/${widget.cash}.png", width: 128.w, height: 250.h,));
                   },
                 ),
               )),
@@ -289,7 +273,7 @@ class _SprayScreenState extends State<SprayScreen>{
     );
   }
 
-   String? response_amount, response_transactiondate, response_eventId,response_transactRef;
+  String? response_amount, response_transactiondate, response_eventId,response_transactRef;
 
   Widget _buildLimitReached(){
     return Column(

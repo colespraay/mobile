@@ -128,7 +128,7 @@ class _CreateAccountOtpPageState extends State<CreateAccountOtpPage> {
             selectedColor: CustomColors.sPrimaryColor500
 
           ),
-          animationDuration: Duration(milliseconds: 300),
+          animationDuration: const Duration(milliseconds: 300),
           // enableActiveFill: true,
           onChanged: (value) {
             setState(() {

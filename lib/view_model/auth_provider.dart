@@ -382,6 +382,10 @@ class AuthProvider extends ChangeNotifier{
       await MySharedPreference.saveWalletBalance(apiResponse.data?.data?.walletBalance.toString()??"");
       if(dataResponse?.bvn !=null){
         await SecureStorage().saveVn(dataResponse?.bvn);
+
+        await MySharedPreference.saveVAccName(dataResponse?.virtualAccountName.toString()??"");
+        await MySharedPreference.saveVAccNumber(dataResponse?.virtualAccountNumber.toString()??"");
+        await MySharedPreference.saveVBankName(dataResponse?.bankName.toString()??"");
       }
     }
     setloadingNoNotif(false);

@@ -1,31 +1,31 @@
 // To parse this JSON data, do
 //
-//     final dataPlanModel = dataPlanModelFromJson(jsonString);
+//     final preOrPostPaidModel = preOrPostPaidModelFromJson(jsonString);
 
 import 'dart:convert';
 
-DataPlanModel dataPlanModelFromJson(String str) => DataPlanModel.fromJson(json.decode(str));
+PreOrPostPaidModel preOrPostPaidModelFromJson(String str) => PreOrPostPaidModel.fromJson(json.decode(str));
 
-String dataPlanModelToJson(DataPlanModel data) => json.encode(data.toJson());
+String preOrPostPaidModelToJson(PreOrPostPaidModel data) => json.encode(data.toJson());
 
-class DataPlanModel {
+class PreOrPostPaidModel {
   bool? success;
   int? code;
   String? message;
-  List<DataPlan>? data;
+  List<PrePostDatum>? data;
 
-  DataPlanModel({
+  PreOrPostPaidModel({
     this.success,
     this.code,
     this.message,
     this.data,
   });
 
-  factory DataPlanModel.fromJson(Map<String, dynamic> json) => DataPlanModel(
+  factory PreOrPostPaidModel.fromJson(Map<String, dynamic> json) => PreOrPostPaidModel(
     success: json["success"],
     code: json["code"],
     message: json["message"],
-    data: json["data"] == null ? [] : List<DataPlan>.from(json["data"]!.map((x) => DataPlan.fromJson(x))),
+    data: json["data"] == null ? [] : List<PrePostDatum>.from(json["data"]!.map((x) => PrePostDatum.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -36,20 +36,20 @@ class DataPlanModel {
   };
 }
 
-class DataPlan {
+class PrePostDatum {
   String? name;
   String? code;
   int? price;
   String? shortCode;
 
-  DataPlan({
+  PrePostDatum({
     this.name,
     this.code,
     this.price,
     this.shortCode,
   });
 
-  factory DataPlan.fromJson(Map<String, dynamic> json) => DataPlan(
+  factory PrePostDatum.fromJson(Map<String, dynamic> json) => PrePostDatum(
     name: json["name"],
     code: json["code"],
     price: json["price"],

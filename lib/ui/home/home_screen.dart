@@ -207,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         height16,
 
-        Expanded(child: eventProvider?.transactionList==null? ShimmerList(): MiniTransactionHistory(transactionList:eventProvider?.transactionList,))
+        Expanded(child: eventProvider?.transactionList==null? const ShimmerList(): MiniTransactionHistory(transactionList:eventProvider?.transactionList,))
       ],
     );
   }
@@ -215,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void showNotification(context) {
     showModalBottomSheet(
         isScrollControlled: true,
-        backgroundColor: Color(0xff1A1A21),
+        backgroundColor: const Color(0xff1A1A21),
         shape: RoundedRectangleBorder(borderRadius:BorderRadius.only(topRight: Radius.circular(25.r), topLeft: Radius.circular(25.r)),),
         context: context,
         builder: (context) {
@@ -226,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void seeAllTransaction(context) {
     showModalBottomSheet(
         isScrollControlled: true,
-        backgroundColor: Color(0xff1A1A21),
+        backgroundColor: const Color(0xff1A1A21),
         shape: RoundedRectangleBorder(borderRadius:BorderRadius.only(topRight: Radius.circular(25.r), topLeft: Radius.circular(25.r)),),
         context: context,
         builder: (context) {

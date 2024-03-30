@@ -72,7 +72,7 @@ class _EventConfirmationPageState extends State<EventConfirmationPage> {
               height26,
               CustomButton(
                   onTap: () {
-                    Navigator.push(context, SlideLeftRoute(page: PhoneContacts()));
+                    Navigator.push(context, SlideLeftRoute(page: const PhoneContacts()));
 
                   },
                   buttonText: "Invite friends", borderRadius: 30.r,width: 380.w,
@@ -84,8 +84,6 @@ class _EventConfirmationPageState extends State<EventConfirmationPage> {
                   },
                   buttonText: 'View Event', borderRadius: 30.r,width: 380.w,
                   buttonColor: CustomColors.sDarkColor3),
-
-
 
 
             ],

@@ -23,11 +23,8 @@ class GoogleMapLocationScreen extends StatefulWidget {
 }
 
 class _GoogleMapLocationScreenState extends State<GoogleMapLocationScreen> {
+
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
-
-
-
-
   Set<Marker> _markers=Set<Marker>();
   void _setMarker(LatLng point)async{
 
@@ -43,10 +40,6 @@ class _GoogleMapLocationScreenState extends State<GoogleMapLocationScreen> {
 
     setState(() {});
   }
-
-
-
-
   @override
   void initState() {
     print("latitude=${widget.lat}, long=${widget.long}");
