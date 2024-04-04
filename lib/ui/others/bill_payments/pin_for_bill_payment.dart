@@ -18,13 +18,13 @@ import 'package:spraay/view_model/bill_payment_provider.dart';
 
 class PinForBillPayment extends StatefulWidget {
   String title, image,amount,provider,phoneController;
-  String? dataPlanId,electricityProvider,billerName,plan, cableSubscriptionId,cableName, electricUserName,airtimeDataCode,dataSubCode,cableCode;
+  String? dataPlanId,electricityProvider,billerName,plan, cableSubscriptionId,cableName, electricUserName,airtimeDataCode,dataSubCode,cableCode,providerGameIdCode;
 
 
 
    PinForBillPayment({super.key, required this.title, required this.image, required this.amount, required this.provider,
     required this.phoneController, this.dataPlanId, this.electricityProvider, this.billerName, this.plan, this.cableSubscriptionId,
-     this.cableName, this.electricUserName,this.airtimeDataCode,this.dataSubCode,this.cableCode});
+     this.cableName, this.electricUserName,this.airtimeDataCode,this.dataSubCode,this.cableCode, this.providerGameIdCode});
 
   @override
   State<PinForBillPayment> createState() => _PinForBillPaymentState();
@@ -98,6 +98,11 @@ class _PinForBillPaymentState extends State<PinForBillPayment> {
                           //widget.cableSubscriptionId
                           _billPaymentProvider?.fetchCablePurchaseApi(context, MySharedPreference.getToken(),widget.provider, widget.phoneController,
                               widget.amount, requiredNumber, widget.image,widget.cableSubscriptionId!,widget.cableCode??"");
+                        }
+                        else if(widget.providerGameIdCode !=null){
+                          //betting game
+                          _billPaymentProvider?.fetchelBetGamePurchaseApi(context,MySharedPreference.getToken(),
+                              widget.providerGameIdCode??"", widget.phoneController, widget.amount, requiredNumber, widget.image, widget.plan??"", widget.billerName??"");
 
                         }
                         else{

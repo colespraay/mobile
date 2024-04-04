@@ -61,7 +61,7 @@ class _MyEventsState extends State<MyEvents> {
 
   Widget buildContainer(Datum datum){
     return Container(
-      decoration: BoxDecoration(color: Color(0xff1A1A21), borderRadius: BorderRadius.all(Radius.circular(18.r))),
+      decoration: BoxDecoration(color: const Color(0xff1A1A21), borderRadius: BorderRadius.all(Radius.circular(18.r))),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

@@ -6,6 +6,7 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/image_title_models.dart';
+import 'package:spraay/ui/others/bill_payments/betting_screen/betting_screens.dart';
 import 'package:spraay/ui/others/bill_payments/cable_sub/cable_subscription.dart';
 import 'package:spraay/ui/others/bill_payments/data/data_top_up.dart';
 import 'package:spraay/view_model/bill_payment_provider.dart';
@@ -28,13 +29,18 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
     Provider.of<BillPaymentProvider>(context,listen: false).fetchAirtimeTopUpList();
     Provider.of<BillPaymentProvider>(context,listen: false).fetchCableTvListList();
     Provider.of<BillPaymentProvider>(context,listen: false).fetchEletricityProvidersApiList();
+    Provider.of<BillPaymentProvider>(context,listen: false).fetchGameProvidersApiList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-        appBar: buildAppBar(context: context, title:"Pay Bills"),
-        body: buildInviWidget());
+    final loader= context.watch<BillPaymentProvider>();
+    return  LoadingOverlayWidget(
+      loading: loader.loading,
+      child: Scaffold(
+          appBar: buildAppBar(context: context, title:"Pay Bills"),
+          body: buildInviWidget()),
+    );
   }
 
   Widget buildInviWidget(){
@@ -59,7 +65,7 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
     ImageTitleModel(image: "electricity", title: "Electricity"),
     ImageTitleModel(image: "Internet", title: "Internet"),
     ImageTitleModel(image: "tv", title: "Television"),
-    // ImageTitleModel(image: "game", title: "Games"),
+    ImageTitleModel(image: "game", title: "Games"),
   ];
   //
   Widget buildHorizontalTicket(){
@@ -87,8 +93,7 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
             }
 
             else{
-
-              // Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
+              Navigator.push(context, ScaleTransition1(page: BettingScreen(title:e.value.title,)));
             }
 
           },

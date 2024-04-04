@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/airtime_topup_model.dart';
+import 'package:spraay/models/betting_plan_model.dart';
 import 'package:spraay/models/cable_tv_model.dart';
+import 'package:spraay/models/game_model_data.dart';
 import 'package:spraay/models/pre_post_model.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/services/api_services.dart';
@@ -73,6 +75,20 @@ class BillPaymentProvider extends ChangeNotifier {
   }
 
 
+  List<GameDatum> gameList=[];
+  fetchGameProvidersApiList() async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.gameProvidersApi(MySharedPreference.getToken());
+    if(apiResponse.error==true){
+      gameList=[];
+    }else{
+      gameList=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+
   List<PrePostDatum> prePostList=[];
   fetchPrePostAPIList(String merchantPublicId) async{
     setloadingNoNotif(true);
@@ -81,6 +97,20 @@ class BillPaymentProvider extends ChangeNotifier {
       prePostList=[];
     }else{
       prePostList=apiResponse.data?.data??[];
+    }
+    setloadingNoNotif(false);
+    notifyListeners();
+  }
+
+
+  List<BettingPlanDatum> bettingPlanList=[];
+  fetchBettingPlanApiList(String merchantPublicId) async{
+    setloadingNoNotif(true);
+    var apiResponse=await service.bettingPlanApi(MySharedPreference.getToken(),merchantPublicId);
+    if(apiResponse.error==true){
+      bettingPlanList=[];
+    }else{
+      bettingPlanList=apiResponse.data?.data??[];
     }
     setloadingNoNotif(false);
     notifyListeners();
@@ -124,6 +154,43 @@ class BillPaymentProvider extends ChangeNotifier {
       String plan,String billerName ) async{
     setloading(true);
     var result=await service.electricityUnitPurchaseApi(mytoken, service_provider, phoneNumber, amount.replaceAll(",", ""), transactionPin, plan, billerName);
+    if(result['error'] == true){
+      if(context.mounted){
+        errorCherryToast(context, result['message']);
+      }
+    }else{
+      if (context.mounted){
+
+        Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
+        Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
+
+        popupWithTwoBtnDialog(context: context, title: "Top-up Successful",
+            content: result["message"]/*"$phoneNumber has been credited with ₦${amount}"*/,
+            buttonTxt: "Okay", onTap: (){
+              Navigator.pushAndRemoveUntil(context, FadeRoute(page: const DasboardScreen()),(Route<dynamic> route) => false);
+              Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
+
+            }, png_img: "verified", btn2Txt: 'View Receipt', onTapBtn2: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+
+              Navigator.pushReplacement(context, FadeRoute(page: PaymentReceipt(svg_img: svg_img, type: result["message"], date: result["dateCreated"], amount: '₦$amount', meterNumber: result["phoneNumber"], transactionRef: result["transactionId"] , transStatus: 'Successful', transactionId: '',)));
+            });
+
+
+      }
+
+    }
+    setloading(false);
+  }
+
+
+
+  fetchelBetGamePurchaseApi(BuildContext context ,String mytoken, String service_provider, String phoneNumber,String amount,String transactionPin,String svg_img,
+      String plan,String billerName ) async{
+    setloading(true);
+    var result=await service.betGamePurchaseApi(mytoken, service_provider, phoneNumber, amount.replaceAll(",", ""), transactionPin, plan, billerName);
     if(result['error'] == true){
       if(context.mounted){
         errorCherryToast(context, result['message']);

@@ -73,7 +73,7 @@ class _EventSlidderState extends State<EventSlidder> {
             height: 112.h,
             child: InkWell(
               onTap:(){
-                Navigator.push(context, ScaleTransition1(page: NewEvent()));
+                Navigator.push(context, ScaleTransition1(page: const NewEvent()));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

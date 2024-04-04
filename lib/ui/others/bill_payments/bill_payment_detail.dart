@@ -292,46 +292,6 @@ class _PayBilDetailState extends State<PayBilDetail> {
 
 
 
-  // List <String> electricityList=["AEDC","BEDC","EEDC","IBEDC","IKEDC","JEDC","KAEDCO","KEDCO","PHED"];
-  // Widget buildHorizontalElectricity(){
-  //   return SizedBox(
-  //     height: 90.h,
-  //     width: double.infinity,
-  //     child: ListView.builder(
-  //       shrinkWrap: true,
-  //       padding: EdgeInsets.zero,
-  //       itemCount: electricityList.length,
-  //       scrollDirection:Axis.horizontal,
-  //       itemBuilder: (BuildContext context, int index) {
-  //         return GestureDetector(
-  //           onTap:(){
-  //             setState(() {
-  //               airtimePosition = index;//position
-  //               imageAirtime=electricityList[index];
-  //             });
-  //
-  //           },
-  //           child: Column(
-  //             children: [
-  //               Container(
-  //                 margin: EdgeInsets.only(right: 4.w, bottom: 4.h),
-  //                 decoration: BoxDecoration(
-  //                   shape: BoxShape.circle,
-  //                   border: Border.all(color:airtimePosition==index?  CustomColors.sPrimaryColor500: Colors.transparent, width: 5.r),
-  //                 ),
-  //                 child: Image.asset("images/${electricityList[index].toLowerCase()}.png", width: 70.w, height: 70.h,),
-  //
-  //               ),
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //
-  //     ),
-  //   );
-  // }
-
-
   String electricityProvider="";
   String displayNameElectricity='';
   Widget buildElectricityDropDown(){
@@ -362,7 +322,6 @@ class _PayBilDetailState extends State<PayBilDetail> {
             Provider.of<BillPaymentProvider>(context,listen: false).fetchPrePostAPIList(electricityProvider);
           },
           decoration: InputDecoration(
-
             contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
             hintText: "Choose electricity plan",
             isDense: true,
@@ -377,7 +336,6 @@ class _PayBilDetailState extends State<PayBilDetail> {
         );
       }
     );
-
   }
 
   String shortPrePaidCode="";
@@ -405,14 +363,15 @@ class _PayBilDetailState extends State<PayBilDetail> {
               }).toList(),
               onChanged: (PrePostDatum? newValue) {
                 setState(() {
+                  // shortPrePaidCode="MY004";
+
                   shortPrePaidCode=newValue?.shortCode??"";
                   // airtimePosition = 0;//position
                   // imageAirtime="ekedc";
                   // electricityProvider=newValue?.code??"";
                   // displayNameElectricity=newValue?.displayName??"";
                 });
-
-              },
+                },
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
                 hintText: "Choose paid plan",
