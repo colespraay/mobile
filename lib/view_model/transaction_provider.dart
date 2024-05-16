@@ -36,7 +36,7 @@ class TransactionProvider extends ChangeNotifier {
   fetchWithdrawalApi(BuildContext context, String bankName, String accountNumber,
       String bankCode, String transactionPin,String amount, String fromWhere, String accountName) async{
     setloading(true);
-    var result=await service.withdrawalApi(mytoken, bankName, accountNumber, bankCode, transactionPin, amount);
+    var result=await service.withdrawalApi(mytoken, bankName, accountNumber, bankCode, transactionPin,amount.replaceAll(",", ""));
     if(result['error'] == true){
 
       //Failed transaction
@@ -51,7 +51,7 @@ class TransactionProvider extends ChangeNotifier {
       popupSuccessfulDialog(context: context, title: "Transaction successful",
           content: "You have successfully withdrawn N$amount to $accountName $accountNumber",
           buttonTxt: "Great! Take me Home", onTap: (){
-            Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
+            Navigator.pushAndRemoveUntil(context, FadeRoute(page: const DasboardScreen()),(Route<dynamic> route) => false);
             Provider.of<AuthProvider>(context, listen: false).onItemTap(0);
 
           }, png_img: "verified", fromWhere: fromWhere,transactionId: result["transactionId"].toString(),amount: result["amount"].toString(),type: result["type"],

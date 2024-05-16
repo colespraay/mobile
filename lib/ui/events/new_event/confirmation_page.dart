@@ -80,7 +80,7 @@ class _EventConfirmationPageState extends State<EventConfirmationPage> {
               height16,
               CustomButton(
                   onTap: () {
-                    Navigator.push(context, SlideLeftRoute(page: ViewEvent()));
+                    Navigator.push(context, SlideLeftRoute(page: const ViewEvent()));
                   },
                   buttonText: 'View Event', borderRadius: 30.r,width: 380.w,
                   buttonColor: CustomColors.sDarkColor3),

@@ -160,10 +160,12 @@ class _CreateAccountState extends State<CreateAccount> {
                       richTexts: [
                         BaseRichText("Terms of Service", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sPrimaryColor400,),
                           onTap:(){
+                            openWebPage(url: "https://www.spraay.ng/terms");
                           },
                         ),
                         BaseRichText("Privacy Policy", style:  CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sPrimaryColor400),
                           onTap:(){
+                            openWebPage(url: "https://www.spraay.ng/privacy");
                           },
                         ),
 

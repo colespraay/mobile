@@ -125,8 +125,8 @@ class _PhoneContactsState extends State<PhoneContacts> {
           width: 28.w,
           height: 28.h,
           imageUrl:userInformationList?.profileImageUrl??"",
-          placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-          errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+          placeholder: (context, url) => const Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+          errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
         ),
       ),
 

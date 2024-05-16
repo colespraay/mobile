@@ -20,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   PageController ?_pageController;
   int currentIndex = 0;
-  static const _kDuration = const Duration(milliseconds: 300);
+  static const _kDuration = Duration(milliseconds: 300);
   static const _kCurve = Curves.ease;
   onChangedFunction(int index) {
     setState(() {currentIndex = index;});
@@ -40,7 +40,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
     return Scaffold(
       backgroundColor: CustomColors.sBackgroundColor,
       body: Stack(
@@ -90,7 +90,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               padding: EdgeInsets.only(bottom: 40.h),
               child: CustomButton(
                   onTap: () {
-                    Navigator.push(context, FadeRoute(page: WelcomePage()));
+                    Navigator.push(context, FadeRoute(page: const WelcomePage()));
                     },
                   buttonText: 'Let’s Go!', borderRadius: 30.r,width: 380.w,
                   buttonColor: CustomColors.sPrimaryColor500 ),
@@ -105,7 +105,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 width: 64.w,
                 height: 64.h,
                 margin: EdgeInsets.only(bottom: 40.h),
-                decoration:BoxDecoration(
+                decoration:const BoxDecoration(
                   color:CustomColors.sPrimaryColor500,
                   shape: BoxShape.circle
                 ),

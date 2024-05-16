@@ -76,7 +76,7 @@ class EventProvider extends ChangeNotifier{
 
 
   double ?latitude ,longitude;
-  String? eventId,eventCode,qrCodeForEvent,eventname,eventdescription,event_date,eventTime, eventVenue,eventCategory,event_CoverImage;
+  String? eventId,eventCode,qrCodeForEvent,eventname,eventdescription,event_date,eventTime, eventVenue,eventCategory,event_CoverImage,eventCategoryId;
   fetchCreateEventApi(BuildContext context, String eventName, String eventDescription,
       String venue, String eventDate, String time, String category, String eventCoverImage,String longit, String lati ) async{
     setloading(true);
@@ -99,10 +99,11 @@ class EventProvider extends ChangeNotifier{
       event_CoverImage= result["eventCoverImage"];
       latitude= double.parse(result["latitude"]);
       longitude= double.parse(result["longitude"]);
+      eventCategoryId=result["categoryID"];
 
       notifyListeners();
 
-      Navigator.push(context, SlideLeftRoute(page: EventConfirmationPage()));
+      Navigator.push(context, SlideLeftRoute(page: const EventConfirmationPage()));
     }
     setloading(false);
     // notifyListeners();

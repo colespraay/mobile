@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -24,9 +25,9 @@ import 'package:path/path.dart' as baseImg;
 
 class EditEvent extends StatefulWidget {
 
-  String fromPage,eventname,event_date,eventTime,eventVenue,eventCategory, eventdescription, event_CoverImage,eventId,eventCode;
+  String fromPage,eventname,event_date,eventTime,eventVenue,eventCategory, eventdescription, event_CoverImage,eventId,eventCode,eventCategoryID;
    EditEvent({required this.fromPage, required this.eventname, required this.event_date, required this.eventTime, required this.eventVenue,
-     required this.eventCategory, required this.eventdescription, required this.event_CoverImage, required this.eventId, required this.eventCode});
+     required this.eventCategory, required this.eventdescription, required this.event_CoverImage, required this.eventId, required this.eventCode, required this.eventCategoryID});
 
   @override
   State<EditEvent> createState() => _EditEventState();
@@ -41,6 +42,8 @@ class _EditEventState extends State<EditEvent> {
   TextEditingController venueController=TextEditingController();
   TextEditingController descriptionController=TextEditingController();
   TextEditingController categoryController=TextEditingController();
+  TextEditingController categoryControllerName=TextEditingController();
+
   TextEditingController txtCategoryController=TextEditingController();
 
 
@@ -71,7 +74,9 @@ class _EditEventState extends State<EditEvent> {
       dateController.text=widget.event_date;
       timeController.text=widget.eventTime;
       venueController.text=widget.eventVenue;
-      categoryController.text=widget.eventCategory;
+      categoryControllerName.text=widget.eventCategory;
+      categoryController.text=widget.eventCategoryID;
+
       descriptionController.text=widget.eventdescription;
       coverImage=widget.event_CoverImage;
       eventId=widget.eventId;
@@ -93,6 +98,8 @@ class _EditEventState extends State<EditEvent> {
   String forthVal="";
   String fiveVal="";
   String sixVal="";
+  String _timeOutput = '';
+
 
   @override
   void dispose() {
@@ -125,7 +132,10 @@ class _EditEventState extends State<EditEvent> {
     }else{
       setState(() {
         categoryController.text=result["categoryId"];
+        categoryControllerName.text=result['categoryName'];
         thirdVal=result["categoryId"];
+        // categoryController.text=newValue?.id??"";
+
       });
       // result["categoryName"];
     }
@@ -158,6 +168,7 @@ class _EditEventState extends State<EditEvent> {
 
   }
 
+
   Widget buildStep1Widget(){
     return ListView(
       padding: horizontalPadding,
@@ -189,8 +200,6 @@ class _EditEventState extends State<EditEvent> {
           },
           onTap: ()async {
 
-            // TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context,
-            //     initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
             TimeOfDay? newSelectedTime = await showRoundedTimePicker(
                 context: context,
                 theme:  ThemeData.dark(useMaterial3: true),
@@ -198,12 +207,46 @@ class _EditEventState extends State<EditEvent> {
                 locale: const Locale('en', 'US')
             );
 
+            //check if the default time is set to 24 hours format
+            bool is24HoursFormat = MediaQuery.of(context).alwaysUse24HourFormat;
+
+
             setState(() {
-              _openPickupTime = newSelectedTime == null ? TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))) : newSelectedTime;
-              secondVal=_openPickupTime?.format(context)??"";
+              log("is24HoursFormat=${is24HoursFormat}");
+              if(is24HoursFormat==false){
+                //12 hour
+                  _openPickupTime = newSelectedTime ?? TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 10)));
+                  secondVal=_openPickupTime?.format(context)??"";
+                timeController.text=_openPickupTime?.format(context)??"";
+
+              }else{
+                //24 hours
+                // Check if the picked time is in 24-hour format
+                if (newSelectedTime!.period == DayPeriod.am) {
+                  // If it's in AM, convert to 12-hour format
+                  newSelectedTime = TimeOfDay(hour: newSelectedTime!.hour % 12, minute: newSelectedTime!.minute);
+                  _timeOutput = '${newSelectedTime!.format(context)} AM';
+                } else {
+                  // If it's in PM, add 12 to the hour to convert to 12-hour format
+                  newSelectedTime = TimeOfDay(hour: newSelectedTime!.hour % 12, minute: newSelectedTime!.minute);
+                  _timeOutput = '${newSelectedTime!.format(context)} PM';
+                }
+
+                timeController.text=_timeOutput;
+                secondVal=_timeOutput;
+              }
+
+              // _selectedTime = picked;
+
+
             });
 
-            timeController.text=_openPickupTime?.format(context)??"";
+
+            // setState(() {
+            //   _openPickupTime = newSelectedTime ?? TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 10)));
+            //   secondVal=_openPickupTime?.format(context)??"";
+            // });
+
 
           },
         ),
@@ -253,6 +296,8 @@ class _EditEventState extends State<EditEvent> {
               if( widget.fromPage=="view_event"){
                 //when routed through view_event page edit event
 
+                //ditEventApi(   BuildContext context,   String eventName,   String eventDescription,   String venue,   String eventDate,   String time,
+                // String category,   String eventCoverImage,   String eventId,   String fromPage,   String longitude,   String latitude,
                 //url image pass to api
                 eventProvider?.editEventApi(context, fullNameController.text, descriptionController.text, venueController.text,
                     dateController.text, timeController.text, categoryController.text, eventProvider?.file_url??"", eventId, "view_event",
@@ -286,7 +331,7 @@ class _EditEventState extends State<EditEvent> {
     return DropdownButtonFormField<CategoryDatum>(
       iconEnabledColor: CustomColors.sDisableButtonColor,
       isDense: false,
-      dropdownColor: Color(0xff212121),
+      dropdownColor: const Color(0xff212121),
       focusNode: _textField3Focus,
       items: eventProvider?.dataList.map((CategoryDatum value) {
         return DropdownMenuItem<CategoryDatum>(
@@ -303,19 +348,20 @@ class _EditEventState extends State<EditEvent> {
         }else{
           setState(() {_isOtherTrue=false;});
           categoryController.text=newValue?.id??"";
+          categoryControllerName.text=newValue?.name??"";
           thirdVal=newValue?.id??"";
         }
 
       },
       decoration: InputDecoration(
         contentPadding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 10.w),
-        hintText: categoryController.text.isEmpty? "Category": categoryController.text,
+        hintText: categoryControllerName.text.isEmpty? "Category": categoryControllerName.text,
         isDense: true,
         filled: true,
         // prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),
         // prefixIcon:Padding(padding:  EdgeInsets.only(right: 8.w, left: 10.w), child: SizedBox.shrink(),),
-        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
-        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+        enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
         hintStyle: CustomTextStyle.kTxtSemiBold.copyWith(color: CustomColors.sGreyScaleColor100,
             fontSize: 14.sp, fontWeight: FontWeight.w500),
         fillColor:_textField3Focus!.hasFocus? CustomColors.sTransparentPurplecolor : CustomColors.sDarkColor2,
@@ -331,7 +377,7 @@ class _EditEventState extends State<EditEvent> {
       child: buildDottedBorder(child: Container(
         width: 180.w,
         height: 174.h,
-        decoration: BoxDecoration(color: CustomColors.sDarkColor3),
+        decoration: const BoxDecoration(color: CustomColors.sDarkColor3),
         child: Stack(
           children: [
 
@@ -344,8 +390,8 @@ class _EditEventState extends State<EditEvent> {
                 height: 172.h,
                 fit: BoxFit.contain,
                 imageUrl:coverImage,
-                placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-                errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                placeholder: (context, url) => const Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
               ),
             ):
           ClipRRect(

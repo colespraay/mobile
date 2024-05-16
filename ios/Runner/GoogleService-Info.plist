@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.spraay.app</string>
+	<string>com.software.spraay</string>
 	<key>PROJECT_ID</key>
 	<string>spraay-app</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:45187346066:ios:999e1dbb36e5e49fa1804b</string>
+	<string>1:45187346066:ios:29c657dd26c394aea1804b</string>
 </dict>
 </plist>

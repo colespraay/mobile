@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/services/api_services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 bool isLoading=false;
@@ -34,7 +35,7 @@ var height13=SizedBox(height: 13.h,);
 var height16=SizedBox(height: 16.h,);
 var height18=SizedBox(height: 18.h,);
 var height20=SizedBox(height: 20.h,);
-var height22=SizedBox(height: 22,);
+var height22=const SizedBox(height: 22,);
 var height26=SizedBox(height: 26.h,);
 var height30=SizedBox(height: 30.h,);
 var height34=SizedBox(height: 34.h,);
@@ -53,44 +54,39 @@ EdgeInsets horizontalPadding=EdgeInsets.symmetric(horizontal: 18.w);
 
 String dollar_sign = "\$";
  actionBar(){
-  if(Platform.isAndroid){SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.white,statusBarIconBrightness: Brightness.light ));}
+  if(Platform.isAndroid){SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.white,statusBarIconBrightness: Brightness.light ));}
 }
 
-// loadingDialog(context){
-//  double height=MediaQuery.of(context).size.height;
-//  double width=MediaQuery.of(context).size.width;
-//  return showDialog(
-//      context: context,
-//      barrierDismissible: false,
-//      barrierColor: Colors.black12,
-//      builder: (BuildContext context){
-//       return StatefulBuilder(
-//           builder: (BuildContext context, StateSetter setState){
-//            return Dialog(
-//             insetPadding: EdgeInsets.all(20.0),
-//             shape: RoundedRectangleBorder(
-//              borderRadius: BorderRadius.circular(5),
-//             ),
-//             child: Container(
-//              decoration: BoxDecoration(
-//               color: CustomColors.sGreyBlack,
-//               borderRadius: BorderRadius.circular(5),
-//              ),
-//              child: Padding(
-//               padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
-//               child: Row(
-//                crossAxisAlignment: CrossAxisAlignment.center,
-//                mainAxisSize: MainAxisSize.min,
-//                children: [
-//                 Text("Loading...", style: TextStyle(color: CustomColors.sWhite),)
-//                ],
-//               ),
-//              ),
-//             ),
-//            );
-//           });
-//      });
-// }
+loadingDialog(context){
+ return showDialog(
+     context: context,
+     barrierDismissible: false,
+     barrierColor: Colors.black12,
+     builder: (BuildContext context){
+      return Dialog(
+       insetPadding: const EdgeInsets.all(20.0),
+       shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+       ),
+       child: Container(
+        decoration: BoxDecoration(
+         color: CustomColors.sDarkColor2,
+         borderRadius: BorderRadius.circular(5),
+        ),
+        child: const Padding(
+         padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+           Text("Loading...", style: TextStyle(color: CustomColors.sWhiteColor),)
+          ],
+         ),
+        ),
+       ),
+      );
+     });
+}
 
 extension StringExtension on String {
  String capitalize() {
@@ -150,5 +146,29 @@ Future<String?> getId() async {
  return udid;
 }
 
+String convertTo12HourFormat(String time24hr) {
+ List<String> parts = time24hr.split(':');
+ int hour = int.parse(parts[0]);
+ int minute = int.parse(parts[1]);
 
+ String minuteString = minute.toString().padLeft(2, '0');
+
+ if (hour < 12) {
+  return '$hour:$minuteString AM';
+ }
+ else if (hour == 12) {
+  return '12:$minuteString PM';
+ } else {
+  hour -= 12;
+  return '$hour:$minuteString PM';
+ }
+}
+
+void openWebPage({required String url}) async {
+ if (await canLaunchUrl(Uri.parse(url))) {
+  await launchUrl(Uri.parse(url));
+ } else {
+  throw 'Could not launch $url';
+ }
+}
 

@@ -70,7 +70,8 @@ class _ViewEventState extends State<ViewEvent> {
                   eventTime: eventProvider?.eventTime??"",
                   eventVenue: eventProvider?.eventVenue??"", eventCategory: eventProvider?.eventCategory??"",
                   eventdescription: eventProvider?.eventdescription??"",event_CoverImage: eventProvider?.event_CoverImage??"", eventId: eventProvider?.eventId??"",
-                  eventCode: eventProvider?.eventCode??"")));
+                  eventCode: eventProvider?.eventCode??"",
+                  eventCategoryID:eventProvider?.eventCategoryId??"" )));
             },
               child: Padding(padding:  EdgeInsets.only(right: 18.w), child: SvgPicture.asset("images/edit.svg"),)),
 
@@ -100,8 +101,8 @@ class _ViewEventState extends State<ViewEvent> {
                       height: 455.h,
                       fit: BoxFit.cover,
                       imageUrl:eventProvider?.event_CoverImage??"",
-                      placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-                      errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                      placeholder: (context, url) => const Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                      errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
                     ),
                   ),
                 ),
@@ -113,7 +114,7 @@ class _ViewEventState extends State<ViewEvent> {
                   child: Container(
                     padding: EdgeInsets.all(16.r),
                     decoration: BoxDecoration(
-                        color: Color(0xB209090B),
+                        color: const Color(0xB209090B),
                         borderRadius: BorderRadius.all(Radius.circular(8.r))
                     ),
                     child: Column(
@@ -225,14 +226,15 @@ class _ViewEventState extends State<ViewEvent> {
                     eventTime: eventProvider?.eventTime??"",
                     eventVenue: eventProvider?.eventVenue??"", eventCategory: eventProvider?.eventCategory??"",
                     eventdescription: eventProvider?.eventdescription??"",event_CoverImage: eventProvider?.event_CoverImage??"",
-                  eventId: eventProvider?.eventId??"", eventCode: eventProvider?.eventCode??"")));
+                  eventId: eventProvider?.eventId??"", eventCode: eventProvider?.eventCode??"",
+                    eventCategoryID: eventProvider?.eventCategoryId??"",)));
                 },
                 buttonText: "Edit this Event", borderRadius: 30.r,width: 380.w,
                 buttonColor:  CustomColors.sPrimaryColor500),
             height16,
             CustomButton(
                 onTap: () {
-                  Navigator.pushReplacement(context, SlideLeftRoute(page: PhoneContacts()));
+                  Navigator.pushReplacement(context, SlideLeftRoute(page: const PhoneContacts()));
                 },
                 buttonText: 'Share this event', borderRadius: 30.r,width: 380.w,
                 buttonColor: CustomColors.sDarkColor3),
@@ -260,11 +262,11 @@ class _ViewEventState extends State<ViewEvent> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(dayString(eventProvider?.event_date??""), style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500) ),
-                    Text(monthString(eventProvider?.event_date??""), style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0x99E0E9F4)) ),
+                    Text(monthString(eventProvider?.event_date??""), style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: const Color(0x99E0E9F4)) ),
                   ],
                 ),
                 SizedBox(width: 16.w,),
-                VerticalDivider(color: Color(0x80FFFFFF),width: 0,thickness: 1.5.w, ),
+                VerticalDivider(color: const Color(0x80FFFFFF),width: 0,thickness: 1.5.w, ),
                 SizedBox(width: 16.w,),
                 Expanded(
                   child: Column(
@@ -272,7 +274,7 @@ class _ViewEventState extends State<ViewEvent> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(eventProvider?.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis, ),
-                      Text(eventProvider?.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0x99FFFFFF)), maxLines: 2, overflow: TextOverflow.ellipsis ),
+                      Text(eventProvider?.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: const Color(0x99FFFFFF)), maxLines: 2, overflow: TextOverflow.ellipsis ),
                     ],
                   ),
                 ),

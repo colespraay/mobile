@@ -39,8 +39,8 @@ class ViewProfile extends StatelessWidget {
       imageUrl:imageUrl,
       fit: BoxFit.cover,
       // imageBuilder: (context, imageProvider) => Container(decoration: BoxDecoration(shape: BoxShape.circle, image: DecorationImage(image: imageProvider, fit: BoxFit.cover,),),),
-      placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-      errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+      placeholder: (context, url) => const Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+      errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
     );
   }
 

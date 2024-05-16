@@ -29,11 +29,11 @@ class DasboardScreen extends StatefulWidget {
 class _DasboardScreenState extends State<DasboardScreen> {
 
   final List<Widget> _widgetOption = [
-    HomeScreen(),
-    EventsScreen(),
-    SizedBox.shrink(),//empty page between
-    WalletScreen(),
-    ProfileUi()
+    const HomeScreen(),
+    const EventsScreen(),
+    const SizedBox.shrink(),//empty page between
+    const WalletScreen(),
+    const ProfileUi()
   ];
 
   @override
@@ -52,7 +52,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
             shape: RoundedRectangleBorder( borderRadius: BorderRadius.all(Radius.circular(40.r))),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             // elevation: 10,
-            backgroundColor: Color(0xffD3F701),
+            backgroundColor: const Color(0xffD3F701),
             onPressed: () {
               _choseFABModal().then((value){
                 Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
@@ -72,9 +72,9 @@ class _DasboardScreenState extends State<DasboardScreen> {
           backgroundColor:CustomColors.sDarkColor2,
           type: BottomNavigationBarType.fixed,
           selectedItemColor:CustomColors.sPrimaryColor500 ,
-          selectedLabelStyle: CustomTextStyle.kTxtBold.copyWith(fontSize: 12.sp,color: Color(0xff868686)),
-          unselectedLabelStyle: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp,color: Color(0xff868686)),
-          unselectedItemColor:Color(0xff868686),
+          selectedLabelStyle: CustomTextStyle.kTxtBold.copyWith(fontSize: 12.sp,color: const Color(0xff868686)),
+          unselectedLabelStyle: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp,color: const Color(0xff868686)),
+          unselectedItemColor:const Color(0xff868686),
           items: [
             buildButomNav(img: "selected_home", title: "Home"),
             buildButomNav(img: "selected_event", title: "Events"),
@@ -123,7 +123,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
 
   BottomNavigationBarItem buildButomNav({required String img, required String title}){
     return   BottomNavigationBarItem(activeIcon: SvgPicture.asset("images/$img.svg",color: CustomColors.sPrimaryColor500),
-        icon:SvgPicture.asset('images/$img.svg',color: Color(0xff868686),), label: title);
+        icon:SvgPicture.asset('images/$img.svg',color: const Color(0xff868686),), label: title);
   }
 
   Widget buildBtmNav({required int position,required String img,required String title,required String grey_img }){
@@ -146,7 +146,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
         mainAxisSize: MainAxisSize.min,
             children: [
               SvgPicture.asset("images/$grey_img.svg"),
-              Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp,color: Color(0xff868686)),)
+              Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp,color: const Color(0xff868686)),)
             ],
           ) ,
     );
@@ -182,26 +182,26 @@ class _DasboardScreenState extends State<DasboardScreen> {
 
                               GestureDetector(
                                 onTap:(){
-                                  Navigator.pushReplacement(context, ScaleTransition1(page: JoinEvent()));
+                                  Navigator.pushReplacement(context, ScaleTransition1(page: const JoinEvent()));
                                 },
                                   child: buildModalChildren(img: "spray_sm_svg", title: "Spray")),
 
                               height18,
                               GestureDetector(
                                 onTap:(){
-                                  Navigator.pushReplacement(context, ScaleTransition1(page: NewEvent()));
+                                  Navigator.pushReplacement(context, ScaleTransition1(page: const NewEvent()));
                                 },
                                   child: buildModalChildren(img: "s_calend", title: "New Event")),
                               height18,
                               GestureDetector(
                                 onTap:(){
-                                  Navigator.pushReplacement(context, ScaleTransition1(page: BillPaymentScreen()));
+                                  Navigator.pushReplacement(context, ScaleTransition1(page: const BillPaymentScreen()));
                                 },
                                   child: buildModalChildren(img: "p_bill", title: "Pay Bills")),
                               height18,
                               GestureDetector(
                                 onTap:(){
-                                  Navigator.pushReplacement(context, FadeRoute(page: SprayGifting()));
+                                  Navigator.pushReplacement(context, FadeRoute(page: const SprayGifting()));
                                 },
                                   child: buildModalChildren(img: "money_send", title: "Send Gift")),
                               height30,
@@ -214,7 +214,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
                                       shape: RoundedRectangleBorder( borderRadius: BorderRadius.all(Radius.circular(40.r))),
                                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                       elevation: 10,
-                                      backgroundColor: Color(0xffD3F701),
+                                      backgroundColor: const Color(0xffD3F701),
                                       onPressed: () {
                                        Navigator.pop(context);
                                       },

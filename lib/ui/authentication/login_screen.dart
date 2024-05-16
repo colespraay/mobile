@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     await FirebaseMessaging.instance.getToken().then((token){
       setState(() {fcm_token=token??"";});
 
-      // log("FCM==$token");
+      log("FCM==$token");
 
     });
   }
@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     onTap: (){setState(() {_isObscure = !_isObscure;});},
                     child: Padding(
                       padding:  EdgeInsets.only(right: 8.w),
-                      child: Icon(_isObscure ? Icons.visibility_off: Icons.visibility, color: Color(0xff9E9E9E),),
+                      child: Icon(_isObscure ? Icons.visibility_off: Icons.visibility, color: const Color(0xff9E9E9E),),
                     ),
                   ),
                   prefixIcon: Padding(
@@ -148,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Center(child: Padding(
                       padding:  EdgeInsets.only(bottom: 20.h),
                       child: Image.asset("images/biometric.png", color: CustomColors.sPrimaryColor500,),
-                    ))):SizedBox.shrink(),
+                    ))):const SizedBox.shrink(),
 
                 CustomButton(
                     onTap: () async{
@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
         contentPadding: EdgeInsets.only(left: 0.w),
         checkColor: Colors.white,
         activeColor: CustomColors.sPrimaryColor500,
-        title: Text("Remember me", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: Color(0xffF0F0F0)),),
+        title: Text("Remember me", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: const Color(0xffF0F0F0)),),
         // subtitle: Text("08:00  -  11:00 AM", style: kTxtLight.copyWith(fontSize: 10.sp, fontWeight: FontWeight.w300, color: Colors.black),),
         value: checkedValue,
         onChanged: (newValue) {

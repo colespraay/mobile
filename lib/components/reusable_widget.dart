@@ -97,7 +97,7 @@ AppBar buildAppBar({required BuildContext context, String ?title,
     centerTitle: true,
     leading: GestureDetector(
         onTap: (){Navigator.pop(context);},
-        child:  Icon(Icons.arrow_back_outlined, color: arrowColor??Color(0xffFBFBFB),)),
+        child:  Icon(Icons.arrow_back_outlined, color: arrowColor??const Color(0xffFBFBFB),)),
     title: Text(title?? "",
         style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.w700) ),
     actions:action??[],
@@ -406,13 +406,13 @@ class SlideListAnimationWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimationConfiguration.staggeredList(
         position: position,
-        delay: Duration(milliseconds: 100),
+        delay: const Duration(milliseconds: 100),
         child: SlideAnimation(
-            duration: Duration(milliseconds: 1500),
+            duration: const Duration(milliseconds: 1500),
             curve: Curves.fastLinearToSlowEaseIn,
             child: FadeInAnimation(
                 curve: Curves.fastLinearToSlowEaseIn,
-                duration: Duration(milliseconds: 4000),
+                duration: const Duration(milliseconds: 4000),
                 child: child)));
   }
 }
@@ -424,7 +424,7 @@ toastMessage(String titile){
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.CENTER,
       timeInSecForIosWeb: 1,
-      backgroundColor: Color(0x405B45FF),
+      backgroundColor: const Color(0x405B45FF),
       textColor: Colors.white,
       fontSize: 16.0
   );
@@ -436,7 +436,7 @@ toastMsg(String titile){
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM_RIGHT,
       timeInSecForIosWeb: 1,
-      backgroundColor: Color(0x405B45FF),
+      backgroundColor: const Color(0x405B45FF),
       textColor: Colors.white,
       fontSize: 16.0
   );
@@ -486,7 +486,7 @@ class _EmptyListLotieState extends State<EmptyListLotie> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     if(_isCompleted==true){
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
     else{
       return Column(
@@ -574,11 +574,11 @@ class ShimmerCustomeGrid extends StatelessWidget {
                           children: [
                             Container(
                               width:double.infinity, height: 10.h,
-                              padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
+                              padding: const EdgeInsets.all(1.5), decoration: const BoxDecoration(color: CustomColors.sWhiteColor,),),
                             height10,
                             Container(
                               width:double.infinity, height: 8.h,
-                              padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor,),),
+                              padding: const EdgeInsets.all(1.5), decoration: const BoxDecoration(color: CustomColors.sWhiteColor,),),
                             height18,
 
                             Row(
@@ -586,12 +586,12 @@ class ShimmerCustomeGrid extends StatelessWidget {
                               children: [
                                 Container(
                                   width:100.w, height: 20.h,
-                                  padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(6.r))),),
+                                  padding: const EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(6.r))),),
                                 SizedBox(width: 10.w,),
                                 Expanded(
                                   child: Container(
                                     width:80.w, height: 20.h,
-                                    padding: EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(6.r))),),
+                                    padding: const EdgeInsets.all(1.5), decoration: BoxDecoration(color: CustomColors.sWhiteColor, borderRadius: BorderRadius.all(Radius.circular(6.r))),),
                                 )
                               ],
                             ),

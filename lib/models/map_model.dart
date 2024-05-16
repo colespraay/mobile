@@ -53,7 +53,6 @@ class PlaceApiProvider {
 
     // var response=await http.get(Uri.parse(request));
 
-    log("maaaaap=${response.body}");
 
     if (response.statusCode == 200) {
 

@@ -73,8 +73,8 @@ class _MyEventsState extends State<MyEvents> {
                 width: 110.w, height: 140.h,
                 fit: BoxFit.cover,
                 imageUrl:datum.eventCoverImage??"",
-                placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-                errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                placeholder: (context, url) => const Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
               ),
             ),
           ),
@@ -133,7 +133,8 @@ class _MyEventsState extends State<MyEvents> {
                               Navigator.push(context, FadeRoute(page: EditEvent(fromPage: "", eventname:datum.eventName??"",
                                 event_date: DateFormat('yyyy-MM-dd').format(datum.eventDate!), eventTime: datum.time??"", eventVenue: datum.venue??"",
                                 eventCategory: datum.eventCategory?.name??"", eventdescription: datum.eventDescription??"", event_CoverImage: datum.eventCoverImage??"", eventId: datum.id??"",
-                              eventCode: datum.eventCode??"",)));
+                              eventCode: datum.eventCode??"",
+                                eventCategoryID:datum.eventCategory?.id??"" ,)));
 
                               },
                             child: buildStatus(title: "Edit", color:CustomColors.sPrimaryColor500, )),

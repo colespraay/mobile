@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -134,6 +135,9 @@ class _NewEventState extends State<NewEvent> {
 
   }
 
+  TimeOfDay? newSelectedTime;
+  String _timeOutput = '';
+
   Widget buildStep1Widget(){
     return ListView(
       padding: horizontalPadding,
@@ -166,31 +170,63 @@ class _NewEventState extends State<NewEvent> {
           },
           onTap: ()async {
 
-            // TimeOfDay? newSelectedTime = await showTimePicker(helpText: "Select Time", context: context,
-            //     builder: (context, childWidget) {
-            //       return MediaQuery(
-            //         data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-            //         child: childWidget!,
-            //       );
-            //     },
-            //     initialTime: TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))));
+          // if(Platform.isIOS){
+          //   newSelectedTime = await showTimePicker(helpText: "Select Time",
+          //       context: context,
+          //       builder: (context, childWidget) {
+          //         return MediaQuery(
+          //           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          //           child: childWidget!,
+          //         );
+          //       },
+          //     initialTime: TimeOfDay.now(),
+          //   );
+          //   log("timm=${_openPickupTime?.format(context)}");
+          //   setState(() {
+          //     _openPickupTime = newSelectedTime ?? TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 10)));
+          //     timeController.text=convertTo12HourFormat(_openPickupTime?.format(context)??"");
+          //     secondVal=convertTo12HourFormat(_openPickupTime?.format(context)??"");
+          //   });
+          // }
 
-
-            TimeOfDay? newSelectedTime = await showRoundedTimePicker(
+            newSelectedTime = await showRoundedTimePicker(
                 context: context,
                 theme:  ThemeData.dark(useMaterial3: true),
                 initialTime: TimeOfDay.now(),
                 locale: const Locale('en', 'US')
             );
 
+            //check if the default time is set to 24 hours format
+            bool is24HoursFormat = MediaQuery.of(context).alwaysUse24HourFormat;
+
             setState(() {
-              _openPickupTime = newSelectedTime == null ? TimeOfDay.fromDateTime(DateTime.now().add(Duration(hours: 10))) : newSelectedTime;
-              timeController.text=_openPickupTime?.format(context)??"";
-              secondVal=_openPickupTime?.format(context)??"";
+              if(is24HoursFormat==false){
+                //12 hour
+                _openPickupTime = newSelectedTime ?? TimeOfDay.fromDateTime(DateTime.now().add(const Duration(hours: 10)));
+                secondVal=_openPickupTime?.format(context)??"";
+                timeController.text=_openPickupTime?.format(context)??"";
+
+              }else{
+                //24 hours
+                // Check if the picked time is in 24-hour format
+                if (newSelectedTime!.period == DayPeriod.am) {
+                  // If it's in AM, convert to 12-hour format
+                  newSelectedTime = TimeOfDay(hour: newSelectedTime!.hour % 12, minute: newSelectedTime!.minute);
+                  _timeOutput = '${newSelectedTime!.format(context)} AM';
+                } else {
+                  // If it's in PM, add 12 to the hour to convert to 12-hour format
+                  newSelectedTime = TimeOfDay(hour: newSelectedTime!.hour % 12, minute: newSelectedTime!.minute);
+                  _timeOutput = '${newSelectedTime!.format(context)} PM';
+                }
+
+                timeController.text=_timeOutput;
+                secondVal=_timeOutput;
+              }
+
+              // _selectedTime = picked;
+
+
             });
-
-
-            print("timePM=${ timeController.text}");
 
 
             },
@@ -198,13 +234,6 @@ class _NewEventState extends State<NewEvent> {
 
 
         height16,
-        // CustomizedTextField(
-        //   textEditingController:venueController, keyboardType: TextInputType.text,
-        //   textInputAction: TextInputAction.next,hintTxt: "Venue",focusNode: _textField5Focus,
-        //   onChanged:(value){
-        //     setState(() {fiveVal=value;});
-        //   },
-        // ),
 
         DummyMapSearch(venueController: venueController, query: fiveVal, textField5Focus: _textField5Focus),
 
@@ -298,7 +327,7 @@ class _NewEventState extends State<NewEvent> {
     return DropdownButtonFormField<CategoryDatum>(
       iconEnabledColor: CustomColors.sDisableButtonColor,
       isDense: false,
-      dropdownColor: Color(0xff212121),
+      dropdownColor: const Color(0xff212121),
       focusNode: _textField3Focus,
       items: eventProvider?.dataList.map((CategoryDatum value) {
         return DropdownMenuItem<CategoryDatum>(
@@ -327,8 +356,8 @@ class _NewEventState extends State<NewEvent> {
         filled: true,
         // prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),
         // prefixIcon:Padding(padding:  EdgeInsets.only(right: 8.w, left: 10.w), child: SizedBox.shrink(),),
-        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
-        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+        enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
         hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
         fillColor:_textField3Focus!.hasFocus? CustomColors.sTransparentPurplecolor : CustomColors.sDarkColor2,
         errorBorder:  OutlineInputBorder(borderSide:  BorderSide(color: Colors.red, width: 0.1.w), borderRadius: BorderRadius.circular(8.r),),
@@ -351,7 +380,7 @@ class _NewEventState extends State<NewEvent> {
       child: buildDottedBorder(child: Container(
         width: 180.w,
         height: 174.h,
-        decoration: BoxDecoration(color: CustomColors.sDarkColor3),
+        decoration: const BoxDecoration(color: CustomColors.sDarkColor3),
         child: Stack(
           children: [
 
@@ -416,8 +445,8 @@ class _NewEventState extends State<NewEvent> {
         style: CustomTextStyle.kTxtMedium.copyWith(fontFamily: "Metropolis", fontSize: 18.sp,),
         decoration: InputDecoration(
           border: InputBorder.none,
-          contentPadding: EdgeInsets.only(top: 7, left: 0, right: 15, bottom: 7),
-          suffixIconConstraints: BoxConstraints(minWidth: 19, minHeight: 19,),
+          contentPadding: const EdgeInsets.only(top: 7, left: 0, right: 15, bottom: 7),
+          suffixIconConstraints: const BoxConstraints(minWidth: 19, minHeight: 19,),
           suffixIcon:  InkWell(
             onTap:() async {
               //The location service api is here
@@ -428,12 +457,12 @@ class _NewEventState extends State<NewEvent> {
                 width: 28.w,
                 height: 28.h,
                 // margin: EdgeInsets.only(top: 8.h),
-                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10.r)), color: Color(0xff076231)),
+                decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(10.r)), color: const Color(0xff076231)),
                 child: Center(child: Icon(Icons.search, color: CustomColors.sWhiteColor,
                   size: 18.r,))),
           ),
           hintText: "Search...",
-          hintStyle: CustomTextStyle.kTxtMedium.copyWith(fontSize: 14.sp, color: Color(0xffA8A8A8), fontWeight: FontWeight.w400,),
+          hintStyle: CustomTextStyle.kTxtMedium.copyWith(fontSize: 14.sp, color: const Color(0xffA8A8A8), fontWeight: FontWeight.w400,),
         ),
       ),
     );

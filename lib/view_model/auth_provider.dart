@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:local_session_timeout/local_session_timeout.dart';
+import 'package:provider/provider.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/user_profile.dart';
@@ -412,6 +413,24 @@ class AuthProvider extends ChangeNotifier{
     setloading(false);
   }
 
+
+  deleteAccountEndpoint(context,String userIds) async{
+    loadingDialog(context);
+    var result = await apiResponse.deleteAccount(userIds, mytoken);
+
+    if (result['error'] == true) {
+      Navigator.pop(context);
+      errorCherryToast(context, result['message']);
+    }
+    else {
+      Navigator.pop(context);
+      // cherryToastInfo(context, "Info!", result['message']);
+      toastMessage(result['message']);
+      Navigator.pushAndRemoveUntil(context, FadeRoute(page: const LoginScreen()),(Route<dynamic> route) => false);
+      onItemTap(0);
+    }
+
+  }
 
   fetchuploadImageUrl(context,String profileImageUrl, String userId) async{
     setloading(true);

@@ -55,7 +55,7 @@ class _TransactionDetailState extends State<TransactionDetail> {
     return LoadingOverlayWidget(
       loading: _transactionProvider?.loading??false,
       child: Scaffold(
-          appBar: buildAppBar(context: context, title: "Spray details"),
+          appBar: buildAppBar(context: context, title: "Spraay details"),
           body:  ListView(
             padding: horizontalPadding,
             children: [
@@ -125,11 +125,11 @@ class _TransactionDetailState extends State<TransactionDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Text("Here is your spray details", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w700) )),
+            Center(child: Text("Here is your spraay details", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w700) )),
             height16,
             dividerWidget,
             height26,
-            buildRow(title: "Spray Amount:", content: "N${widget.transactionList?.amount}"),
+            buildRow(title: "Spraay Amount:", content: "N${widget.transactionList?.amount}"),
             height8,
             buildRow(title: "Transaction Date:", content: dateTimeFormat(widget.transactionList!.dateCreated.toString())),
             height8,
