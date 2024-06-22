@@ -63,7 +63,7 @@ class AuthProvider extends ChangeNotifier{
       await MySharedPreference.saveUId(result["userId"]);
       await MySharedPreference.savePhoneNumber(result["phoneNumber"]);
 
-      Navigator.push(context, SlideLeftRoute(page: CreateAccountOtpPage()));
+      Navigator.push(context, SlideLeftRoute(page: const CreateAccountOtpPage()));
     }
     setloading(false);
   }
@@ -107,7 +107,7 @@ class AuthProvider extends ChangeNotifier{
     }
     else {
       successCherryToast(context, result["message"]);
-      Navigator.pushReplacement(context, FadeRoute(page: PinCreation()));
+      Navigator.pushReplacement(context, FadeRoute(page: const PinCreation()));
     }
     setloading(false);
   }
@@ -196,7 +196,7 @@ class AuthProvider extends ChangeNotifier{
       popupDialog(context: context, title: "Password Changed", content: "You now have access to your account.",
           buttonTxt: 'Access Account',
           onTap: () {
-            Navigator.pushAndRemoveUntil(context, FadeRoute(page: LoginScreen()),(Route<dynamic> route) => false);
+            Navigator.pushAndRemoveUntil(context, FadeRoute(page: const LoginScreen()),(Route<dynamic> route) => false);
           }, png_img: 'verified');
       // Navigator.pushReplacement(context, SlideLeftRoute(page: CreateNewPassword(uniqueVerificationCode)));
     }
@@ -230,7 +230,7 @@ class AuthProvider extends ChangeNotifier{
     }
     else {
 
-      Navigator.pushAndRemoveUntil(context, FadeRoute(page: LoginScreen()),(Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(context, FadeRoute(page: const LoginScreen()),(Route<dynamic> route) => false);
 
       // MySharedPreference.setVisitingFlag();
       // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
@@ -272,7 +272,7 @@ class AuthProvider extends ChangeNotifier{
       popupDialog(context: context, title: "Registration Successful", content: "You have successfully registered your account. Now let’s know you.",
           buttonTxt: 'Continue',
           onTap: () {
-            Navigator.pushReplacement(context, FadeRoute(page: TellUsAboutYourself()));
+            Navigator.pushReplacement(context, FadeRoute(page: const TellUsAboutYourself()));
           }, png_img: 'verified');
 
     }
@@ -359,7 +359,7 @@ class AuthProvider extends ChangeNotifier{
       await MySharedPreference.saveVBankName(result["bankName"].toString());
 
 
-      Navigator.push(context, FadeRoute(page: ChangeTransactionPin()));
+      Navigator.push(context, FadeRoute(page: const ChangeTransactionPin()));
 
       // MySharedPreference.setVisitingFlag();
       // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);

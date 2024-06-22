@@ -54,13 +54,13 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
                     labelPadding: EdgeInsets.zero,
                     labelStyle: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w700),
                     unselectedLabelStyle: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w700),
-                    physics: NeverScrollableScrollPhysics(),
-                    tabs:[Tab(text: "Help",), Tab(text: "Contact us",)]),
+                    physics: const NeverScrollableScrollPhysics(),
+                    tabs:const [Tab(text: "Help",), Tab(text: "Contact us",)]),
               ),
 
               Expanded(
                 child: TabBarView(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     children: [
                       buildHelpWidget(),
                       buildContactUs()
@@ -136,8 +136,8 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                 margin: EdgeInsets.only(right: 16.w),
                 decoration: BoxDecoration(
-                    color:index_pos==position? CustomColors.sPrimaryColor500: Color(0x40335EF7),
-                    border: Border.all(color:index_pos==position? Colors.transparent: Color(0xffFAFAFA)),
+                    color:index_pos==position? CustomColors.sPrimaryColor500: const Color(0x40335EF7),
+                    border: Border.all(color:index_pos==position? Colors.transparent: const Color(0xffFAFAFA)),
                     borderRadius: BorderRadius.all(Radius.circular(30.r))
                 ),
                 child: Text(horizList[position], style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w500, color: CustomColors.sWhiteColor) ),
@@ -151,7 +151,7 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
     return Theme(
       data: Theme.of(context).copyWith(dividerColor: Colors.transparent,
         unselectedWidgetColor: CustomColors.sPrimaryColor500, // here for close state
-        colorScheme: ColorScheme.light(primary: CustomColors.sPrimaryColor500),
+        colorScheme: const ColorScheme.light(primary: CustomColors.sPrimaryColor500),
       ),
       child: ExpansionTile(
         //trailing: Padding(padding: EdgeInsets.zero,),
@@ -185,7 +185,6 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
         _buildExpandedList("What is Spraay?", "What is Spraay? is a one stop payment solution for individuals, businesses, marketplaces, and ecommerceplatforms. It allows you to make secure payments for goods and services."),
         height16,
         _buildExpandedList("What is Spraay?", "What is Spraay? is a one stop payment solution for individuals, businesses, marketplaces, and ecommerceplatforms. It allows you to make secure payments for goods and services."),
-
       ],
     );
   }
@@ -286,7 +285,7 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
             SvgPicture.asset("images/$img.svg", width: 24.w, height: 24.w,),
             SizedBox(width: 12.w,),
             Expanded(child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400),)),
-            Icon(Icons.arrow_forward_ios_outlined, color: Color(0xff9E9E9E), size: 20.r,)
+            Icon(Icons.arrow_forward_ios_outlined, color: const Color(0xff9E9E9E), size: 20.r,)
           ],
         ),
       ),
@@ -313,11 +312,11 @@ class _HelpAndSupportScreenState extends State<HelpAndSupportScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Open Mail App"),
-          content: Text("No mail apps installed"),
+          title: const Text("Open Mail App"),
+          content: const Text("No mail apps installed"),
           actions: <Widget>[
             TextButton(
-              child: Text("OK"),
+              child: const Text("OK"),
               onPressed: () {
                 Navigator.pop(context);
               },

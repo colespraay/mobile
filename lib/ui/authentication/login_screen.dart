@@ -65,11 +65,15 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() {
       checkedValue= MySharedPreference.getRemember()==1?true:false;
 
-      phoneController.text=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1).toString():"";
-      firstBtn=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1):"";
+      if(MySharedPreference.getPhoneNumber().isNotEmpty){
+        phoneController.text=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1).toString():"";
+        firstBtn=MySharedPreference.getRemember()==1?MySharedPreference.getPhoneNumber().substring(1):"";
+      }
       _textField1Focus = FocusNode();
       _textField2Focus = FocusNode();
     });
+
+
 
     SecureStorage().getPassword().then((value){
       if(value.isNotEmpty){

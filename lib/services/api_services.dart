@@ -34,18 +34,14 @@ import 'package:spraay/models/user_saved_bank_model.dart';
 import 'package:spraay/services/api_response.dart';
 class ApiServices{
 
-  String url="https://spraay-api-577f3dc0a0fe.herokuapp.com";
+  // String url="https://spraay-api-577f3dc0a0fe.herokuapp.com";
+  String url="https://admin-test-app-527853a95e08.herokuapp.com";
   Future<Map<String, dynamic>> logIn(String phoneNumber, String password, String deviceId)async{
     Map<String, dynamic> result = {};
     try{
-      // print("deviceIddeviceId=${deviceId}");
       var response=await http.post(Uri.parse("$url/auth/login/phone-number"), body:{"phoneNumber":phoneNumber, "password":password,"deviceId":deviceId},
           headers: {"Accept":"application/json"}).timeout(const Duration(seconds: 30));
-      // int statusCode = response.statusCode;
-      // print("Resbody statusCode==${response.statusCode}");
-
       var jsonResponse=convert.jsonDecode(response.body);
-
       if (jsonResponse["code"] == 200) {
 
         var loginResponse=LogoinResponse.fromJson(jsonResponse);
@@ -74,9 +70,6 @@ class ApiServices{
         result["virtualAccountName"]=loginResponse.data?.user?.virtualAccountName??"";
         result["virtualAccountNumber"]=loginResponse.data?.user?.virtualAccountNumber??"";
 
-
-
-
         result['error'] = false;
       }
       else{
@@ -89,7 +82,8 @@ class ApiServices{
     on HttpException{result["message"] = "Error in network connection"; result['error'] = true;}
     on SocketException{result["message"] = "Error in network connection";result['error'] = true;}
     on FormatException{result["message"] = "invalid format";result['error'] = true;}
-    catch(e){result["message"] = "Something went wrong";result['error'] = true;}
+    catch(e){
+      result["message"] = "Something went wrong";result['error'] = true;}
     return result;
   }
 

@@ -23,6 +23,7 @@ import 'package:spraay/models/join_event_model.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 import 'package:spraay/view_model/event_provider.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 
 class SprayScreen extends StatefulWidget {
@@ -42,12 +43,43 @@ class _SprayScreenState extends State<SprayScreen>{
 
   final AppinioSwiperController controller = AppinioSwiperController();
   double amount=0.00;
+  IO.Socket ? socket;
+  var isTyping;
+  sockectIOconnect(){
+    socket = IO.io('ws://admin-test-app-527853a95e08.herokuapp.com',<String, dynamic>{'transports': ['websocket'],
+      'query': {
+      'userId': MySharedPreference.getUId(),
+      },
+    });
+    socket?.connect();
+    socket?.onConnect((_) {print('Connection established');});
 
+    //Receive message
+    // socket?.on('newMessage', (newMessage) {
+    //   if(newMessage["sender"] != widget.senderId){
+    //     homeProvider?.sendMessagemm(message: newMessage["content"]["message"], senderId: newMessage["sender"], receiverId: newMessage["receiver"],
+    //         username: newMessage["content"]["Username"],
+    //         profileImg: newMessage["content"]["profileImg"],
+    //         receiverImage: newMessage["receiverData"]["image"],
+    //         receiverName: newMessage["receiverData"]["name"], reciverId: newMessage["receiverData"]["reciver_id"]);
+    //   }
+    //
+    //
+    // });
+
+    socket?.onDisconnect((_) => print('Connection Disconnection'));
+    socket?.onConnectError((err) => print("error==$err"));
+    socket?.onError((err) => print("connecterror=$err"));
+  }
+
+  socketChatIOfn({required Map<String,dynamic> chatObject}) {
+    socket?.emit('sendSpray', chatObject);
+  }
   // int? noteQuantity;
   @override
   void initState() {
     super.initState();
-
+    sockectIOconnect();
   }
 
 
@@ -56,6 +88,11 @@ class _SprayScreenState extends State<SprayScreen>{
   void dispose() {
     super.dispose();
     controller.dispose();
+    disconnectSocket();
+  }
+  disconnectSocket(){
+    socket?.dispose();
+    socket?.disconnect();
   }
 
   bool _isLoading=false;
@@ -135,12 +172,12 @@ class _SprayScreenState extends State<SprayScreen>{
                         buttonText: 'Stop spray', borderRadius: 30.r,width: 380.w,
                         buttonColor: CustomColors.sErrorColor),
                   ),
-                ).animate().fadeIn(duration: 1000.milliseconds, curve: Curves.easeIn): SizedBox.shrink(),
+                ).animate().fadeIn(duration: 1000.milliseconds, curve: Curves.easeIn): const SizedBox.shrink(),
 
-                _isDismissHandAfterSpraying==false? Spacer(): Expanded(child: _buildLimitReached().animate() // baseline=800ms
+                _isDismissHandAfterSpraying==false? const Spacer(): Expanded(child: _buildLimitReached().animate() // baseline=800ms
                     .slide(
                     duration: 800.milliseconds,curve: Curves.fastOutSlowIn,
-                    begin: Offset(0.0, 1.0),
+                    begin: const Offset(0.0, 1.0),
                     end: Offset.zero
                 )),
 
@@ -148,7 +185,7 @@ class _SprayScreenState extends State<SprayScreen>{
                 _isDismissHandAfterSpraying==false?buildSprayWidget(): Center(
                   child: Image.asset("images/hand.png", height: 200.h, ).animate().slide(
                       begin: Offset.zero,
-                      end: Offset(0.0, 1.0),
+                      end: const Offset(0.0, 1.0),
                       duration: 800.milliseconds,curve: Curves.fastOutSlowIn),
                 )
 
@@ -251,7 +288,18 @@ class _SprayScreenState extends State<SprayScreen>{
                     if(activity is Swipe){
                       setState(() {amount +=widget.unitAmount;});
 
-                      // print("SwipeSwipe=#${amount}");
+
+                      socketChatIOfn(chatObject:{
+                        "amount": amount.toString(),
+                        "sprayerName": "${MySharedPreference.getFname()} ${MySharedPreference.getLastname()}",
+                        "receiver": widget.eventModelData?.id??"",
+                        "sprayerId": MySharedPreference.getUId(),
+                        "eventId": widget.eventModelData?.id??"",
+                        "transactionPin": widget.transactionPin??""
+                      });
+
+                      // log("SwipeSwipe=${amount}, eveID=${widget.eventModelData?.id}, uid=${MySharedPreference.getUId()}, pin=${widget.transactionPin},"
+                      //     "name=${MySharedPreference.getFname()}");
 
                     }
                     },
