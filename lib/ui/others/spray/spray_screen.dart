@@ -232,7 +232,6 @@ class _SprayScreenState extends State<SprayScreen>{
                   Text(widget.eventModelData?.user?.firstName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) ),
                   height8,
                   buildDateAndLocContainer(title: "₦${formatNumberAndDecimal.format(amount)}")
-
                 ],
               ),
             ),
@@ -294,7 +293,7 @@ class _SprayScreenState extends State<SprayScreen>{
                         "sprayerName": "${MySharedPreference.getFname()} ${MySharedPreference.getLastname()}",
                         "receiver": widget.eventModelData?.id??"",
                         "sprayerId": MySharedPreference.getUId(),
-                        "eventId": widget.eventModelData?.id??"",
+                        "eventId": widget.eventModelData?.eventCode??"",
                         "transactionPin": widget.transactionPin??""
                       });
 

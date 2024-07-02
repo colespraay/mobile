@@ -338,7 +338,7 @@ class _JoinEventInfoState extends State<JoinEventInfo> {
 
     }else{
       Navigator.push(context, SlideUpRoute(page: JoinEventOtp(cash: cash, totalAmount: int.parse(totalAmount), noteQuantity: noteQuantity.toInt(),
-        unitAmount: unitAmount, eventModelData: widget.eventModelData,)));
+        unitAmount: unitAmount, eventModelData: widget.eventModelData)));
 
     }
 
