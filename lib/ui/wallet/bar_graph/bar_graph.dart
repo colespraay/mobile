@@ -86,7 +86,6 @@ class SprayBarGraph extends StatelessWidget {
                   showTitles: true,
                   reservedSize: 46.r,
                   getTitlesWidget: (dataValue, value) => Text("N${dataValue.toInt()/1000}K", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 11.sp, fontWeight: FontWeight.w700, color: Color(0xff9E9E9E)),),
-
                 )),
               ),
               borderData: FlBorderData(show: false),

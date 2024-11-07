@@ -24,7 +24,7 @@ String onbTitle3="Pay your Bills Conveniently";
 String onbCont1="Immerse guests in unforgettable experiences! Digitally spray money, igniting the joyous spirit of celebration.";
 String onbCont2="Connect with your favourite celebrity. Be the first to get your favorite celebrity’s tickets.";
 String onbCont3="Easily pay your bills digitally with just a few taps, making your financial transactions hassle-free.";
-final currrency = new NumberFormat("#,##0.00", "en_US");
+final currrency = NumberFormat("#,##0.00", "en_US");
 
 //Height
 var height4=SizedBox(height: 4.h,);

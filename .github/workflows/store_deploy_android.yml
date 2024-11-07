@@ -1,0 +1,91 @@
+## Github Actions CI workflow to deploy to Internal testing in the Play Store
+name: CI_STORE_DEPLOY_ANDROID
+
+on:
+  # Run this workflow when any new code is pushed into the main branch
+  pull_request:
+    branches: [master ]
+  push:
+    branches: [master]
+
+jobs:
+  store_deploy_android:
+    # Only run this job if the branch name starts with 'release/'
+#    if:  startsWith(github.head_ref, 'release/')
+#    name: android store release
+    runs-on: ubuntu-latest
+    env:
+      # Setup env variables that will be used throughout the workflow
+      JAVA_VERSION: 17.0
+      FLUTTER_VERSION: 3.19.1
+      AAB_PATH: build/app/outputs/bundle/release/app-release.aab
+#      KEYSTORE_PATH: android/upload-keystore.jks
+      KEYSTORE_PATH: android/spraay.jks
+      KEY_PROPS_PATH: android/key.properties
+      SERVICE_ACCOUNT_PATH: serviceAccount.json
+    steps:
+      # Checkout repository codebase
+      - name: Checkout the code
+        uses: actions/checkout@v4.2.2
+
+      # Setup Java in the VM
+      - name: Setup Java to compile the Android project
+        uses: actions/setup-java@v4.4.0
+        with:
+          distribution: 'adopt'
+          java-version: ${{ env.JAVA_VERSION }}
+
+      # Setup Flutter in the VM
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2.14.0
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true  # workflow runs faster by caching the Java and Flutter SDKs
+
+      # Decode Android env variables and create a keystore file and pass it to env.KEYSTORE_PATH
+      - name: Decode Android keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.KEYSTORE_PATH }}
+
+      # Decode Decode Android key properties and create file and pass it to env.KEY_PROPS_PATH
+      - name: Decode Android key properties
+        run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.KEY_PROPS_PATH }}
+
+      # Decode Android release Service Account and create a json file to env.SERVICE_ACCOUNT_PATH
+      - name: Decode Android Service Account
+        run: echo "${{ secrets.PRODUCTION_CREDENTIAL_FILE }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
+
+      # Run flutter commands
+      - name: Run flutter pub get
+        run: flutter pub get
+
+      - name: 📦 Install dependencies
+        run: flutter pub get
+
+      - name: 🕵️ Analyze to check for bad Dart/Flutter practices
+        run: flutter analyze
+
+      - name: 📉 Run all app tests
+        run: flutter test
+
+      # Build Android Bundle release file
+      - name: Build aab
+        run: |
+          flutter build appbundle --release
+
+      # Upload generated aab to project artifacts
+      - name: Upload generated aab to the artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: aab-stores
+          path: ${{ env.AAB_PATH }}
+
+      # Deploy bundle to Google Play internal testing
+      - name: Deploy to Play Store (Internal testing)
+        uses: r0adkll/upload-google-play@v1.1.3
+        with:
+          serviceAccountJson: ${{ env.SERVICE_ACCOUNT_PATH }}
+          packageName: com.app.spraay
+          releaseFiles: ${{ env.AAB_PATH }}
+          track: internal   # it can be internal or production
+#          whatsNewDirectory: whatsnew/

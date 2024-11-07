@@ -31,7 +31,7 @@ class _GoogleMapLocationScreenState extends State<GoogleMapLocationScreen> {
     BitmapDescriptor markerIcon= await BitmapDescriptor.fromAssetImage(const ImageConfiguration(), "images/mark_pinn.png");
 
     _markers.add(Marker(
-      markerId: MarkerId("_kGooglePlex"),
+      markerId: const MarkerId("_kGooglePlex"),
       infoWindow: InfoWindow(title: widget.eventname),
       icon: markerIcon  /*BitmapDescriptor.defaultMarker*/, //use this marker to change icon
       position: point,
@@ -83,7 +83,7 @@ class _GoogleMapLocationScreenState extends State<GoogleMapLocationScreen> {
         borderRadius: BorderRadius.all(Radius.circular(24.r)),
         child: Container(
           margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 1.w),
-          decoration: BoxDecoration(color: Color(0xff1A1A21), borderRadius: BorderRadius.all(Radius.circular(18.r))),
+          decoration: BoxDecoration(color: const Color(0xff1A1A21), borderRadius: BorderRadius.all(Radius.circular(18.r))),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -95,8 +95,8 @@ class _GoogleMapLocationScreenState extends State<GoogleMapLocationScreen> {
                     width: 110.w, height: 110.h,
                     fit: BoxFit.cover,
                     imageUrl:widget.event_CoverImage??"",
-                    placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
-                    errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
+                    placeholder: (context, url) => const Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                    errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
                   ),
                 ),
               ),
@@ -121,7 +121,7 @@ class _GoogleMapLocationScreenState extends State<GoogleMapLocationScreen> {
                           SizedBox(width: 10.w,),
                           SizedBox(
                             width: 150.w,
-                            child: Text(widget.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: Color(0xffEEEEEE)),
+                            child: Text(widget.eventVenue??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: const Color(0xffEEEEEE)),
                               maxLines: 1, overflow: TextOverflow.ellipsis,),
                           ),
                         ],

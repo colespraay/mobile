@@ -222,10 +222,6 @@ class _NewEventState extends State<NewEvent> {
                 timeController.text=_timeOutput;
                 secondVal=_timeOutput;
               }
-
-              // _selectedTime = picked;
-
-
             });
 
 
@@ -234,7 +230,6 @@ class _NewEventState extends State<NewEvent> {
 
 
         height16,
-
         DummyMapSearch(venueController: venueController, query: fiveVal, textField5Focus: _textField5Focus),
 
         height16,
