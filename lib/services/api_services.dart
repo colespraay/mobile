@@ -34,8 +34,8 @@ import 'package:spraay/models/user_saved_bank_model.dart';
 import 'package:spraay/services/api_response.dart';
 class ApiServices{
 
-  // String url="https://spraay-api-577f3dc0a0fe.herokuapp.com";
-  String url="https://admin-test-app-527853a95e08.herokuapp.com";
+  String url="https://spraay-api-577f3dc0a0fe.herokuapp.com";
+  // String url="https://admin-test-app-527853a95e08.herokuapp.com";
   Future<Map<String, dynamic>> logIn(String phoneNumber, String password, String deviceId)async{
     Map<String, dynamic> result = {};
     try{
