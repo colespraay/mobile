@@ -88,4 +88,5 @@ jobs:
           packageName: com.app.spraay
           releaseFiles: ${{ env.AAB_PATH }}
           track: internal   # it can be internal or production
+          status: completed
 #          whatsNewDirectory: whatsnew/

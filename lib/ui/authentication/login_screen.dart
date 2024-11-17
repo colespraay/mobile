@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
               shrinkWrap: true,
               children: [
                 height16,
-                Text("Please Login to your\nAccount",
+                Text("Pleases Login to your\nAccount",
                     style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 48.sp, color: CustomColors.sGreyScaleColor50)),
                 height40,
 
