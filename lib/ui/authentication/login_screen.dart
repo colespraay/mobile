@@ -73,8 +73,6 @@ class _LoginScreenState extends State<LoginScreen> {
       _textField2Focus = FocusNode();
     });
 
-
-
     SecureStorage().getPassword().then((value){
       if(value.isNotEmpty){
        setState(() {password=value;});
@@ -107,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
               shrinkWrap: true,
               children: [
                 height16,
-                Text("Login to your\nAccount",
+                Text("Please Login to your\nAccount",
                     style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 48.sp, color: CustomColors.sGreyScaleColor50)),
                 height40,
 
