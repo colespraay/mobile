@@ -52,9 +52,8 @@ class _EditProfileState extends State<EditProfile> {
   }
   @override
   void initState() {
-
+    super.initState();
     setState(() {
-
       fullNameController.text=widget.dataResponse?.firstName??"";
       emailController.text=widget.dataResponse?.email??"";
       genderController.text=widget.dataResponse?.gender??"";

@@ -172,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height18,
                 GestureDetector(
                   onTap:(){
-                    Navigator.push(context, FadeRoute(page: FundWallet()));
+                    Navigator.push(context, FadeRoute(page: const FundWallet()));
                   },
                   child: Align(
                     alignment: Alignment.bottomRight,

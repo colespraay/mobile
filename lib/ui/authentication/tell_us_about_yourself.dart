@@ -104,7 +104,7 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
             Text("Step  1 of 2", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sGreyScaleColor50)),
           ],
         ),
-        Divider(color: CustomColors.sGreyScaleColor300,),
+        const Divider(color: CustomColors.sGreyScaleColor300,),
         Text("Kindly complete your information", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
         height40,
 
@@ -201,7 +201,7 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
             Text("Step  2 of 2", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sGreyScaleColor50)),
           ],
         ),
-        Divider(color: CustomColors.sGreyScaleColor300,),
+        const Divider(color: CustomColors.sGreyScaleColor300,),
         Text("Choose a Spraay tag. This allows you\nreceive money", style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 18.sp, color: CustomColors.sGreyScaleColor50)),
         height40,
 
@@ -257,7 +257,7 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
     return DropdownButtonFormField<String>(
       iconEnabledColor: CustomColors.sDisableButtonColor,
       isDense: false,
-      dropdownColor: Color(0xff212121),
+      dropdownColor: const Color(0xff212121),
       focusNode: _textField3Focus,
       items: genderlist.map((String value) {
         return DropdownMenuItem<String>(
@@ -275,13 +275,13 @@ class _TellUsAboutYourselfState extends State<TellUsAboutYourself> {
           hintText: "Gender",
           isDense: true,
           filled: true,
-        prefixIconConstraints:  BoxConstraints(minWidth: 19, minHeight: 19,),
+        prefixIconConstraints:  const BoxConstraints(minWidth: 19, minHeight: 19,),
         prefixIcon:Padding(
           padding:  EdgeInsets.only(right: 8.w, left: 10.w),
-          child: SizedBox.shrink(),
+          child: const SizedBox.shrink(),
         ),
-        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
-        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
+        enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: Colors.transparent, width: 0.1),borderRadius: BorderRadius.circular(8.r),),
+        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: CustomColors.sPrimaryColor500, width: 0.5),borderRadius: BorderRadius.circular(8.r),),
         hintStyle: CustomTextStyle.kTxtRegular.copyWith(color: CustomColors.sGreyScaleColor500, fontSize: 14.sp, fontWeight: FontWeight.w400),
 
         fillColor:_textField3Focus!.hasFocus? CustomColors.sTransparentPurplecolor : CustomColors.sDarkColor2,
