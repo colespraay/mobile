@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:spraay/env/env.dart';
 import 'package:uuid/uuid.dart';
 
 class Place {
@@ -39,8 +40,8 @@ class PlaceApiProvider {
   final sessionToken = Uuid().v4();
 
   // final apiKey = Platform.isAndroid ? androidKey : iosKey;
-  final String apiKey="AIzaSyD-wphDwAJBt5Jd87jvJUaK-0iQT9UhPt4";
 
+  final String apiKey= Env.apiKey;
   Future<List<Suggestion>> fetchSuggestions(String input, String lang) async {
     //maps.googleapis.com/maps/api/place/autocomplete/json
     final request =
