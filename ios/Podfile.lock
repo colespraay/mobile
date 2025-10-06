@@ -18,7 +18,7 @@ PODS:
     - Firebase/Crashlytics (= 10.25.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (14.9.4):
+  - firebase_messaging (15.2.6):
     - Firebase/Messaging (= 10.25.0)
     - firebase_core
     - Flutter
@@ -78,8 +78,8 @@ PODS:
     - Toast
   - geocoding_ios (1.0.5):
     - Flutter
-  - Google-Maps-iOS-Utils (5.0.0):
-    - GoogleMaps (~> 8.0)
+  - Google-Maps-iOS-Utils (6.1.0):
+    - GoogleMaps (~> 9.0)
   - google_maps_flutter_ios (0.0.1):
     - Flutter
     - Google-Maps-iOS-Utils (< 7.0, >= 5.0)
@@ -88,11 +88,9 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30911.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleMaps (8.4.0):
-    - GoogleMaps/Maps (= 8.4.0)
-  - GoogleMaps/Base (8.4.0)
-  - GoogleMaps/Maps (8.4.0):
-    - GoogleMaps/Base
+  - GoogleMaps (9.4.0):
+    - GoogleMaps/Maps (= 9.4.0)
+  - GoogleMaps/Maps (9.4.0)
   - GoogleUtilities/AppDelegateSwizzler (7.13.3):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -238,12 +236,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  contacts_service: 849e1f84281804c8bfbec1b4c3eedcb23c5d3eca
-  document_file_save_plus: 913d440d8b611ae19add4522ed578e3ed1483a2f
+  contacts_service: 7c2ed10147f55891576c6a582f431e385d8de92d
+  document_file_save_plus: 47b52a647efb29f7d431af45a856ce1a841f32fc
   Firebase: 0312a2352584f782ea56f66d91606891d4607f06
-  firebase_core: a626d00494efa398e7c54f25f1454a64c8abf197
-  firebase_crashlytics: 17e856fabec68d993662abaf2f6fe2413f0abece
-  firebase_messaging: 06391e8f35dc65a00c56580266285263d2861f10
+  firebase_core: 3b49a055ff54114cae400581c13671fe53936c36
+  firebase_crashlytics: 66f38fa4dd09ba785fb909ee14e97b02693162f4
+  firebase_messaging: f396f463c762822e847cfb4e79129e346fcc5d81
   FirebaseCore: 7ec4d0484817f12c3373955bc87762d96842d483
   FirebaseCoreExtension: 705ca5b14bf71d2564a0ddc677df1fc86ffa600f
   FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
@@ -253,31 +251,31 @@ SPEC CHECKSUMS:
   FirebaseRemoteConfigInterop: 6efda51fb5e2f15b16585197e26eaa09574e8a4d
   FirebaseSessions: dbd14adac65ce996228652c1fc3a3f576bdf3ecc
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_contacts: edb1c5ce76aa433e20e6cb14c615f4c0b66e0983
-  flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
-  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
-  flutter_udid: b2417673f287ee62817a1de3d1643f47b9f508ab
-  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
-  geocoding_ios: a389ea40f6f548de6e63006a2e31bf66ff80769a
-  Google-Maps-iOS-Utils: 66d6de12be1ce6d3742a54661e7a79cb317a9321
-  google_maps_flutter_ios: e31555a04d1986ab130f2b9f24b6cdc861acc6d3
+  flutter_contacts: 5383945387e7ca37cf963d4be57c21f2fc15ca9f
+  flutter_local_notifications: ad39620c743ea4c15127860f4b5641649a988100
+  flutter_secure_storage: 1ed9476fba7e7a782b22888f956cce43e2c62f13
+  flutter_udid: f7c3884e6ec2951efe4f9de082257fc77c4d15e9
+  fluttertoast: 76fea30fcf04176325f6864c87306927bd7d2038
+  geocoding_ios: 86f1c479822f07a2f79f7094f2b753d1e9e20215
+  Google-Maps-iOS-Utils: 0a484b05ed21d88c9f9ebbacb007956edd508a96
+  google_maps_flutter_ios: 0291eb2aa252298a769b04d075e4a9d747ff7264
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
-  GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
+  GoogleMaps: 0608099d4870cac8754bdba9b6953db543432438
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
-  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
-  local_auth_darwin: 66e40372f1c29f383a314c738c7446e2f7fdadc3
+  image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
+  local_auth_darwin: 553ce4f9b16d3fdfeafce9cf042e7c9f77c1c391
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
   SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
-  share_plus: 8875f4f2500512ea181eef553c3e27dba5135aad
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  share_plus: 011d6fb4f9d2576b83179a3a5c5e323202cdabcf
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
+  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
-  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
+  url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
 
-PODFILE CHECKSUM: bc100c76d79231c0d99df50149717f6003604fd7
+PODFILE CHECKSUM: 5e2ee2a701f5dd0b266af9a9acd0054732c6a5d5
 
 COCOAPODS: 1.16.2

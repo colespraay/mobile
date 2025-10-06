@@ -9,6 +9,7 @@ import 'package:spraay/models/image_title_models.dart';
 import 'package:spraay/ui/others/bill_payments/betting_screen/betting_screens.dart';
 import 'package:spraay/ui/others/bill_payments/cable_sub/cable_subscription.dart';
 import 'package:spraay/ui/others/bill_payments/data/data_top_up.dart';
+import 'package:spraay/ui/others/bill_payments/giftcard/giftcard.dart';
 import 'package:spraay/view_model/bill_payment_provider.dart';
 
 import '../../../navigations/scale_transition.dart';
@@ -22,28 +23,28 @@ class BillPaymentScreen extends StatefulWidget {
 }
 
 class _BillPaymentScreenState extends State<BillPaymentScreen> {
-
   @override
   void initState() {
     super.initState();
-    Provider.of<BillPaymentProvider>(context,listen: false).fetchAirtimeTopUpList();
-    Provider.of<BillPaymentProvider>(context,listen: false).fetchCableTvListList();
-    Provider.of<BillPaymentProvider>(context,listen: false).fetchEletricityProvidersApiList();
-    Provider.of<BillPaymentProvider>(context,listen: false).fetchGameProvidersApiList();
+    Provider.of<BillPaymentProvider>(context, listen: false).fetchAirtimeTopUpList();
+    Provider.of<BillPaymentProvider>(context, listen: false).fetchCableTvListList();
+    Provider.of<BillPaymentProvider>(context, listen: false).fetchEletricityProvidersApiList();
+    Provider.of<BillPaymentProvider>(context, listen: false).fetchGameProvidersApiList();
+    Provider.of<BillPaymentProvider>(context, listen: false).fetchGiftCardCountries();
+    Provider.of<BillPaymentProvider>(context, listen: false).fetchGiftCardCategories();
+    Provider.of<BillPaymentProvider>(context, listen: false).fetchGiftCardsByCountry();
   }
 
   @override
   Widget build(BuildContext context) {
-    final loader= context.watch<BillPaymentProvider>();
-    return  LoadingOverlayWidget(
+    final loader = context.watch<BillPaymentProvider>();
+    return LoadingOverlayWidget(
       loading: loader.loading,
-      child: Scaffold(
-          appBar: buildAppBar(context: context, title:"Pay Bills"),
-          body: buildInviWidget()),
+      child: Scaffold(appBar: buildAppBar(context: context, title: "Pay Bills"), body: buildInviWidget()),
     );
   }
 
-  Widget buildInviWidget(){
+  Widget buildInviWidget() {
     return Padding(
       padding: horizontalPadding,
       child: Column(
@@ -51,69 +52,99 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
         children: [
           height80,
           buildHorizontalTicket(),
-
           height34,
-
         ],
       ),
     );
   }
 
-  List<ImageTitleModel> cableList=[
+  List<ImageTitleModel> cableList = [
     ImageTitleModel(image: "airtime_topup", title: "Airtime Top-up"),
     // ImageTitleModel(image: "airtime_topup", title: "Data Top-up"),
     ImageTitleModel(image: "electricity", title: "Electricity"),
     ImageTitleModel(image: "Internet", title: "Internet"),
     ImageTitleModel(image: "tv", title: "Television"),
     ImageTitleModel(image: "game", title: "BET"),
+    ImageTitleModel(image: "gift-card", title: "Gift Card"),
   ];
   //
-  Widget buildHorizontalTicket(){
-    return   Center(
+  Widget buildHorizontalTicket() {
+    return Center(
       child: Wrap(
         alignment: WrapAlignment.start,
         runAlignment: WrapAlignment.center,
         // crossAxisAlignment: CrossAxisAlignment.start,
-        children: cableList.asMap().entries.map((e) => GestureDetector(
-          onTap:(){
-            int position = e.key;//position
+        children: cableList
+            .asMap()
+            .entries
+            .map((e) => GestureDetector(
+                  onTap: () {
+                    int position = e.key; //position
 
-            if(e.value.title=="Airtime Top-up"){
-              Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
-            }
-            else if(e.value.title=="Internet"){
-              Navigator.push(context, ScaleTransition1(page: DataTopUp(title:"Data Top-up",)));
-            }
-            else if(e.value.title=="Television"){
-              Navigator.push(context, ScaleTransition1(page: CableSubscriptionscreen(title:e.value.title,)));
-            }
-
-            else if(e.value.title=="Electricity"){
-              Navigator.push(context, ScaleTransition1(page: PayBilDetail(title:e.value.title,)));
-            }
-
-            else{
-              Navigator.push(context, ScaleTransition1(page: BettingScreen(title:e.value.title,)));
-            }
-
-          },
-          child: Container(
-            width: 105.w,
-            // height: 200.h,
-            margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SvgPicture.asset("images/${e.value.image}.svg", width: 80.w, height: 80.h,),
-                height12,
-                Text(e.value.title, style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sWhiteColor)),
-              ],
-            ),
-          ),
-        ) ).toList(),
+                    if (e.value.title == "Airtime Top-up") {
+                      Navigator.push(
+                          context,
+                          ScaleTransition1(
+                              page: PayBilDetail(
+                            title: e.value.title,
+                          )));
+                    } else if (e.value.title == "Internet") {
+                      Navigator.push(
+                          context,
+                          ScaleTransition1(
+                              page: DataTopUp(
+                            title: "Data Top-up",
+                          )));
+                    } else if (e.value.title == "Television") {
+                      Navigator.push(
+                          context,
+                          ScaleTransition1(
+                              page: CableSubscriptionscreen(
+                            title: e.value.title,
+                          )));
+                    } else if (e.value.title == "Electricity") {
+                      Navigator.push(
+                          context,
+                          ScaleTransition1(
+                              page: PayBilDetail(
+                            title: e.value.title,
+                          )));
+                    } else if (e.value.title == "Gift Card") {
+                      Navigator.push(
+                          context,
+                          ScaleTransition1(
+                              page: GiftCardPage(
+                            title: e.value.title,
+                          )));
+                    } else {
+                      Navigator.push(
+                          context,
+                          ScaleTransition1(
+                              page: BettingScreen(
+                            title: e.value.title,
+                          )));
+                    }
+                  },
+                  child: Container(
+                    width: 105.w,
+                    // height: 200.h,
+                    margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          "images/${e.value.image}.svg",
+                          width: 80.w,
+                          height: 80.h,
+                        ),
+                        height12,
+                        Text(e.value.title, style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sWhiteColor)),
+                      ],
+                    ),
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
-
-
 }

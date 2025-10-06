@@ -43,7 +43,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "com.app.spraay"
-    compileSdkVersion 35
+    compileSdkVersion 34
     ndkVersion "25.1.8937393"
 
     compileOptions {

@@ -76,11 +76,16 @@ dependencies:
   flutter_secure_storage: ^9.2.0
   flutter_rounded_date_picker: ^3.0.4
   rich_text_widget: ^0.2.7
-  firebase_core: ^2.28.0
-  firebase_messaging: ^14.7.8
+  firebase_core: ^3.4.1
+#  2.28.0 #3.4.1
+  firebase_messaging: ^15.1.1
+#  14.7.8
   flutter_local_notifications: ^17.0.0
-  firebase_crashlytics: ^3.4.9
+  firebase_crashlytics: ^3.5.7
+#  3.4.9
   socket_io_client: ^2.0.3+1
+  logger: ^2.5.0
+#  mobile_scanner: ^6.0.11
 #  animate_do: ^3.1.2
 #  flutter_media_downloader: ^0.0.1
 
@@ -98,6 +103,7 @@ dependency_overrides:
   archive: ^3.6.1
   web: ^0.5.0
   permission_handler_apple: 9.4.5
+  firebase_core: ^2.32.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

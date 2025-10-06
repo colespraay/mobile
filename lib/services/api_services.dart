@@ -3,8 +3,11 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:logger/logger.dart';
+import 'package:spraay/components/constant.dart';
 import 'package:spraay/models/airtime_topup_model.dart';
 import 'package:spraay/models/betting_plan_model.dart';
 import 'package:spraay/models/cable_tv_model.dart';
@@ -13,6 +16,7 @@ import 'package:spraay/models/current_user.dart';
 import 'package:spraay/models/data_model.dart';
 import 'package:spraay/models/events_models.dart';
 import 'package:spraay/models/game_model_data.dart';
+import 'package:spraay/models/giftcard/gc-req.dart';
 import 'package:spraay/models/graph_history_model.dart';
 import 'package:spraay/models/join_event_model.dart';
 import 'package:spraay/models/list_of_banks_model.dart';
@@ -23,14 +27,30 @@ import 'package:spraay/models/ongoing_event_model.dart';
 import 'package:spraay/models/pre_post_model.dart';
 import 'package:spraay/models/recent_recipient_models.dart';
 import 'package:spraay/models/registered_user_model.dart';
+import 'package:spraay/models/result-model.dart';
 import 'package:spraay/models/transaction_models.dart';
 import 'package:spraay/models/user_name_with_phone_contact_model.dart';
 import 'package:spraay/models/user_profile.dart';
 import 'package:spraay/models/user_saved_bank_model.dart';
 import 'package:spraay/services/api_response.dart';
+import 'package:spraay/utils/logger.dart';
+import 'package:spraay/utils/my_sharedpref.dart';
 
 class ApiServices {
-  String url = "https://spraay-api-577f3dc0a0fe.herokuapp.com";
+  final String url;
+  final http.Client _client;
+  final Logger _logger;
+
+  ApiServices({
+    this.url = baseUrl,
+    http.Client? client,
+    Logger? logger,
+  })  : _logger = logger ?? Logger(),
+        _client = client ?? HttpLogger().createLoggingClient();
+
+  // String url = "https://spraay-app-112ede567f1a.herokuapp.com";
+
+  // String url = "https://spraay-api-577f3dc0a0fe.herokuapp.com";
   // String url="https://admin-test-app-527853a95e08.herokuapp.com";
   Future<Map<String, dynamic>> logIn(String phoneNumber, String password, String deviceId) async {
     Map<String, dynamic> result = {};
@@ -38,9 +58,11 @@ class ApiServices {
       var response = await http.post(Uri.parse("$url/auth/login/phone-number"),
           body: {"phoneNumber": phoneNumber, "password": password, "deviceId": deviceId}, headers: {"Accept": "application/json"}).timeout(const Duration(seconds: 30));
       var jsonResponse = convert.jsonDecode(response.body);
+      debugPrint(jsonResponse.toString(), wrapWidth: 1024);
       if (jsonResponse["code"] == 200) {
-        var loginResponse = LogoinResponse.fromJson(jsonResponse);
+        var loginResponse = LoginResponse.fromJson(jsonResponse);
         result["id"] = loginResponse.data?.userId ?? "";
+        result['quidaxUserId'] = loginResponse.data?.user?.quidaxUserId ?? "";
         result["firstname"] = loginResponse.data?.user?.firstName ?? "";
         result["lastname"] = loginResponse.data?.user?.lastName ?? "";
         result["email"] = loginResponse.data?.user?.email ?? "";
@@ -155,16 +177,12 @@ class ApiServices {
     return result;
   }
 
-  Future<Map<String, dynamic>> verifyBvnCode(String userId, String bvn, String token) async {
+  Future<Map<String, dynamic>> verifyBvnCode(String userId, String bvn, String token, {String? selfie}) async {
     Map<String, dynamic> result = {};
     try {
-      var response = await http.patch(Uri.parse("$url/user"), body: {
-        "userId": userId,
-        "bvn": bvn,
-      }, headers: {
-        "Accept": "application/json",
-        "Authorization": "Bearer $token"
-      }).timeout(const Duration(seconds: 30));
+      // var response = await http.patch(Uri.parse("$url/user"),
+      var response = await http.post(Uri.parse("$url/user/kyc/liveness/face-match/bvn/verify"),
+          body: {"userId": userId, "bvn": bvn, 'selfie_image_url': selfie}, headers: {"Accept": "application/json", "Authorization": "Bearer $token"}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
       if (statusCode == 200 || statusCode == 201) {
         var jsonResponse = convert.jsonDecode(response.body);
@@ -1904,5 +1922,154 @@ class ApiServices {
       result['error'] = true;
     }
     return result;
+  }
+
+  Future<ApiResponse<ResModel>> getGiftCardCategories() {
+    return _client
+        .get(Uri.parse("$url/giftcard/categories/fetch-all-categories"), headers: {'accept': 'application/json', 'Authorization': 'Bearer ${MySharedPreference.getToken()}'}).then((response) {
+      if (response.statusCode == 200) {
+        final note1 = ResModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<ResModel>(data: note1);
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e) {
+      if (e.toString().contains("SocketException")) {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Error in network connection');
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
+  }
+
+  Future<ApiResponse<ResModel>> getGiftCountries() {
+    return _client.get(Uri.parse("$url/giftcard/countries"), headers: {'accept': 'application/json', 'Authorization': 'Bearer ${MySharedPreference.getToken()}'}).then((response) {
+      if (response.statusCode == 200) {
+        final note1 = ResModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<ResModel>(data: note1);
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e) {
+      if (e.toString().contains("SocketException")) {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Error in network connection');
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
+  }
+
+//
+  Future<ApiResponse<ResModel>> getCardByCountry(String country) {
+    return _client.get(Uri.parse("$url/giftcard/display-all-giftcard/all-gift-card/$country"),
+        headers: {'accept': 'application/json', 'Authorization': 'Bearer ${MySharedPreference.getToken()}'}).then((response) {
+      if (response.statusCode == 200) {
+        final note1 = ResModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<ResModel>(data: note1);
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e) {
+      if (e.toString().contains("SocketException")) {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Error in network connection');
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
+  }
+
+  Future<ApiResponse<ResModel>> getCardByCategory(String country, String category) {
+    return _client.get(Uri.parse("$url/giftcard/filter/filter-giftcard-by-category?category=$category&countryCode=$country"),
+        headers: {'accept': 'application/json', 'Authorization': 'Bearer ${MySharedPreference.getToken()}'}).then((response) {
+      if (response.statusCode == 200) {
+        final note1 = ResModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<ResModel>(data: note1);
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e) {
+      if (e.toString().contains("SocketException")) {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Error in network connection');
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
+  }
+
+  Future<ApiResponse<ResModel>> searchGiftCard(String country, String query) {
+    return _client.get(Uri.parse("$url/giftcard/search?wildcardName=$query&countryCode=$country"),
+        headers: {'accept': 'application/json', 'Authorization': 'Bearer ${MySharedPreference.getToken()}'}).then((response) {
+      if (response.statusCode == 200) {
+        final note1 = ResModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<ResModel>(data: note1);
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e) {
+      if (e.toString().contains("SocketException")) {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Error in network connection');
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
+  }
+
+  Future<ApiResponse<ResModel>> getProductById(String id) {
+    return _client.get(Uri.parse("$url/giftcard/products/$id"), headers: {'accept': 'application/json', 'Authorization': 'Bearer ${MySharedPreference.getToken()}'}).then((response) {
+      if (response.statusCode == 200) {
+        final note1 = ResModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<ResModel>(data: note1);
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e) {
+      if (e.toString().contains("SocketException")) {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Error in network connection');
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
+  }
+
+  Future<ApiResponse<ResModel>> getFxRate(String currency, num amount) {
+    return _client.get(Uri.parse("$url/giftcard/fx-rate?currencyCode=$currency&amount=$amount"),
+        headers: {'accept': 'application/json', 'Authorization': 'Bearer ${MySharedPreference.getToken()}'}).then((response) {
+      if (response.statusCode == 200) {
+        final note1 = ResModel.fromJson(jsonDecode(response.body));
+        return ApiResponse<ResModel>(data: note1);
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e) {
+      if (e.toString().contains("SocketException")) {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Error in network connection');
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
+  }
+
+  Future<ApiResponse<ResModel>> purchaseGiftCard(GiftCardReq data) {
+    final jsonBody = jsonEncode(data.toJson());
+    return _client
+        .post(Uri.parse("$url/giftcard/GiftCard-purchase"),
+            headers: {'accept': 'application/json', 'Content-Type': 'application/json', 'Authorization': 'Bearer ${MySharedPreference.getToken()}'}, body: jsonBody)
+        .then((response) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('===1');
+        final note1 = ResModel.fromJson(jsonDecode(response.body));
+        print('===2');
+        return ApiResponse<ResModel>(data: note1);
+      } else {
+        print(jsonDecode(response.body)['message']);
+        return ApiResponse<ResModel>(error: true, errorMessage: jsonDecode(response.body)['message']);
+      }
+    }).catchError((e, s) {
+      if (e.toString().contains("SocketException")) {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Error in network connection');
+      } else {
+        return ApiResponse<ResModel>(error: true, errorMessage: 'Something went wrong ${e.toString()}');
+      }
+    });
   }
 }

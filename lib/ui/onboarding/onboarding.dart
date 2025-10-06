@@ -17,21 +17,22 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-
-  PageController ?_pageController;
+  PageController? _pageController;
   int currentIndex = 0;
   static const _kDuration = Duration(milliseconds: 300);
   static const _kCurve = Curves.ease;
   onChangedFunction(int index) {
-    setState(() {currentIndex = index;});
+    setState(() {
+      currentIndex = index;
+    });
   }
-
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
   }
+
   @override
   void dispose() {
     _pageController?.dispose();
@@ -46,79 +47,99 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: Stack(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           PageView(
             controller: _pageController,
             onPageChanged: onChangedFunction,
-            children : [
+            children: [
               Stack(
                 children: [
                   Image.asset('images/onbd1.gif', width: double.infinity, height: double.infinity, fit: BoxFit.cover),
-                  Image.asset("images/bg_trans.png", width: double.infinity, height: double.infinity,
-                    fit: BoxFit.cover,),
+                  Image.asset(
+                    "images/bg_trans.png",
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ],
               ),
               Stack(
                 children: [
                   Image.asset('images/onbd.gif', width: double.infinity, height: double.infinity, fit: BoxFit.cover),
-                  Image.asset("images/bg_trans.png", width: double.infinity, height: double.infinity, fit: BoxFit.cover,),
+                  Image.asset(
+                    "images/bg_trans.png",
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ],
               ),
-
               Stack(
                 children: [
                   Image.asset('images/onbd3.gif', width: double.infinity, height: double.infinity, fit: BoxFit.cover),
-
-                  Image.asset("images/bg_trans.png", width: double.infinity, height: double.infinity, fit: BoxFit.cover,),
+                  Image.asset(
+                    "images/bg_trans.png",
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ],
               ),
-              ],
+            ],
           ),
-
-
-
           Positioned(
               top: 550.h,
               left: 0,
               right: 0,
-              child: pageIndicator()),
-
-
-          currentIndex==2? Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 40.h),
-              child: CustomButton(
+              child: Column(
+                children: [
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     Navigator.push(context, FadeRoute(page: GiftCardPage(title: "title")));
+                  //   },
+                  //   child: Icon(
+                  //     Icons.add,
+                  //     color: Colors.white,
+                  //   ),
+                  // ),
+                  pageIndicator(),
+                ],
+              )),
+          currentIndex == 2
+              ? Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 40.h),
+                    child: CustomButton(
+                        onTap: () {
+                          Navigator.push(context, FadeRoute(page: const WelcomePage()));
+                        },
+                        buttonText: 'Let’s Go!',
+                        borderRadius: 30.r,
+                        width: 380.w,
+                        buttonColor: CustomColors.sPrimaryColor500),
+                  ),
+                )
+              : GestureDetector(
                   onTap: () {
-                    Navigator.push(context, FadeRoute(page: const WelcomePage()));
-                    },
-                  buttonText: 'Let’s Go!', borderRadius: 30.r,width: 380.w,
-                  buttonColor: CustomColors.sPrimaryColor500 ),
-            ),
-          ): GestureDetector(
-            onTap:(){
-              _pageController!.nextPage( duration: _kDuration, curve: _kCurve);
-            },
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: 64.w,
-                height: 64.h,
-                margin: EdgeInsets.only(bottom: 40.h),
-                decoration:const BoxDecoration(
-                  color:CustomColors.sPrimaryColor500,
-                  shape: BoxShape.circle
-                ),
-                child: Center(child: SvgPicture.asset("images/arrow_right.svg")),
-              ),
-            ),
-          )
+                    _pageController!.nextPage(duration: _kDuration, curve: _kCurve);
+                  },
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: 64.w,
+                      height: 64.h,
+                      margin: EdgeInsets.only(bottom: 40.h),
+                      decoration: const BoxDecoration(color: CustomColors.sPrimaryColor500, shape: BoxShape.circle),
+                      child: Center(child: SvgPicture.asset("images/arrow_right.svg")),
+                    ),
+                  ),
+                )
         ],
       ),
     );
   }
 
-  Widget pageIndicator(){
+  Widget pageIndicator() {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -126,23 +147,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         children: [
           AnimatedSmoothIndicator(
               activeIndex: currentIndex,
-              count: 3,  //count: pages.length,
-              effect: ExpandingDotsEffect( dotColor: CustomColors.sDarkColor3,
-                dotHeight: 10.h, dotWidth: 10.w,
-                activeDotColor: CustomColors.sGreenColor500,)),
+              count: 3, //count: pages.length,
+              effect: ExpandingDotsEffect(
+                dotColor: CustomColors.sDarkColor3,
+                dotHeight: 10.h,
+                dotWidth: 10.w,
+                activeDotColor: CustomColors.sGreenColor500,
+              )),
           height20,
           SizedBox(
             width: 360.w,
-            child: Text(currentIndex==0? onbTitle1: currentIndex==1? onbTitle2: onbTitle3,
-            style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+            child: Text(
+              currentIndex == 0
+                  ? onbTitle1
+                  : currentIndex == 1
+                      ? onbTitle2
+                      : onbTitle3,
+              style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
           ),
           height26,
           SizedBox(
             width: 360.w,
-            child: Text(currentIndex==0? onbCont1: currentIndex==1? onbCont2: onbCont3 ,
-              style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 18.sp),textAlign: TextAlign.center,),
+            child: Text(
+              currentIndex == 0
+                  ? onbCont1
+                  : currentIndex == 1
+                      ? onbCont2
+                      : onbCont3,
+              style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 18.sp),
+              textAlign: TextAlign.center,
+            ),
           ),
-
         ],
       ),
     );
