@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:spraay/components/reusable_widget.dart';
 
 class QrCodeScanner extends StatelessWidget {
@@ -6,13 +7,14 @@ class QrCodeScanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.black, appBar: buildAppBar(context: context, title: "Scan Address"), body: Container()
-        // MobileScanner(
-        //   onDetect: (result) {
-        //     print(result.barcodes.first.rawValue);
-        //     Navigator.pop(context, result.barcodes.first.rawValue);
-        //   },
-        // )
-        );
+    return Scaffold(
+        backgroundColor: Colors.black,
+        appBar: buildAppBar(context: context, title: "Scan Address"),
+        body: MobileScanner(
+          onDetect: (result) {
+            print(result.barcodes.first.rawValue);
+            Navigator.pop(context, result.barcodes.first.rawValue);
+          },
+        ));
   }
 }

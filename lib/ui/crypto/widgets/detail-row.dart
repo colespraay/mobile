@@ -27,12 +27,18 @@ class DetailRow extends StatelessWidget {
               fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
+          SizedBox(
+            width: 16,
+          ),
+          Flexible(
+            child: Text(
+              value,
+              // maxLines: 1,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
+              ),
             ),
           ),
         ],

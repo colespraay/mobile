@@ -27,6 +27,14 @@ class BuyCryptoScreen extends StatefulWidget {
 
 class _BuyCryptoScreenState extends State<BuyCryptoScreen> with AfterLayoutMixin<BuyCryptoScreen> {
   CryptoProvider? cryptoProvider;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {
@@ -41,8 +49,16 @@ class _BuyCryptoScreenState extends State<BuyCryptoScreen> with AfterLayoutMixin
     Provider.of<CryptoProvider>(context, listen: false).getFees(context);
   }
 
+  List<Wallet> _filterAssets(List<Wallet> assets) {
+    if (_searchQuery.isEmpty) return assets;
+    return assets.where((asset) => asset.name.toString().toLowerCase().contains(_searchQuery) || (asset.currency ?? "").toLowerCase().contains(_searchQuery)).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final assetsList = cryptoProvider?.wallets ?? []; // from your global or provider
+    final filteredAssets = _filterAssets(assetsList);
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: buildAppBar(context: context, title: "Buy Asset"),
@@ -55,11 +71,12 @@ class _BuyCryptoScreenState extends State<BuyCryptoScreen> with AfterLayoutMixin
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: CustomizedTextField(
-                textEditingController: TextEditingController(),
+                textEditingController: _searchController,
                 textInputAction: TextInputAction.next,
                 hintTxt: "Search",
-                // focusNode: _textField1Focus,
-                onChanged: (value) {},
+                onChanged: (value) {
+                  setState(() => _searchQuery = value.toLowerCase());
+                },
               ),
             ),
             const SizedBox(height: 24),
@@ -70,7 +87,7 @@ class _BuyCryptoScreenState extends State<BuyCryptoScreen> with AfterLayoutMixin
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: TradeAssetList(
                         assetsList: assets,
-                        wallet: cryptoProvider?.wallets ?? [],
+                        wallet: filteredAssets, //(cryptoProvider?.wallets ?? []),
                         showAll: true,
                       ),
                     ),
@@ -127,7 +144,7 @@ class TradeAssetList extends StatelessWidget {
     } else {
       return AnimationLimiter(
         child: ListView.builder(
-            physics: NeverScrollableScrollPhysics(), // Important!
+            physics: const NeverScrollableScrollPhysics(), // Important!
             shrinkWrap: true,
             itemCount: showAll
                 ? wallet?.length

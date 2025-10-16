@@ -276,4 +276,30 @@ class CryptoServices {
     }
     return result;
   }
+
+  Future<ResModel> sendCrypto({required Map<String, dynamic> data}) async {
+    ResModel result = ResModel();
+    print(data.toString());
+    try {
+      var response = await http.post(Uri.parse("${url}crypto/send/withdraw"), headers: {"Accept": "application/json"}, body: data).timeout(const Duration(seconds: 30));
+      printWrapped(response.body);
+      var jsonResponse = convert.jsonDecode(response.body);
+      if (jsonResponse["code"] == 200) {
+        // var loginResponse = LoginResponse.fromJson(jsonResponse);
+        return ResModel(data: jsonResponse, success: true, message: "Success");
+      } else {
+        var jsonResponse = convert.jsonDecode(response.body);
+        result = ResModel(success: false, message: jsonResponse['message'], error: jsonResponse['message'], status: false);
+      }
+    } on HttpException {
+      result = ResModel(success: false, message: "Error in network connection", error: "Error in network connection", status: false);
+    } on SocketException {
+      result = ResModel(success: false, message: "Error in network connection", error: "Error in network connection", status: false);
+    } on FormatException {
+      result = ResModel(success: false, message: "invalid format", error: "invalid format", status: false);
+    } catch (e) {
+      result = ResModel(success: false, message: "Something went wrong", error: "Something went wrong", status: false);
+    }
+    return result;
+  }
 }

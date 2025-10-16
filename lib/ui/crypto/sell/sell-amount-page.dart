@@ -143,15 +143,15 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
 
                   const SizedBox(height: 8),
                   Text(
-                    'approx. ${_getUSDTAmount().toStringAsFixed(2)} USDT',
+                    'approx. ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)} ${widget.asset.currency?.toUpperCase()}',
                     style: const TextStyle(
                       color: CustomColors.semanticFGMuted,
                       fontSize: 14,
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'Wallet balance: ₦100,000',
+                  Text(
+                    'Wallet balance: ${widget.asset.currency?.toUpperCase()} ${widget.asset.numBalance.toStringAsFixed(2)}',
                     style: TextStyle(color: CustomColors.sWhiteColor, fontSize: 14, fontWeight: FontWeight.w700),
                   ),
 
@@ -165,7 +165,13 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                   const SizedBox(
                     height: 24,
                   ),
-                  buttonWidget(onDone: () => pageIndex.value = pageIndex.value + 1, isActive: hasValue),
+                  buttonWidget(
+                      onDone: () {
+                        if (cryptoProvider?.cryptoData != null) {
+                          pageIndex.value = pageIndex.value + 1;
+                        }
+                      },
+                      isActive: hasValue),
                 ],
               ),
             );
@@ -188,6 +194,7 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                           final result = await Navigator.push(context, FadeRoute(page: const QrCodeScanner()));
                           if (result != null) {
                             addressController.text = result.toString();
+                            pageIndex.value = pageIndex.value + 1;
                           }
                         },
                         child: Padding(
@@ -205,9 +212,13 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Spacer(),
+                        const Spacer(),
                         buttonWidget(
-                          onDone: () {
+                          onDone: () async {
+                            // var result = await Navigator.push(context, MaterialPageRoute(builder: (_) => QrCodeScanner()));
+                            if (addressController.text.isNotEmpty) {
+                              pageIndex.value = pageIndex.value + 1;
+                            }
                             // Navigator.push(
                             //     context,
                             //     FadeRoute(
@@ -265,21 +276,26 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                       child: Column(
                         children: [
                           DetailRow(
+                            label: 'Recipient',
+                            value: '${addressController.text}',
+                          ),
+                          DetailRow(
                             label: 'Order Quantity',
-                            value: '₦$amount USDT',
+                            value:
+                                "${widget.asset.referenceCurrency?.toUpperCase()}$displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)}${widget.asset.currency?.toUpperCase()}",
                           ),
                           DetailRow(
                             label: 'Rate',
-                            value: '1 USDT = ₦1,697.51',
+                            value: "1 ${widget.asset.currency?.toUpperCase()} = ${widget.asset.referenceCurrency?.toUpperCase()} ${cryptoProvider?.cryptoData?.ticker?.buy}",
                           ),
                           DetailRow(
                             label: 'Network Fee',
-                            value: '2 USDT = ₦3,400.00',
+                            value: cryptoProvider?.transactionFeesData?.cashWithdrawalFee ?? "",
                           ),
-                          DetailRow(
-                            label: 'Spraay Fee',
-                            value: '2 USDT = ₦3,400.00',
-                          ),
+                          // DetailRow(
+                          //   label: 'Spraay Fee',
+                          //   value: '2 USDT = ₦3,400.00',
+                          // ),
                           Container(
                             height: 1,
                             color: Colors.grey[800],
@@ -287,20 +303,25 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                           ),
                           DetailRow(
                             label: 'Total',
-                            value: '',
+                            value:
+                                '${widget.asset.referenceCurrency?.toUpperCase()} $displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)}${widget.asset.currency?.toUpperCase()} + ${cryptoProvider?.transactionFeesData?.cashWithdrawalFee ?? ""}',
                             isTotal: true,
                           ),
                           const Spacer(),
-                          buttonWidget(onDone: () {
-                            popupSuccessfulDialog(
-                                context: context,
-                                title: 'Transaction Successful',
-                                content: "Your asset purchase was successful",
-                                onTap: () => goHome(context),
-                                buttonTxt: "Okay",
-                                fromWhere: '',
-                                amount: amount.toString());
-                          }),
+                          buttonWidget(
+                            onDone: () {
+                              cryptoProvider?.sellCrypto(context, onDone: () {
+                                popupSuccessfulDialog(
+                                    context: context,
+                                    title: 'Transaction Successful',
+                                    content: "Your asset sale was successful",
+                                    onTap: () => goHome(context),
+                                    buttonTxt: "Okay",
+                                    fromWhere: '',
+                                    amount: amount.toString());
+                              }, fundId: addressController.text, amount: amount, currency: widget.asset.currency);
+                            },
+                          ),
                           const SizedBox(height: 54),
                         ],
                       ),

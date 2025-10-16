@@ -28,6 +28,7 @@ class _SellCryptoScreenState extends State<SellCryptoScreen> with AfterLayoutMix
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) {
     Provider.of<CryptoProvider>(context, listen: false).getUserWallets(context);
+    Provider.of<CryptoProvider>(context, listen: false).getFees(context);
   }
 
   @override
@@ -50,13 +51,14 @@ class _SellCryptoScreenState extends State<SellCryptoScreen> with AfterLayoutMix
           const SizedBox(height: 24),
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TradeAssetList(
                     assetsList: assets,
                     isBuy: false,
+                    showAll: true,
                     wallet: cryptoProvider?.wallets ?? [],
                   )
                 ],

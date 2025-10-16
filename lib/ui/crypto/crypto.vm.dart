@@ -204,7 +204,25 @@ class CryptoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void sellCrypto(BuildContext context, {required Function() onDone, num? amount, String? currency}) async {
+  void sellCrypto(BuildContext context, {required Function() onDone, num? amount, String? currency, String? fundId}) async {
+    setloading(true);
+    ResModel result = await cryptoServices.sendCrypto(data: {
+      "amount": amount,
+      "currency": currency,
+      "userId": MySharedPreference.getQuidaxUserId(),
+      "fund_uid": fundId,
+    });
+    if (result.success == true) {
+      onDone();
+      notifyListeners();
+      setloading(false);
+    } else {
+      setloading(false);
+      errorCherryToast(context, result.message ?? "Something went wrong");
+    }
+  }
+
+  void sendCrypto(BuildContext context, {required Function() onDone, num? amount, String? currency}) async {
     setloading(true);
     ResModel result = await cryptoServices.sellCrypto(data: {
       "amount": amount,
