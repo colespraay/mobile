@@ -26,6 +26,7 @@ class CryptoServices {
     try {
       var response = await http.get(Uri.parse("${url}crypto/$id/wallets"), headers: {"Accept": "application/json"}).timeout(const Duration(seconds: 30));
       // printWrapped(response.body);
+
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
         // var loginResponse = LoginResponse.fromJson(jsonResponse);

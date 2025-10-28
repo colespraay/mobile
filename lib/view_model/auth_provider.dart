@@ -51,6 +51,8 @@ class AuthProvider extends ChangeNotifier {
 
   fetchRegistertEndpoint(context, String password, String email, String deviceId) async {
     setloading(true);
+    await MySharedPreference.deleteAllSharedPref();
+    step = 1;
     var result = await apiResponse.register(password, email, deviceId);
     if (result['error'] == true) {
       errorCherryToast(context, result['message']);
