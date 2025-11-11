@@ -616,10 +616,14 @@ class ApiServices {
   }
 
   Future<ApiResponse<BettingPlanModel>> bettingPlanApi(String mytoken, String merchantPublicId) {
+    print('calling bettingPlanApi');
+    print('calling $merchantPublicId');
     return http.get(Uri.parse("$url/bill/merchants/betting/find-plans/$merchantPublicId"), headers: {'accept': 'application/json', 'Authorization': 'Bearer $mytoken'}).then((response) {
       if (response.statusCode == 200) {
+        print(response.body);
         // final body=json.decode(response.body);
         final note1 = BettingPlanModel.fromJson(jsonDecode(response.body));
+
         return ApiResponse<BettingPlanModel>(data: note1);
       } else {
         return ApiResponse<BettingPlanModel>(error: true, errorMessage: jsonDecode(response.body)['message']);
@@ -1787,6 +1791,56 @@ class ApiServices {
     return result;
   }
 
+  Future<Map<String, dynamic>> verifyBettingPurchaseApi(String mytoken, String provider, String betWalletId, String amount, String plan, {String? pin}) async {
+    Map<String, dynamic> result = {};
+
+    try {
+      Map dataPayload = {
+        "providerId": provider,
+        "amount": amount,
+        "bettingWalletId": betWalletId,
+        "transactionPin": pin,
+        // "merchantPlan": "string"
+      };
+
+      print(dataPayload);
+      if (plan.isNotEmpty || plan != "") {
+        dataPayload["merchantPlan"] = plan;
+      }
+
+      var response = await http.post(Uri.parse("$url/bill/fund-betting-wallet"),
+          body: jsonEncode(dataPayload), headers: {"Accept": "application/json", 'Authorization': 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
+      int statusCode = response.statusCode;
+      print(response.body);
+
+      if (statusCode == 200 || statusCode == 201) {
+        var jsonResponse = convert.jsonDecode(response.body);
+        result["message"] = jsonResponse["message"];
+        result["billerName"] = jsonResponse["data"]["billerName"];
+        result["name"] = jsonResponse["data"]["name"];
+        result['error'] = false;
+      } else {
+        var jsonResponse = convert.jsonDecode(response.body);
+        result["message"] = jsonResponse["message"];
+        result['error'] = true;
+      }
+    } on HttpException {
+      result["message"] = "Error in network connection";
+      result['error'] = true;
+    } on SocketException {
+      result["message"] = "Error in network connection";
+      result['error'] = true;
+    } on FormatException {
+      result["message"] = "invalid format";
+      result['error'] = true;
+    } catch (e) {
+      // print("object${e.toString()}");
+      result["message"] = "Something went wrong";
+      result['error'] = true;
+    }
+    return result;
+  }
+
   Future<ApiResponse<JoinEventModel>> joinEvent(String mytoken, String eventCode) {
     return http.get(Uri.parse("$url/event/by-code/$eventCode"), headers: {'accept': 'application/json', 'Authorization': 'Bearer $mytoken'}).then((response) {
       if (response.statusCode == 200) {
@@ -1828,6 +1882,7 @@ class ApiServices {
     return http.get(Uri.parse("$url/wallet/list-of-banks"), headers: {'accept': 'application/json', 'Authorization': 'Bearer $mytoken'}).then((response) {
       if (response.statusCode == 200) {
         final note1 = ListOfBankModel.fromJson(jsonDecode(response.body));
+        print(note1);
         return ApiResponse<ListOfBankModel>(data: note1);
       } else {
         return ApiResponse<ListOfBankModel>(error: true, errorMessage: jsonDecode(response.body)['message']);

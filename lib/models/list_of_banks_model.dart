@@ -22,18 +22,23 @@ class ListOfBankModel {
   });
 
   factory ListOfBankModel.fromJson(Map<String, dynamic> json) => ListOfBankModel(
-    success: json["success"],
-    code: json["code"],
-    message: json["message"],
-    data: json["data"] == null ? [] : List<DatumBankModel>.from(json["data"]!.map((x) => DatumBankModel.fromJson(x))),
-  );
+        success: json["success"],
+        code: json["code"],
+        message: json["message"],
+        data: json["data"] == null ? [] : List<DatumBankModel>.from(json["data"]!.map((x) => DatumBankModel.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "success": success,
-    "code": code,
-    "message": message,
-    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
-  };
+        "success": success,
+        "code": code,
+        "message": message,
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
+
+  @override
+  String toString() {
+    return 'ListOfBankModel{success: $success, code: $code, message: $message, data: ${data.toString()}}';
+  }
 }
 
 class DatumBankModel {
@@ -46,12 +51,17 @@ class DatumBankModel {
   });
 
   factory DatumBankModel.fromJson(Map<String, dynamic> json) => DatumBankModel(
-    bankName: json["bankName"],
-    bankCode: json["bankCode"],
-  );
+        bankName: json["bankName"],
+        bankCode: json["bankCode"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "bankName": bankName,
-    "bankCode": bankCode,
-  };
+        "bankName": bankName,
+        "bankCode": bankCode,
+      };
+
+  @override
+  String toString() {
+    return 'DatumBankModel{bankName: $bankName, bankCode: $bankCode}';
+  }
 }

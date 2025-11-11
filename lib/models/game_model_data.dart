@@ -22,18 +22,18 @@ class GameModel {
   });
 
   factory GameModel.fromJson(Map<String, dynamic> json) => GameModel(
-    success: json["success"],
-    code: json["code"],
-    message: json["message"],
-    data: json["data"] == null ? [] : List<GameDatum>.from(json["data"]!.map((x) => GameDatum.fromJson(x))),
-  );
+        success: json["success"],
+        code: json["code"],
+        message: json["message"],
+        data: json["data"] == null ? [] : List<GameDatum>.from(json["data"]!.map((x) => GameDatum.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "success": success,
-    "code": code,
-    "message": message,
-    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
-  };
+        "success": success,
+        "code": code,
+        "message": message,
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
 }
 
 class GameDatum {
@@ -48,14 +48,19 @@ class GameDatum {
   });
 
   factory GameDatum.fromJson(Map<String, dynamic> json) => GameDatum(
-    name: json["name"],
-    code: json["code"],
-    displayName: json["displayName"],
-  );
+        name: json["name"],
+        code: json["code"],
+        displayName: json["displayName"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "name": name,
-    "code": code,
-    "displayName": displayName,
-  };
+        "name": name,
+        "code": code,
+        "displayName": displayName,
+      };
+
+  @override
+  String toString() {
+    return 'GameDatum{name: $name, code: $code, displayName: $displayName}';
+  }
 }

@@ -66,6 +66,7 @@ class NumberPad extends StatelessWidget {
   Widget _buildNumberButton(String number) {
     return GestureDetector(
       onTap: () => onNumberPressed(number),
+      behavior: HitTestBehavior.opaque,
       child: Container(
         width: 80,
         height: 48,

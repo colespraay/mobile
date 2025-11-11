@@ -127,7 +127,9 @@ class CryptoProvider extends ChangeNotifier {
       setloading(false);
       wallets = [];
       result.data['data'].forEach((e) {
-        wallets.add(Wallet.fromJson(e));
+        if (e['currency'] != "ngn" && e['currency'] != "usd") {
+          wallets.add(Wallet.fromJson(e));
+        }
       });
       notifyListeners();
     } else {
@@ -207,13 +209,26 @@ class CryptoProvider extends ChangeNotifier {
   void sellCrypto(BuildContext context, {required Function() onDone, num? amount, String? currency, String? fundId}) async {
     setloading(true);
     ResModel result = await cryptoServices.sendCrypto(data: {
-      "amount": amount,
+      "amount": amount.toString(),
       "currency": currency,
       "userId": MySharedPreference.getQuidaxUserId(),
       "fund_uid": fundId,
     });
     if (result.success == true) {
       onDone();
+      notifyListeners();
+      setloading(false);
+    } else {
+      setloading(false);
+      errorCherryToast(context, result.message ?? "Something went wrong");
+    }
+  }
+
+  List<dynamic> transactions = [];
+  void getTransactions(BuildContext context, String currency) async {
+    setloading(true);
+    ResModel result = await cryptoServices.getTransaction(currency);
+    if (result.success == true) {
       notifyListeners();
       setloading(false);
     } else {
@@ -323,11 +338,19 @@ class CryptoProvider extends ChangeNotifier {
   }
 
   List<CAsset> convertWalletsToCAssets(List<Wallet>? wallets) {
+    List<String> swapAssets = ['usdt', 'btc', 'eth', 'ltc', 'bch'];
     if (wallets == null || wallets.isEmpty) {
       return [];
     }
+    // Usdt
+    // Bitcoin
+    // Eth
+    // Litecoin
+    // Bitcoin cash
 
-    return wallets.map((item) {
+    //swapAssets.contains(item.currency)
+
+    return wallets.where((e) => swapAssets.contains(e.currency?.toLowerCase())).map((item) {
       return CAsset(
         name: item.name,
         nairaPrice: item.balance,

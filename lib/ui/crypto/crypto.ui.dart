@@ -17,6 +17,7 @@ import 'package:spraay/ui/crypto/crypto.vm.dart';
 import 'package:spraay/ui/crypto/receive/receive.ui.dart';
 import 'package:spraay/ui/crypto/sell/sell.ui.dart';
 import 'package:spraay/ui/crypto/swap/swap.ui.dart';
+import 'package:spraay/ui/crypto/widgets/my-assets-page.dart';
 import 'package:spraay/ui/home/fund_wallet.dart';
 import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/profile/user_profile/edit_profile.dart';
@@ -224,6 +225,10 @@ class _CryptoPageState extends State<CryptoPage> with AfterLayoutMixin<CryptoPag
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("My Assets", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700)),
+            GestureDetector(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MyAssetsScreen())),
+                behavior: HitTestBehavior.opaque,
+                child: Text("View All", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w700))),
           ],
         ),
         height16,
@@ -231,7 +236,7 @@ class _CryptoPageState extends State<CryptoPage> with AfterLayoutMixin<CryptoPag
             child: (cryptoProvider?.loading ?? false)
                 ? const ShimmerList()
                 : AssetsList(
-                    assetsList: assets,
+                    // assetsList: assets,
                     wallets: cryptoProvider?.wallets ?? [],
                   ))
       ],
@@ -283,8 +288,8 @@ class _CryptoPageState extends State<CryptoPage> with AfterLayoutMixin<CryptoPag
                         child: Padding(
                             padding: horizontalPadding,
                             child: AssetsList(
-                              assetsList: assets,
-                            )),
+                                // assetsList: [assets],
+                                )),
                       ),
                     ]);
                   });
@@ -349,9 +354,14 @@ List<CAsset> assets = [
 ];
 
 class AssetsList extends StatelessWidget {
-  List<CAsset>? assetsList;
+  // List<CAsset>? assetsList;
+  final bool isPreview;
   List<Wallet> wallets;
-  AssetsList({super.key, required this.assetsList, this.wallets = const []});
+  AssetsList(
+      {super.key,
+      // required this.assetsList,
+      this.wallets = const [],
+      this.isPreview = false});
 
   @override
   Widget build(BuildContext context) {
@@ -377,7 +387,11 @@ class AssetsList extends StatelessWidget {
       return AnimationLimiter(
         child: ListView.builder(
             shrinkWrap: true,
-            itemCount: wallets.length < 5 ? wallets.length : 5,
+            itemCount: isPreview
+                ? wallets.length < 5
+                    ? wallets.length
+                    : 5
+                : wallets.length,
             itemBuilder: (context, int position) {
               return SlideListAnimationWidget(
                 position: position,

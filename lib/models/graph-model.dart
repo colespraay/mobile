@@ -20,6 +20,7 @@ class PriceData {
     required this.close,
     required this.volume,
   });
+  double get actualPrice => (open + high + low + close) / 4;
 
   factory PriceData.fromJson(Map<String, dynamic> json) {
     return PriceData(
@@ -32,6 +33,17 @@ class PriceData {
       volume: (json['volume'] as num).toDouble(),
     );
   }
+}
+
+extension PriceDataListExtension on List<PriceData> {
+  /// Returns the most recent [PriceData] item based on timestamp or date.
+  PriceData? get latestData {
+    if (isEmpty) return null;
+    return reduce((a, b) => a.timestamp > b.timestamp ? a : b);
+  }
+
+  /// Returns the actual price of the most recent [PriceData].
+  double? get latestPrice => latestData?.actualPrice;
 }
 
 // Generic Chart Data Handler

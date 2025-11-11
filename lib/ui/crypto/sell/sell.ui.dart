@@ -35,7 +35,7 @@ class _SellCryptoScreenState extends State<SellCryptoScreen> with AfterLayoutMix
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: buildAppBar(context: context, title: "Sell Asset"),
+      appBar: buildAppBar(context: context, title: "Send Asset"),
       body: Column(
         children: [
           Padding(

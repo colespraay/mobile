@@ -383,7 +383,7 @@ class _SwapAssetScreenState extends State<SwapAssetScreen> with AfterLayoutMixin
                                                     ),
                                                   ),
                                                   Text(
-                                                    '${fromAsset?.sub?.toUpperCase()} ${fromAsset?.nairaPrice}',
+                                                    '${(fromAsset?.sub ?? "").toUpperCase()} ${(fromAsset?.nairaPrice ?? "")}',
                                                     style: const TextStyle(
                                                       color: CustomColors.sWhiteColor,
                                                       fontSize: 14,
@@ -463,7 +463,7 @@ class _SwapAssetScreenState extends State<SwapAssetScreen> with AfterLayoutMixin
                                                     ),
                                                   ),
                                                   Text(
-                                                    '${toAsset?.sub?.toUpperCase()} ${toAsset?.nairaPrice}',
+                                                    '${(toAsset?.sub ?? "").toUpperCase()} ${(toAsset?.nairaPrice ?? "")}',
                                                     style: const TextStyle(
                                                       color: CustomColors.sWhiteColor,
                                                       fontSize: 14,

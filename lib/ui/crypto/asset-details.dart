@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/models/graph-model.dart';
 import 'package:spraay/models/loading-states.dart';
 import 'package:spraay/models/wallets-response.dart';
 import 'package:spraay/navigations/fade_route.dart';
@@ -16,6 +17,7 @@ import 'package:spraay/ui/crypto/sell/sell-amount-page.dart';
 import 'package:spraay/ui/crypto/widgets/asset-header.dart';
 import 'package:spraay/ui/crypto/widgets/graph.dart';
 import 'package:spraay/utils/after-layout.dart';
+import 'package:spraay/utils/string-utils.dart';
 
 class CryptoWalletApp extends StatefulWidget {
   final CAsset asset;
@@ -290,8 +292,10 @@ class _AssetDetailsState extends State<AssetDetails> with AfterLayoutMixin<Asset
                   // Tether Price Section
                   AssetHeader(title: widget.asset.name, icon: widget.asset.imageUrl, subTitle: widget.asset.currency),
                   const SizedBox(height: 16),
-                  Text('₦${widget.asset.balance}', style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold)),
-                  Text('63.62 ${(widget.asset.currency ?? "").toUpperCase()}', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
+                  if (cryptoProvider?.assetGraphs.length != 0)
+                    Text('₦${(cryptoProvider?.assetGraphs.latestData?.actualPrice).toString().formatAsAmountWithDecimals()}',
+                        style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold)),
+                  Text("${(widget.asset.currency ?? "").toUpperCase()}\$${widget.asset.convertedBalance}", style: TextStyle(color: Colors.grey[400], fontSize: 14)),
                   const SizedBox(height: 32),
 
                   // Chart
@@ -335,7 +339,7 @@ class _AssetDetailsState extends State<AssetDetails> with AfterLayoutMixin<Asset
                   Text('Your balance', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
                   const SizedBox(height: 4),
                   Text('₦${widget.asset.balance}', style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
-                  Text((widget.asset.currency ?? "").toUpperCase(), style: TextStyle(color: Colors.grey[400], fontSize: 14)),
+                  Text("${(widget.asset.currency ?? " ").toUpperCase()} ${widget.asset.convertedBalance}", style: TextStyle(color: Colors.grey[400], fontSize: 14)),
                   const SizedBox(height: 32),
 
                   // Action Buttons

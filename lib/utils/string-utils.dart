@@ -67,3 +67,30 @@ String formatMoney(
 
   return '$sign$symbol $integerPart$decimalPart';
 }
+
+extension StringFormatExtens on String? {
+  /// Formats the string with commas as an amount
+  String formatAsAmountWithDecimals() {
+    if (this == null || this!.isEmpty) {
+      return "0.00";
+    }
+
+    try {
+      // Remove any existing commas and parse the number
+      final number = double.parse(this!.replaceAll(',', ''));
+      // Format the number with commas and two decimal places
+      final formatted = number.toStringAsFixed(2).replaceAllMapped(
+            RegExp(r'\B(?=(\d{3})+(?!\d))'),
+            (match) => ',',
+          );
+      return formatted;
+    } catch (e) {
+      // If parsing fails, return the original string
+      return this!;
+    }
+  }
+
+  // String formatDate() => DateFormat('dd/MM/yyyy').format(DateTime.parse(this!
+  //   // "2024-10-17T14:23:22.956Z"
+  // ));
+}

@@ -10,6 +10,7 @@ import 'package:spraay/models/game_model_data.dart';
 import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/services/api_services.dart';
 import 'package:spraay/ui/others/bill_payments/pin_for_bill_payment.dart';
+import 'package:spraay/ui/others/pin-sheet.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/bill_payment_provider.dart';
 
@@ -50,10 +51,11 @@ class _BettingScreenState extends State<BettingScreen> {
     super.dispose();
   }
 
-  fetchCheckbalanceBeforeWithdrawingApiPinApi(BuildContext context, String amount) async {
+  fetchCheckbalanceBeforeWithdrawingApiPinApi(BuildContext context, String amount, {String? pin}) async {
     setState(() {
       _isLoading = true;
     });
+
     var result = await ApiServices().checkbalanceBeforeWithdrawingApi(MySharedPreference.getToken(), amount.replaceAll(",", ""));
     if (result['error'] == true) {
       popupDialog(
@@ -70,7 +72,56 @@ class _BettingScreenState extends State<BettingScreen> {
       //       buttonTxt: 'Try again', onTap: () {Navigator.pop(context);}, png_img: 'Incorrect_sign');
       // }
     } else {
-      fetchverifyElectricityUnitPurchaseApi(context, providerGameIdCode, phoneController.text, amount, shortCodeBetin);
+      await verifyBettingPurchase(context, providerGameIdCode, phoneController.text, amount, shortCodeBetin, pin: pin);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  verifyBettingPurchase(BuildContext context, String provider, String meterNumber, String amount, String plan, {String? pin}) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    var result = await ApiServices().verifyBettingPurchaseApi(MySharedPreference.getToken(), provider, meterNumber, amount, plan, pin: pin);
+    print(result.toString());
+    if (result['error'] == true) {
+      popupDialog(
+          context: context,
+          title: "Transaction Failed",
+          content: result['message'],
+          buttonTxt: 'Try again',
+          onTap: () {
+            Navigator.pop(context);
+          },
+          png_img: 'Incorrect_sign');
+      // if(context.mounted){
+      //   popupDialog(context: context, title: "Transaction Failed", content:result['message'],
+      //       buttonTxt: 'Try again', onTap: () {Navigator.pop(context);}, png_img: 'Incorrect_sign');
+      // }
+    } else {
+      Navigator.push(
+          context,
+          SlideLeftRoute(
+              page: PinForBillPayment(
+            title: widget.title,
+            image: imageAirtime,
+            amount: amount,
+            provider: imageAirtime.replaceAll("_", "").toUpperCase(),
+            phoneController: phoneController.text,
+            providerGameIdCode: provider,
+            billerName: result["billerName"],
+            plan: plan,
+            electricUserName: result["name"],
+          )));
+      // if(context.mounted){
+      //   //call API
+      //   Navigator.push(context, SlideLeftRoute(page: PinForBillPayment(title: widget.title, image: imageAirtime, amount: amount,
+      //     provider: imageAirtime.replaceAll("_", "").toUpperCase(), phoneController: phoneController.text,providerGameIdCode: provider,billerName: result["billerName"],plan: plan,
+      //     electricUserName: result["name"],)));
+      // }
     }
 
     setState(() {
@@ -149,7 +200,7 @@ class _BettingScreenState extends State<BettingScreen> {
                   keyboardType: TextInputType.phone,
                   maxLength: 11,
                   textInputAction: TextInputAction.next,
-                  hintTxt: "Meter Number",
+                  hintTxt: "User ID",
                   focusNode: _textField1Focus,
                   inputFormat: [FilteringTextInputFormatter.digitsOnly],
                   onChanged: (value) {
@@ -178,9 +229,20 @@ class _BettingScreenState extends State<BettingScreen> {
                 height40,
                 Center(
                   child: CustomButton(
-                      onTap: () {
+                      onTap: () async {
                         if (firstBtn.isNotEmpty && secondBtn.isNotEmpty) {
-                          fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text);
+                          final pin = await showPinForBillPaymentSheet(
+                            context: context,
+                            onPinChanged: (pinValue) {
+                              // print("User typing PIN: $pinValue");
+                            },
+                          );
+
+                          if (pin != null) {
+                            print("Final confirmed PIN: $pin");
+                            fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text, pin: pin);
+                          }
+                          // fetchCheckbalanceBeforeWithdrawingApiPinApi(context, amtController.text);
 
                           // if(shortCodeBetin.isEmpty){
                           //   cherryToastInfo(context, "Info!", "Select betting plan");
@@ -224,6 +286,7 @@ class _BettingScreenState extends State<BettingScreen> {
           );
         }).toList(),
         onChanged: (GameDatum? newValue) {
+          print(newValue.toString());
           setState(() {
             // airtimePosition = 0;//position
             imageAirtime = "game";

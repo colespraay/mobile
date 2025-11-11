@@ -117,6 +117,23 @@ class Wallet {
         'destination_tag': destinationTag,
         'image_url': imageUrl,
       };
+
+  Network? get defaultNetworkObject {
+    if (networks == null || defaultNetwork == null) return null;
+    try {
+      return networks!.firstWhere(
+        (network) => network.id?.toLowerCase() == defaultNetwork?.toLowerCase(),
+        orElse: () => Network(id: defaultNetwork, name: defaultNetwork?.toUpperCase() ?? ''),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  String toString() {
+    return 'Wallet{id: $id, name: $name, currency: $currency, balance: $balance, locked: $locked, staked: $staked, user: ${user.toString()}, convertedBalance: $convertedBalance, referenceCurrency: $referenceCurrency, isCrypto: $isCrypto, createdAt: $createdAt, updatedAt: $updatedAt, blockchainEnabled: $blockchainEnabled, defaultNetwork: $defaultNetwork, networks: ${networks.toString()}, depositAddress: $depositAddress, destinationTag: $destinationTag, imageUrl: $imageUrl}';
+  }
 }
 
 // User model
@@ -166,6 +183,11 @@ class User {
         'created_at': createdAt,
         'updated_at': updatedAt,
       };
+
+  @override
+  String toString() {
+    return 'User{id: $id, sn: $sn, email: $email, reference: $reference, firstName: $firstName, lastName: $lastName, displayName: $displayName, createdAt: $createdAt, updatedAt: $updatedAt}';
+  }
 }
 
 // Network model
@@ -195,6 +217,11 @@ class Network {
         'deposits_enabled': depositsEnabled,
         'withdraws_enabled': withdrawsEnabled,
       };
+
+  @override
+  String toString() {
+    return 'Network{id: $id, name: $name, depositsEnabled: $depositsEnabled, withdrawsEnabled: $withdrawsEnabled}';
+  }
 }
 
 class MarketData {

@@ -7,6 +7,7 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/models/result-model.dart';
 import 'package:spraay/utils/logger.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/utils/uri-utils.dart';
 
 class CryptoServices {
   final String url;
@@ -108,6 +109,42 @@ class CryptoServices {
     try {
       var response = await http.get(
         Uri.parse("${url}crypto/transaction-fees/get-all-transaction-fees"),
+        headers: {"Accept": "application/json"},
+      ).timeout(const Duration(seconds: 30));
+      printWrapped(response.body);
+      var jsonResponse = convert.jsonDecode(response.body);
+      if (jsonResponse["code"] == 200) {
+        return ResModel(data: jsonResponse, success: true, message: "Success");
+      } else {
+        var jsonResponse = convert.jsonDecode(response.body);
+        result = ResModel(success: false, message: jsonResponse['message'], error: jsonResponse['message'], status: false);
+      }
+    } on HttpException {
+      result = ResModel(success: false, message: "Error in network connection", error: "Error in network connection", status: false);
+    } on SocketException {
+      result = ResModel(success: false, message: "Error in network connection", error: "Error in network connection", status: false);
+    } on FormatException {
+      result = ResModel(success: false, message: "invalid format", error: "invalid format", status: false);
+    } catch (e) {
+      result = ResModel(success: false, message: "Something went wrong", error: "Something went wrong", status: false);
+    }
+    return result;
+  }
+
+  Future<ResModel> getTransaction(String currency) async {
+    ResModel result = ResModel();
+    var id = MySharedPreference.getUId();
+    try {
+      final uri = buildUri(
+        url,
+        "crypto/user/transactions",
+        {
+          "currency": currency,
+          "userId": id,
+        },
+      );
+      var response = await http.get(
+        uri,
         headers: {"Accept": "application/json"},
       ).timeout(const Duration(seconds: 30));
       printWrapped(response.body);
@@ -282,6 +319,7 @@ class CryptoServices {
     ResModel result = ResModel();
     print(data.toString());
     try {
+      print('hi');
       var response = await http.post(Uri.parse("${url}crypto/send/withdraw"), headers: {"Accept": "application/json"}, body: data).timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
@@ -299,6 +337,7 @@ class CryptoServices {
     } on FormatException {
       result = ResModel(success: false, message: "invalid format", error: "invalid format", status: false);
     } catch (e) {
+      print(e.toString());
       result = ResModel(success: false, message: "Something went wrong", error: "Something went wrong", status: false);
     }
     return result;

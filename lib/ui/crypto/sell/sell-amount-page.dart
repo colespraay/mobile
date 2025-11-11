@@ -1,19 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:spraay/components/constant.dart';
+import 'package:spraay/components/custom-dropdown.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/wallets-response.dart';
-import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/crypto/crypto.vm.dart';
 import 'package:spraay/ui/crypto/widgets/asset-header.dart';
 import 'package:spraay/ui/crypto/widgets/detail-row.dart';
 import 'package:spraay/ui/crypto/widgets/misc.dart';
 import 'package:spraay/ui/crypto/widgets/number-pad.dart';
-import 'package:spraay/ui/crypto/widgets/qr-scanner.dart';
 import 'package:spraay/utils/after-layout.dart';
+import 'package:spraay/view_model/bill_payment_provider.dart';
 
 // Buy Asset Screen
 class SellAssetScreen extends StatefulWidget {
@@ -94,246 +96,302 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: pageIndex,
-      builder: (context, page, _) => Builder(builder: (context) {
-        switch (page) {
-          case 0:
-            return Scaffold(
-              appBar: buildAppBar(context: context, title: "Sell Asset"),
-              backgroundColor: Colors.black,
-              body: Column(
-                children: [
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Center(
-                    child: AssetHeader(
-                      title: widget.asset.name,
-                      icon: "${widget.asset.imageUrl}",
-                      subTitle: widget.asset.currency,
-                      small: true,
+    return LoadingOverlayWidget(
+      loading: cryptoProvider?.loading ?? false,
+      child: ValueListenableBuilder(
+        valueListenable: pageIndex,
+        builder: (context, page, _) => Builder(builder: (context) {
+          switch (page) {
+            case 0:
+              return Scaffold(
+                appBar: buildAppBar(context: context, title: "Send Asset"),
+                backgroundColor: Colors.black,
+                body: Column(
+                  children: [
+                    const SizedBox(
+                      height: 24,
                     ),
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  // Amount Display
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '₦',
-                        style: TextStyle(
-                          color: CustomColors.sWhiteColor,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                        ),
+                    Center(
+                      child: AssetHeader(
+                        title: widget.asset.name,
+                        icon: "${widget.asset.imageUrl}",
+                        subTitle: widget.asset.currency,
+                        small: true,
                       ),
-                      Text(
-                        '$displayAmount',
-                        style: TextStyle(
-                          color: CustomColors.sWhiteColor,
-                          fontSize: 48,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 8),
-                  Text(
-                    'approx. ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)} ${widget.asset.currency?.toUpperCase()}',
-                    style: const TextStyle(
-                      color: CustomColors.semanticFGMuted,
-                      fontSize: 14,
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Wallet balance: ${widget.asset.currency?.toUpperCase()} ${widget.asset.numBalance.toStringAsFixed(2)}',
-                    style: TextStyle(color: CustomColors.sWhiteColor, fontSize: 14, fontWeight: FontWeight.w700),
-                  ),
 
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 28),
 
-                  // Number Pad
-                  NumberPad(
-                    onNumberPressed: _onNumberPressed,
-                    onBackspace: _onBackspace,
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  buttonWidget(
-                      onDone: () {
-                        if (cryptoProvider?.cryptoData != null) {
-                          pageIndex.value = pageIndex.value + 1;
-                        }
-                      },
-                      isActive: hasValue),
-                ],
-              ),
-            );
-          case 1:
-            return Scaffold(
-              backgroundColor: Colors.black,
-              appBar: buildAppBar(context: context, title: "Choose Recipient"),
-              body: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: CustomizedTextField(
-                      textEditingController: addressController,
-                      textInputAction: TextInputAction.next,
-                      hintTxt: "Search",
-                      // focusNode: _textField1Focus,
-                      onChanged: (value) {},
-                      surffixWidget: GestureDetector(
-                        onTap: () async {
-                          final result = await Navigator.push(context, FadeRoute(page: const QrCodeScanner()));
-                          if (result != null) {
-                            addressController.text = result.toString();
+                    // Amount Display
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          '₦',
+                          style: TextStyle(
+                            color: CustomColors.sWhiteColor,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          '$displayAmount',
+                          style: const TextStyle(
+                            color: CustomColors.sWhiteColor,
+                            fontSize: 48,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+                    Text(
+                      'approx. ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)} ${widget.asset.currency?.toUpperCase()}',
+                      style: const TextStyle(
+                        color: CustomColors.semanticFGMuted,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Wallet balance: ${widget.asset.currency?.toUpperCase()} ${widget.asset.numBalance.toStringAsFixed(2)}',
+                      style: const TextStyle(color: CustomColors.sWhiteColor, fontSize: 14, fontWeight: FontWeight.w700),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Number Pad
+                    NumberPad(
+                      onNumberPressed: _onNumberPressed,
+                      onBackspace: _onBackspace,
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    buttonWidget(
+                        onDone: () {
+                          if (cryptoProvider?.cryptoData != null) {
                             pageIndex.value = pageIndex.value + 1;
                           }
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 16.0, top: 8, bottom: 8),
-                          child: SvgPicture.asset(
-                            'images/qr-flat.svg',
-                            color: Colors.white,
-                          ),
-                        ),
+                        isActive: hasValue),
+                  ],
+                ),
+              );
+            case 1:
+              return Scaffold(
+                backgroundColor: Colors.black,
+                appBar: buildAppBar(context: context, title: "Choose Recipient"),
+                body: Column(
+                  children: [
+                    height16,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Consumer<BillPaymentProvider>(
+                        builder: (context, dataProvider, _) {
+                          return GenericDropdown<String>(
+                            items: const ["String", "Object"],
+                            hintText: "Choose Betting Platform",
+                            displayText: (item) => item ?? "",
+                            onSelected: (selected) {
+                              //   final provider = Provider.of<BillPaymentProvider>(context, listen: false);
+                              //   provider.fetchBettingPlanApiList(selected ?? "");
+                            },
+                          );
+                        },
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Spacer(),
-                        buttonWidget(
-                          onDone: () async {
-                            // var result = await Navigator.push(context, MaterialPageRoute(builder: (_) => QrCodeScanner()));
-                            if (addressController.text.isNotEmpty) {
-                              pageIndex.value = pageIndex.value + 1;
-                            }
-                            // Navigator.push(
-                            //     context,
-                            //     FadeRoute(
-                            //       page: ReviewScreen(
-                            //         asset: widget.asset,
-                            //         amount: displayAmount,
-                            //       ),
-                            //     ));
-                          },
-                        ),
-                        SizedBox(
-                          height: 32,
-                        )
-                      ],
+                    height16,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: CustomizedTextField(
+                        textEditingController: addressController,
+                        textInputAction: TextInputAction.next,
+                        hintTxt: "Enter Address",
+                        // focusNode: _textField1Focus,
+                        onChanged: (value) {},
+                        // surffixWidget: GestureDetector(
+                        //   onTap: () async {
+                        //     showScannerSheet(context, controller: addressController, onDone: () {
+                        //       pageIndex.value = pageIndex.value + 1;
+                        //     });
+                        //     // final result = await Navigator.push(context, FadeRoute(page: const QrCodeScanner()));
+                        //     // if (result != null) {
+                        //     //   addressController.text = result.toString();
+                        //     //   pageIndex.value = pageIndex.value + 1;
+                        //     // }
+                        //   },
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.only(right: 16.0, top: 8, bottom: 8),
+                        //     child: SvgPicture.asset(
+                        //       'images/qr-flat.svg',
+                        //       color: Colors.white,
+                        //     ),
+                        //   ),
+                        // ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          case 2:
-            return Scaffold(
-              appBar: buildAppBar(context: context, title: "Review"),
-              backgroundColor: Colors.black,
-              body: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  Text(
-                    'You are about to sell',
-                    style: TextStyle(
-                      color: Colors.grey[400],
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    '₦$amount',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: AssetHeader(
-                      title: widget.asset.name ?? "",
-                      icon: "${widget.asset.imageUrl}",
-                      small: true,
-                    ),
-                  ),
-                  const SizedBox(height: 60),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
                         children: [
-                          DetailRow(
-                            label: 'Recipient',
-                            value: '${addressController.text}',
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              icon: const Icon(Icons.content_paste),
+                              label: const Text('Paste'),
+                              onPressed: () async {
+                                final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
+                                if (clipboardData?.text != null) {
+                                  addressController.text = clipboardData!.text!;
+                                }
+                              },
+                            ),
                           ),
-                          DetailRow(
-                            label: 'Order Quantity',
-                            value:
-                                "${widget.asset.referenceCurrency?.toUpperCase()}$displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)}${widget.asset.currency?.toUpperCase()}",
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: const Icon(Icons.qr_code_scanner),
+                              label: const Text('Scan'),
+                              onPressed: () {
+                                showScannerSheet(context, controller: addressController, onDone: () {
+                                  pageIndex.value = pageIndex.value + 1;
+                                });
+                              },
+                            ),
                           ),
-                          DetailRow(
-                            label: 'Rate',
-                            value: "1 ${widget.asset.currency?.toUpperCase()} = ${widget.asset.referenceCurrency?.toUpperCase()} ${cryptoProvider?.cryptoData?.ticker?.buy}",
-                          ),
-                          DetailRow(
-                            label: 'Network Fee',
-                            value: cryptoProvider?.transactionFeesData?.cashWithdrawalFee ?? "",
-                          ),
-                          // DetailRow(
-                          //   label: 'Spraay Fee',
-                          //   value: '2 USDT = ₦3,400.00',
-                          // ),
-                          Container(
-                            height: 1,
-                            color: Colors.grey[800],
-                            margin: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          DetailRow(
-                            label: 'Total',
-                            value:
-                                '${widget.asset.referenceCurrency?.toUpperCase()} $displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)}${widget.asset.currency?.toUpperCase()} + ${cryptoProvider?.transactionFeesData?.cashWithdrawalFee ?? ""}',
-                            isTotal: true,
-                          ),
-                          const Spacer(),
-                          buttonWidget(
-                            onDone: () {
-                              cryptoProvider?.sellCrypto(context, onDone: () {
-                                popupSuccessfulDialog(
-                                    context: context,
-                                    title: 'Transaction Successful',
-                                    content: "Your asset sale was successful",
-                                    onTap: () => goHome(context),
-                                    buttonTxt: "Okay",
-                                    fromWhere: '',
-                                    amount: amount.toString());
-                              }, fundId: addressController.text, amount: amount, currency: widget.asset.currency);
-                            },
-                          ),
-                          const SizedBox(height: 54),
                         ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          default:
-            return const SizedBox.shrink();
-        }
-      }),
+                    const SizedBox(height: 24),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Spacer(),
+                          buttonWidget(
+                            onDone: () async {
+                              // var result = await Navigator.push(context, MaterialPageRoute(builder: (_) => QrCodeScanner()));
+                              if (addressController.text.isNotEmpty) {
+                                pageIndex.value = pageIndex.value + 1;
+                              }
+                              // Navigator.push(
+                              //     context,
+                              //     FadeRoute(
+                              //       page: ReviewScreen(
+                              //         asset: widget.asset,
+                              //         amount: displayAmount,
+                              //       ),
+                              //     ));
+                            },
+                          ),
+                          const SizedBox(
+                            height: 32,
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            case 2:
+              return Scaffold(
+                appBar: buildAppBar(context: context, title: "Review"),
+                backgroundColor: Colors.black,
+                body: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    Text(
+                      'You are about to sell',
+                      style: TextStyle(
+                        color: Colors.grey[400],
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      '₦$amount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: AssetHeader(
+                        title: widget.asset.name ?? "",
+                        icon: "${widget.asset.imageUrl}",
+                        small: true,
+                      ),
+                    ),
+                    const SizedBox(height: 60),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          children: [
+                            DetailRow(
+                              label: 'Recipient',
+                              value: '${addressController.text}',
+                            ),
+                            DetailRow(
+                              label: 'Order Quantity',
+                              value:
+                                  "${widget.asset.referenceCurrency?.toUpperCase()}$displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)}${widget.asset.currency?.toUpperCase()}",
+                            ),
+                            DetailRow(
+                              label: 'Rate',
+                              value: "1 ${widget.asset.currency?.toUpperCase()} = ${widget.asset.referenceCurrency?.toUpperCase()} ${cryptoProvider?.cryptoData?.ticker?.buy}",
+                            ),
+                            DetailRow(
+                              label: 'Network Fee',
+                              value: cryptoProvider?.transactionFeesData?.cashWithdrawalFee ?? "",
+                            ),
+                            // DetailRow(
+                            //   label: 'Spraay Fee',
+                            //   value: '2 USDT = ₦3,400.00',
+                            // ),
+                            Container(
+                              height: 1,
+                              color: Colors.grey[800],
+                              margin: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            DetailRow(
+                              label: 'Total',
+                              value:
+                                  '${widget.asset.referenceCurrency?.toUpperCase()} $displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)}${widget.asset.currency?.toUpperCase()} + ${cryptoProvider?.transactionFeesData?.cashWithdrawalFee ?? ""}',
+                              isTotal: true,
+                            ),
+                            const Spacer(),
+                            buttonWidget(
+                              onDone: () {
+                                cryptoProvider?.sellCrypto(context, onDone: () {
+                                  popupSuccessfulDialog(
+                                      context: context,
+                                      title: 'Transaction Successful',
+                                      content: "Your asset sale was successful",
+                                      onTap: () => goHome(context),
+                                      buttonTxt: "Okay",
+                                      fromWhere: '',
+                                      amount: amount.toString());
+                                }, fundId: addressController.text, amount: amount, currency: widget.asset.currency);
+                              },
+                            ),
+                            const SizedBox(height: 54),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            default:
+              return const SizedBox.shrink();
+          }
+        }),
+      ),
     );
   }
 }
@@ -450,4 +508,75 @@ class ReviewScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+void showScannerSheet(BuildContext context, {TextEditingController? controller, Function()? onDone}) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.black,
+    isScrollControlled: true,
+    builder: (context) => SizedBox(
+      height: MediaQuery.of(context).size.height * 0.85,
+      child: Stack(
+        children: [
+          MobileScanner(
+            onDetect: (result) {
+              final scannedValue = result.barcodes.first.rawValue;
+              if (scannedValue != null) {
+                Navigator.pop(context); // Close sheet
+                controller?.text = scannedValue;
+                if (onDone != null) {
+                  onDone();
+                }
+                // pageIndex.value = pageIndex.value + 1;
+              }
+            },
+          ),
+
+          // Close button
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                    ),
+                    const Spacer(),
+                    const Text(
+                      'Scan QR Code',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    const SizedBox(width: 48),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Frame guide
+          Center(
+            child: Container(
+              width: 250,
+              height: 250,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.white, width: 2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
