@@ -12,7 +12,7 @@ class CurrentUserModel {
   bool? success;
   String? message;
   int? code;
-  List<DatumCurrentUser>? data;
+  List<UserEventModel>? data;
 
   CurrentUserModel({
     this.success,
@@ -22,21 +22,21 @@ class CurrentUserModel {
   });
 
   factory CurrentUserModel.fromJson(Map<String, dynamic> json) => CurrentUserModel(
-    success: json["success"],
-    message: json["message"],
-    code: json["code"],
-    data: json["data"] == null ? [] : List<DatumCurrentUser>.from(json["data"]!.map((x) => DatumCurrentUser.fromJson(x))),
-  );
+        success: json["success"],
+        message: json["message"],
+        code: json["code"],
+        data: json["data"] == null ? [] : List<UserEventModel>.from(json["data"]!.map((x) => UserEventModel.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "success": success,
-    "message": message,
-    "code": code,
-    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
-  };
+        "success": success,
+        "message": message,
+        "code": code,
+        "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
 }
 
-class DatumCurrentUser {
+class UserEventModel {
   String? id;
   bool? status;
   DateTime? dateCreated;
@@ -60,7 +60,7 @@ class DatumCurrentUser {
   EventCategory? eventCategory;
   List<dynamic>? eventInvites;
 
-  DatumCurrentUser({
+  UserEventModel({
     this.id,
     this.status,
     this.dateCreated,
@@ -85,55 +85,60 @@ class DatumCurrentUser {
     this.eventInvites,
   });
 
-  factory DatumCurrentUser.fromJson(Map<String, dynamic> json) => DatumCurrentUser(
-    id: json["id"],
-    status: json["status"],
-    dateCreated: json["dateCreated"] == null ? null : DateTime.parse(json["dateCreated"]),
-    dateUpdated: json["dateUpdated"] == null ? null : DateTime.parse(json["dateUpdated"]),
-    eventName: json["eventName"],
-    eventDescription: json["eventDescription"],
-    qrCodeForEvent: json["qrCodeForEvent"],
-    eventCode: json["eventCode"],
-    eventDate: json["eventDate"] == null ? null : DateTime.parse(json["eventDate"]),
-    time: json["time"],
-    venue: json["venue"],
-    eventTag: json["eventTag"],
-    eventCategoryId: json["eventCategoryId"],
-    eventStatus: json["eventStatus"],
-    eventCoverImage: json["eventCoverImage"],
-    userId: json["userId"],
-    isNotificationSent: json["isNotificationSent"],
-    isRsvpNotificationSent: json["isRSVPNotificationSent"],
-    eventGeoCoordinates: json["eventGeoCoordinates"] == null ? null : EventGeoCoordinates.fromJson(json["eventGeoCoordinates"]),
-    user: json["user"] == null ? null : User.fromJson(json["user"]),
-    eventCategory: json["eventCategory"] == null ? null : EventCategory.fromJson(json["eventCategory"]),
-    eventInvites: json["eventInvites"] == null ? [] : List<dynamic>.from(json["eventInvites"]!.map((x) => x)),
-  );
+  factory UserEventModel.fromJson(Map<String, dynamic> json) {
+    json.forEach((k, v) {
+      print('$k | $v | ${v.runtimeType}');
+    });
+    return UserEventModel(
+      id: json["id"],
+      status: json["status"],
+      dateCreated: json["dateCreated"] == null ? null : DateTime.parse(json["dateCreated"]),
+      dateUpdated: json["dateUpdated"] == null ? null : DateTime.parse(json["dateUpdated"]),
+      eventName: json["eventName"],
+      eventDescription: json["eventDescription"],
+      qrCodeForEvent: json["qrCodeForEvent"],
+      eventCode: json["eventCode"],
+      eventDate: json["eventDate"] == null ? null : DateTime.parse(json["eventDate"]),
+      time: json["time"],
+      venue: json["venue"],
+      eventTag: json["eventTag"],
+      eventCategoryId: json["eventCategoryId"],
+      eventStatus: json["eventStatus"],
+      eventCoverImage: json["eventCoverImage"],
+      userId: json["userId"],
+      isNotificationSent: json["isNotificationSent"],
+      isRsvpNotificationSent: json["isRSVPNotificationSent"],
+      eventGeoCoordinates: json["eventGeoCoordinates"] == null ? null : EventGeoCoordinates.fromJson(json["eventGeoCoordinates"]),
+      user: json["user"] == null ? null : User.fromJson(json["user"]),
+      eventCategory: json["eventCategory"] == null ? null : EventCategory.fromJson(json["eventCategory"]),
+      eventInvites: json["eventInvites"] == null ? [] : List<dynamic>.from(json["eventInvites"]!.map((x) => x)),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "status": status,
-    "dateCreated": dateCreated?.toIso8601String(),
-    "dateUpdated": dateUpdated?.toIso8601String(),
-    "eventName": eventName,
-    "eventDescription": eventDescription,
-    "qrCodeForEvent": qrCodeForEvent,
-    "eventCode": eventCode,
-    "eventDate": "${eventDate!.year.toString().padLeft(4, '0')}-${eventDate!.month.toString().padLeft(2, '0')}-${eventDate!.day.toString().padLeft(2, '0')}",
-    "time": time,
-    "venue": venue,
-    "eventTag": eventTag,
-    "eventCategoryId": eventCategoryId,
-    "eventStatus": eventStatus,
-    "eventCoverImage": eventCoverImage,
-    "userId": userId,
-    "isNotificationSent": isNotificationSent,
-    "isRSVPNotificationSent": isRsvpNotificationSent,
-    "eventGeoCoordinates": eventGeoCoordinates?.toJson(),
-    "user": user?.toJson(),
-    "eventCategory": eventCategory?.toJson(),
-    "eventInvites": eventInvites == null ? [] : List<dynamic>.from(eventInvites!.map((x) => x)),
-  };
+        "id": id,
+        "status": status,
+        "dateCreated": dateCreated?.toIso8601String(),
+        "dateUpdated": dateUpdated?.toIso8601String(),
+        "eventName": eventName,
+        "eventDescription": eventDescription,
+        "qrCodeForEvent": qrCodeForEvent,
+        "eventCode": eventCode,
+        "eventDate": "${eventDate!.year.toString().padLeft(4, '0')}-${eventDate!.month.toString().padLeft(2, '0')}-${eventDate!.day.toString().padLeft(2, '0')}",
+        "time": time,
+        "venue": venue,
+        "eventTag": eventTag,
+        "eventCategoryId": eventCategoryId,
+        "eventStatus": eventStatus,
+        "eventCoverImage": eventCoverImage,
+        "userId": userId,
+        "isNotificationSent": isNotificationSent,
+        "isRSVPNotificationSent": isRsvpNotificationSent,
+        "eventGeoCoordinates": eventGeoCoordinates?.toJson(),
+        "user": user?.toJson(),
+        "eventCategory": eventCategory?.toJson(),
+        "eventInvites": eventInvites == null ? [] : List<dynamic>.from(eventInvites!.map((x) => x)),
+      };
 }
 
 class EventCategory {
@@ -154,22 +159,22 @@ class EventCategory {
   });
 
   factory EventCategory.fromJson(Map<String, dynamic> json) => EventCategory(
-    id: json["id"],
-    status: json["status"],
-    dateCreated: json["dateCreated"] == null ? null : DateTime.parse(json["dateCreated"]),
-    dateUpdated: json["dateUpdated"] == null ? null : DateTime.parse(json["dateUpdated"]),
-    name: json["name"],
-    userId: json["userId"],
-  );
+        id: json["id"],
+        status: json["status"],
+        dateCreated: json["dateCreated"] == null ? null : DateTime.parse(json["dateCreated"]),
+        dateUpdated: json["dateUpdated"] == null ? null : DateTime.parse(json["dateUpdated"]),
+        name: json["name"],
+        userId: json["userId"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "status": status,
-    "dateCreated": dateCreated?.toIso8601String(),
-    "dateUpdated": dateUpdated?.toIso8601String(),
-    "name": name,
-    "userId": userId,
-  };
+        "id": id,
+        "status": status,
+        "dateCreated": dateCreated?.toIso8601String(),
+        "dateUpdated": dateUpdated?.toIso8601String(),
+        "name": name,
+        "userId": userId,
+      };
 }
 
 class EventGeoCoordinates {
@@ -182,14 +187,14 @@ class EventGeoCoordinates {
   });
 
   factory EventGeoCoordinates.fromJson(Map<String, dynamic> json) => EventGeoCoordinates(
-    longitude: json["longitude"],
-    latitude: json["latitude"],
-  );
+        longitude: json["longitude"]?.toString(),
+        latitude: json["latitude"]?.toString(),
+      );
 
   Map<String, dynamic> toJson() => {
-    "longitude": longitude,
-    "latitude": latitude,
-  };
+        "longitude": longitude,
+        "latitude": latitude,
+      };
 }
 
 class User {
@@ -260,70 +265,70 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-    id: json["id"],
-    status: json["status"],
-    dateCreated: json["dateCreated"] == null ? null : DateTime.parse(json["dateCreated"]),
-    dateUpdated: json["dateUpdated"] == null ? null : DateTime.parse(json["dateUpdated"]),
-    email: json["email"],
-    phoneNumber: json["phoneNumber"],
-    formattedPhoneNumber: json["formattedPhoneNumber"],
-    firstName: json["firstName"],
-    lastName: json["lastName"],
-    walletBalance: json["walletBalance"]?.toDouble(),
-    uniqueVerificationCode: json["uniqueVerificationCode"],
-    isNewUser: json["isNewUser"],
-    role: json["role"],
-    deviceId: json["deviceId"],
-    authProvider: json["authProvider"],
-    profileImageUrl: json["profileImageUrl"],
-    bvn: json["bvn"],
-    bankCustomerId: json["bankCustomerId"],
-    virtualAccountName: json["virtualAccountName"],
-    virtualAccountNumber: json["virtualAccountNumber"],
-    bankName: json["bankName"],
-    gender: json["gender"],
-    dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
-    userTag: json["userTag"],
-    transactionPin: json["transactionPin"],
-    externalUserId: json["externalUserId"],
-    allowPushNotifications: json["allowPushNotifications"],
-    allowSmsNotifications: json["allowSmsNotifications"],
-    allowEmailNotifications: json["allowEmailNotifications"],
-    displayWalletBalance: json["displayWalletBalance"],
-    enableFaceId: json["enableFaceId"],
-  );
+        id: json["id"],
+        status: json["status"],
+        dateCreated: json["dateCreated"] == null ? null : DateTime.parse(json["dateCreated"]),
+        dateUpdated: json["dateUpdated"] == null ? null : DateTime.parse(json["dateUpdated"]),
+        email: json["email"],
+        phoneNumber: json["phoneNumber"],
+        formattedPhoneNumber: json["formattedPhoneNumber"],
+        firstName: json["firstName"],
+        lastName: json["lastName"],
+        walletBalance: json["walletBalance"]?.toDouble(),
+        uniqueVerificationCode: json["uniqueVerificationCode"],
+        isNewUser: json["isNewUser"],
+        role: json["role"],
+        deviceId: json["deviceId"],
+        authProvider: json["authProvider"],
+        profileImageUrl: json["profileImageUrl"],
+        bvn: json["bvn"],
+        bankCustomerId: json["bankCustomerId"],
+        virtualAccountName: json["virtualAccountName"],
+        virtualAccountNumber: json["virtualAccountNumber"],
+        bankName: json["bankName"],
+        gender: json["gender"],
+        dob: json["dob"] == null ? null : DateTime.parse(json["dob"]),
+        userTag: json["userTag"],
+        transactionPin: json["transactionPin"],
+        externalUserId: json["externalUserId"],
+        allowPushNotifications: json["allowPushNotifications"],
+        allowSmsNotifications: json["allowSmsNotifications"],
+        allowEmailNotifications: json["allowEmailNotifications"],
+        displayWalletBalance: json["displayWalletBalance"],
+        enableFaceId: json["enableFaceId"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "status": status,
-    "dateCreated": dateCreated?.toIso8601String(),
-    "dateUpdated": dateUpdated?.toIso8601String(),
-    "email": email,
-    "phoneNumber": phoneNumber,
-    "formattedPhoneNumber": formattedPhoneNumber,
-    "firstName": firstName,
-    "lastName": lastName,
-    "walletBalance": walletBalance,
-    "uniqueVerificationCode": uniqueVerificationCode,
-    "isNewUser": isNewUser,
-    "role": role,
-    "deviceId": deviceId,
-    "authProvider": authProvider,
-    "profileImageUrl": profileImageUrl,
-    "bvn": bvn,
-    "bankCustomerId": bankCustomerId,
-    "virtualAccountName": virtualAccountName,
-    "virtualAccountNumber": virtualAccountNumber,
-    "bankName": bankName,
-    "gender": gender,
-    "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
-    "userTag": userTag,
-    "transactionPin": transactionPin,
-    "externalUserId": externalUserId,
-    "allowPushNotifications": allowPushNotifications,
-    "allowSmsNotifications": allowSmsNotifications,
-    "allowEmailNotifications": allowEmailNotifications,
-    "displayWalletBalance": displayWalletBalance,
-    "enableFaceId": enableFaceId,
-  };
+        "id": id,
+        "status": status,
+        "dateCreated": dateCreated?.toIso8601String(),
+        "dateUpdated": dateUpdated?.toIso8601String(),
+        "email": email,
+        "phoneNumber": phoneNumber,
+        "formattedPhoneNumber": formattedPhoneNumber,
+        "firstName": firstName,
+        "lastName": lastName,
+        "walletBalance": walletBalance,
+        "uniqueVerificationCode": uniqueVerificationCode,
+        "isNewUser": isNewUser,
+        "role": role,
+        "deviceId": deviceId,
+        "authProvider": authProvider,
+        "profileImageUrl": profileImageUrl,
+        "bvn": bvn,
+        "bankCustomerId": bankCustomerId,
+        "virtualAccountName": virtualAccountName,
+        "virtualAccountNumber": virtualAccountNumber,
+        "bankName": bankName,
+        "gender": gender,
+        "dob": "${dob!.year.toString().padLeft(4, '0')}-${dob!.month.toString().padLeft(2, '0')}-${dob!.day.toString().padLeft(2, '0')}",
+        "userTag": userTag,
+        "transactionPin": transactionPin,
+        "externalUserId": externalUserId,
+        "allowPushNotifications": allowPushNotifications,
+        "allowSmsNotifications": allowSmsNotifications,
+        "allowEmailNotifications": allowEmailNotifications,
+        "displayWalletBalance": displayWalletBalance,
+        "enableFaceId": enableFaceId,
+      };
 }

@@ -29,11 +29,11 @@ class CustomButton extends StatelessWidget {
     required this.buttonText,
     this.height,
     this.width,
-    this.textfontSize,
+    this.textFontSize,
     Key? key,
   }) : super(key: key);
 
-  VoidCallback onTap;
+  VoidCallback? onTap;
   Color? buttonColor;
   double? borderRadius;
   Color? textColor;
@@ -41,7 +41,7 @@ class CustomButton extends StatelessWidget {
   Color? borderColor;
   double? width;
   double? height;
-  double? textfontSize;
+  double? textFontSize;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,7 @@ class CustomButton extends StatelessWidget {
               style: TextStyle(
                 color: textColor ?? CustomColors.sWhiteColor,
                 fontWeight: FontWeight.w700,
-                fontSize: textfontSize ?? 16.sp,
+                fontSize: textFontSize ?? 16.sp,
                 fontFamily: 'Bold',
               ),
             ),
@@ -71,7 +71,14 @@ class CustomButton extends StatelessWidget {
 }
 
 AppBar buildAppBar(
-    {required BuildContext context, String? title, List<Widget>? action, Color? arrowColor, Brightness? statusBarBrightness, Brightness? statusBarIconBrightness, Color? backgroundColor}) {
+    {required BuildContext context,
+    String? title,
+    List<Widget>? action,
+    Color? arrowColor,
+    Brightness? statusBarBrightness,
+    Brightness? statusBarIconBrightness,
+    Color? backgroundColor,
+    Function()? onBackAction}) {
   return AppBar(
     backgroundColor: backgroundColor ?? Colors.transparent,
     elevation: 0,
@@ -80,7 +87,7 @@ AppBar buildAppBar(
     centerTitle: true,
     leading: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => Navigator.pop(context),
+        onTap: () => onBackAction != null ? onBackAction() : Navigator.pop(context),
         child: Icon(
           Icons.arrow_back_outlined,
           color: arrowColor ?? const Color(0xffFBFBFB),

@@ -125,7 +125,8 @@ class SwapQuotationData {
   double? get toAmountAsDouble => double.tryParse(toAmount ?? '');
   double? get quotedPriceAsDouble => double.tryParse(quotedPrice ?? '');
   String get toAmountNotNullable => toAmount ?? "0";
-
+  num get exchangeRate => (toAmountAsDouble ?? 0) / (fromAmountAsDouble ?? 0);
+  String get exchangeRateText => "1 $fromCurrency = ${exchangeRate.toStringAsFixed(6)} $toCurrency";
   // Helper to check if quotation is expired
   bool get isExpired {
     if (expiresAt == null) return false;

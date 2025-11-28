@@ -23,6 +23,7 @@ import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/profile/user_profile/edit_profile.dart';
 import 'package:spraay/utils/after-layout.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
+import 'package:spraay/utils/string-utils.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 import 'package:spraay/view_model/event_provider.dart';
 import 'package:spraay/view_model/home_provider.dart';
@@ -444,12 +445,12 @@ class AssetsList extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                "NGN ${wallets[position].balance ?? " "}",
+                                "${wallets[position].referenceCurrency?.toUpperCase()} ${((wallets[position].convertedBalance) ?? "0").formatAsAmountWithDecimals() ?? " "}",
                                 style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, fontFamily: "Dm Sans"),
                               ),
                               height4,
                               Text(
-                                "\$${wallets[position].convertedBalance!}",
+                                "\$${wallets[position].balance!}",
                                 style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500, fontFamily: "Dm Sans"),
                                 textAlign: TextAlign.center,
                               ),

@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/wallets-response.dart';
@@ -12,6 +13,7 @@ import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/crypto/asset-details.dart';
 import 'package:spraay/ui/crypto/crypto.vm.dart';
 import 'package:spraay/utils/after-layout.dart';
+import 'package:spraay/utils/string-utils.dart';
 
 class MyAssetsScreen extends StatefulWidget {
   const MyAssetsScreen({super.key});
@@ -181,22 +183,15 @@ class _MyAssetsScreenState extends State<MyAssetsScreen> with AfterLayoutMixin<M
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 Text(
-                                                  "NGN ${filteredAssets[position].balance ?? " "}",
-                                                  style: CustomTextStyle.kTxtRegular.copyWith(
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w400,
-                                                    fontFamily: "Dm Sans",
-                                                  ),
+                                                  "${filteredAssets[position].referenceCurrency?.toUpperCase()} ${((filteredAssets[position].convertedBalance) ?? "0").formatAsAmountWithDecimals() ?? " "}",
+                                                  style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, fontFamily: "Dm Sans"),
                                                 ),
-                                                const SizedBox(height: 4),
+                                                height4,
                                                 Text(
-                                                  "\$${filteredAssets[position].convertedBalance!}",
-                                                  style: CustomTextStyle.kTxtRegular.copyWith(
-                                                    fontSize: 14.sp,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: CustomColors.sGreyScaleColor500,
-                                                    fontFamily: "Dm Sans",
-                                                  ),
+                                                  "\$${filteredAssets[position].balance!}",
+                                                  style:
+                                                      CustomTextStyle.kTxtRegular.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500, fontFamily: "Dm Sans"),
+                                                  textAlign: TextAlign.center,
                                                 ),
                                               ],
                                             ),

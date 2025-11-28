@@ -33,7 +33,6 @@ import 'package:spraay/models/user_name_with_phone_contact_model.dart';
 import 'package:spraay/models/user_profile.dart';
 import 'package:spraay/models/user_saved_bank_model.dart';
 import 'package:spraay/services/api_response.dart';
-import 'package:spraay/utils/logger.dart';
 import 'package:spraay/utils/my_sharedpref.dart';
 
 class ApiServices {
@@ -46,7 +45,8 @@ class ApiServices {
     http.Client? client,
     Logger? logger,
   })  : _logger = logger ?? Logger(),
-        _client = client ?? HttpLogger().createLoggingClient();
+        _client = client ?? http.Client();
+  // ?? HttpLogger().createLoggingClient();
 
   // String url = "https://spraay-app-112ede567f1a.herokuapp.com";
 
@@ -1247,10 +1247,13 @@ class ApiServices {
     });
   }
 
-  Future<ApiResponse<CurrentUserModel>> currentUser(String mytoken) {
-    return http.get(Uri.parse("$url/event/events-for-current-user"), headers: {'accept': 'application/json', 'Authorization': 'Bearer $mytoken'}).then((response) {
+  Future<ApiResponse<CurrentUserModel>> currentUserEvents() {
+    // /events-for-current-user
+    var token = MySharedPreference.getToken();
+    return http.get(Uri.parse("$url/event"), headers: {'accept': 'application/json', 'Authorization': 'Bearer $token'}).then((response) {
       if (response.statusCode == 200) {
         // final body=json.decode(response.body);
+        print('currentUserEvents${response.body}');
         final note1 = CurrentUserModel.fromJson(jsonDecode(response.body));
         return ApiResponse<CurrentUserModel>(data: note1);
       } else {
@@ -1369,11 +1372,13 @@ class ApiServices {
 
   Future<Map<String, dynamic>> userSaveBankApi(String mytoken, String bankCode, String accountNumber) async {
     Map<String, dynamic> result = {};
+    var body = jsonEncode({"bankCode": bankCode, "accountNumber": accountNumber});
+    print(body);
     try {
       var response = await http.post(Uri.parse("$url/user-account"),
-          body: jsonEncode({"bankCode": bankCode, "accountNumber": accountNumber}),
-          headers: {"Accept": "application/json", 'Authorization': 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
+          body: body, headers: {"Accept": "application/json", 'Authorization': 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
+      print(response.body);
       if (statusCode == 200 || statusCode == 201) {
         var jsonResponse = convert.jsonDecode(response.body);
         result["accountName"] = jsonResponse["data"]["accountName"];
@@ -1419,7 +1424,7 @@ class ApiServices {
         result["type"] = "Withdrawal";
         result["dateCreated"] = jsonResponse["data"]["dateCreated"];
         result["reference"] = jsonResponse["data"]["reference"];
-
+        result['data'] = jsonResponse["data"];
         result['error'] = false;
       } else {
         var jsonResponse = convert.jsonDecode(response.body);
@@ -1712,10 +1717,11 @@ class ApiServices {
 
   Future<Map<String, dynamic>> cablePurchaseApi(String mytoken, String provider, String phoneNumber, String dataPlanId, String transactionPin, String amount, String cableCode) async {
     Map<String, dynamic> result = {};
+    var body = jsonEncode({"providerId": cableCode, "smartCardNumber": phoneNumber, "cablePlanId": dataPlanId, "transactionPin": transactionPin, "amount": amount});
+    print(body);
     try {
       var response = await http.post(Uri.parse("$url/bill/cable-purchase"),
-          body: jsonEncode({"providerId": cableCode, "smartCardNumber": phoneNumber, "cablePlanId": dataPlanId, "transactionPin": transactionPin, "amount": amount}),
-          headers: {"Accept": "application/json", 'Authorization': 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
+          body: body, headers: {"Accept": "application/json", 'Authorization': 'Bearer $mytoken', 'Content-Type': 'application/json'}).timeout(const Duration(seconds: 30));
       int statusCode = response.statusCode;
 
       if (statusCode == 200 || statusCode == 201) {
@@ -1933,6 +1939,7 @@ class ApiServices {
   }
 
   Future<Map<String, dynamic>> downloadSingleTransaction(String mytoken, String transactionListID) async {
+    print(transactionListID);
     Map<String, dynamic> result = {};
     try {
       var response = await http.get(Uri.parse("https://spraay-api-577f3dc0a0fe.herokuapp.com/transaction/download-receipt/$transactionListID"),
@@ -1940,9 +1947,11 @@ class ApiServices {
       int statusCode = response.statusCode;
 
       if (statusCode == 200 || statusCode == 201) {
+        print('success');
         result["bytes"] = response.bodyBytes;
         result['error'] = false;
       } else {
+        print('failed');
         var jsonResponse = convert.jsonDecode(response.body);
         result["message"] = jsonResponse["message"];
         result['error'] = true;

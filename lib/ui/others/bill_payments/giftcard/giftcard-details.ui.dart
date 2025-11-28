@@ -35,12 +35,17 @@ class _GiftCardDetailsState extends State<GiftCardDetails> {
 
   FocusNode? _textField3Focus;
 
+  bool get hasPrice => (widget.card.minRecipientDenomination != null) && (widget.card.maxRecipientDenomination != null);
+
+  bool get hasFixedPrices => widget.card.fixedRecipientDenominations != null && widget.card.fixedRecipientDenominations!.length != 0;
+
   List<num> get prices => widget.card.fixedRecipientDenominations != null && widget.card.fixedRecipientDenominations!.length != 0
       ? widget.card.fixedRecipientDenominations!
-      : [(widget.card.minRecipientDenomination ?? 1), (widget.card.maxRecipientDenomination ?? 100)];
+      : [(widget.card.minRecipientDenomination ?? 3), (widget.card.maxRecipientDenomination ?? 300)];
 
   @override
   void initState() {
+    print('hasPrice ::: $hasFixedPrices');
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<BillPaymentProvider>(context, listen: false).getFxRate(widget.card.recipientCurrencyCode ?? "", 1);
@@ -110,83 +115,107 @@ class _GiftCardDetailsState extends State<GiftCardDetails> {
   }
 
   Widget buildGiftCardDetails() {
-    return Container(
-      padding: horizontalPadding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          WalletBalance(),
-          height40,
-          Center(
-            child: Image.network(
-              widget.card.logoUrls?[0] ?? "",
-              fit: BoxFit.cover,
-              height: 100,
-            ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus(); // hides keyboard
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Container(
+        padding: horizontalPadding,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              WalletBalance(),
+              height40,
+              Center(
+                child: Image.network(
+                  widget.card.logoUrls?[0] ?? "",
+                  fit: BoxFit.cover,
+                  height: 100,
+                ),
+              ),
+              height20,
+              CustomizedTextField(
+                onTap: () {},
+                textEditingController: amtController,
+                keyboardType: TextInputType.phone,
+                // maxLength: 10,
+                textInputAction: TextInputAction.next,
+                hintTxt: "Quantity (\$)",
+                inputFormat: [FilteringTextInputFormatter.digitsOnly],
+                onChanged: (value) => Provider.of<BillPaymentProvider>(context, listen: false).setGiftCardQuantity(value),
+              ),
+              height20,
+              hasFixedPrices
+                  ? buildGiftCardAmountDropdown(context)
+                  : CustomizedTextField(
+                      onTap: () {},
+                      textEditingController: Provider.of<BillPaymentProvider>(context, listen: false).customPriceController,
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.next,
+                      hintTxt: "Price (${widget.card.recipientCurrencyCode})",
+                      inputFormat: [FilteringTextInputFormatter.digitsOnly],
+                      onChanged: (value) => Provider.of<BillPaymentProvider>(context, listen: false).setSelectedPrice(num.tryParse(value ?? "0") ?? 0),
+                    ),
+              height20,
+              const Text(
+                "You Pay",
+                style: TextStyle(color: Colors.white),
+              ),
+              height4,
+              CustomizedTextField(
+                readOnly: true,
+                onTap: () {},
+                textEditingController: Provider.of<BillPaymentProvider>(context, listen: false).youPayController,
+                keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.next,
+                hintTxt: "",
+              ),
+              // const Spacer(
+              //   flex: 2,
+              // ),
+              SizedBox(
+                height: 100,
+              ),
+              Consumer<BillPaymentProvider>(
+                builder: (context, provider, _) => Center(
+                  child: CustomButton(
+                      onTap: () {
+                        // PinWidget
+                        provider.giftCardModel = widget.card;
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => PinWidget(
+                                      onDone: (v) {
+                                        provider.purchaseGiftCard(context, v);
+                                      },
+                                      title: widget.card.productName,
+                                      card: widget.card,
+                                      ngnPrice: provider.totalAmount.toString(),
+                                      usdPrice: provider.selectedPrice.toString(),
+                                    )));
+                      },
+                      buttonText: 'Continue',
+                      borderRadius: 30.r,
+                      width: 380.w,
+                      buttonColor: provider.totalAmount != 0 ? CustomColors.sPrimaryColor500 : CustomColors.sDisableButtonColor),
+                ),
+              ),
+              SizedBox(
+                height: 100,
+              ),
+              // const Spacer(),
+            ],
           ),
-          height20,
-          CustomizedTextField(
-            onTap: () {},
-            textEditingController: amtController,
-            keyboardType: TextInputType.phone,
-            // maxLength: 10,
-            textInputAction: TextInputAction.next,
-            hintTxt: "Quantity (\$)",
-            inputFormat: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (value) => Provider.of<BillPaymentProvider>(context, listen: false).setGiftCardQuantity(value),
-          ),
-          height20,
-          buildGiftCardAmountDropdown(context),
-          height20,
-          const Text(
-            "You Pay",
-            style: TextStyle(color: Colors.white),
-          ),
-          height4,
-          CustomizedTextField(
-            readOnly: true,
-            onTap: () {},
-            textEditingController: Provider.of<BillPaymentProvider>(context, listen: false).youPayController,
-            keyboardType: TextInputType.phone,
-            textInputAction: TextInputAction.next,
-            hintTxt: "",
-          ),
-          const Spacer(
-            flex: 2,
-          ),
-          Consumer<BillPaymentProvider>(
-            builder: (context, provider, _) => Center(
-              child: CustomButton(
-                  onTap: () {
-                    // PinWidget
-                    provider.giftCardModel = widget.card;
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => PinWidget(
-                                  onDone: (v) {
-                                    provider.purchaseGiftCard(context, v);
-                                  },
-                                  title: widget.card.productName,
-                                  card: widget.card,
-                                  ngnPrice: provider.totalAmount.toString(),
-                                  usdPrice: provider.selectedPrice.toString(),
-                                )));
-                  },
-                  buttonText: 'Continue',
-                  borderRadius: 30.r,
-                  width: 380.w,
-                  buttonColor: provider.totalAmount != 0 ? CustomColors.sPrimaryColor500 : CustomColors.sDisableButtonColor),
-            ),
-          ),
-          const Spacer(),
-        ],
+        ),
       ),
     );
   }
 }
 
-popupDialogFailedResponse(BuildContext context) {
+popupDialogFailedResponse(BuildContext context, {String? error}) {
   return showDialog(
       context: context,
       barrierDismissible: true,
@@ -223,7 +252,7 @@ popupDialogFailedResponse(BuildContext context) {
                     SizedBox(
                         width: 276.w,
                         child: Text(
-                          "Ops!!!! You do not have sufficient balance to purchase this ticket. Please top up your account!",
+                          error ?? "Ops!!!! You do not have sufficient balance to purchase this ticket. Please top up your account!",
                           style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sWhiteColor),
                           textAlign: TextAlign.center,
                         )),

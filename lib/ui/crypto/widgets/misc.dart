@@ -25,7 +25,8 @@ popupSuccessfulDialog(
     String? amount,
     String? type,
     String? dateCreated,
-    String? reference}) {
+    String? reference,
+    Function()? onViewReceipt}) {
   double height = MediaQuery.of(context).size.height;
   double width = MediaQuery.of(context).size.width;
 
@@ -76,34 +77,38 @@ popupSuccessfulDialog(
                     height22,
                     CustomButton(
                         onTap: () {
-                          if (fromWhere == "new_bank_screen") {
-                            Navigator.pushReplacement(
-                                context,
-                                FadeRoute(
-                                    page: PaymentReceipt(
-                                  svg_img: 'spray_anim',
-                                  type: type ?? "",
-                                  date: dateCreated ?? "",
-                                  amount: amount ?? "",
-                                  meterNumber: '',
-                                  transactionRef: reference ?? "",
-                                  transStatus: 'Successful',
-                                  transactionId: transactionId ?? "",
-                                )));
+                          if (onViewReceipt != null) {
+                            onViewReceipt();
                           } else {
-                            Navigator.pushReplacement(
-                                context,
-                                FadeRoute(
-                                    page: PaymentReceipt(
-                                  svg_img: 'spray_anim',
-                                  type: type ?? "",
-                                  date: dateCreated ?? "",
-                                  amount: amount ?? "",
-                                  meterNumber: '',
-                                  transactionRef: reference ?? "",
-                                  transStatus: 'Successful',
-                                  transactionId: transactionId ?? "",
-                                )));
+                            if (fromWhere == "new_bank_screen") {
+                              Navigator.pushReplacement(
+                                  context,
+                                  FadeRoute(
+                                      page: PaymentReceipt(
+                                    svg_img: 'spray_anim',
+                                    type: type ?? "",
+                                    date: dateCreated ?? "",
+                                    amount: amount ?? "",
+                                    meterNumber: '',
+                                    transactionRef: reference ?? "",
+                                    transStatus: 'Successful',
+                                    transactionId: transactionId ?? "",
+                                  )));
+                            } else {
+                              Navigator.pushReplacement(
+                                  context,
+                                  FadeRoute(
+                                      page: PaymentReceipt(
+                                    svg_img: 'spray_anim',
+                                    type: type ?? "",
+                                    date: dateCreated ?? "",
+                                    amount: amount ?? "",
+                                    meterNumber: '',
+                                    transactionRef: reference ?? "",
+                                    transStatus: 'Successful',
+                                    transactionId: transactionId ?? "",
+                                  )));
+                            }
                           }
                         },
                         buttonText: "View Receipt",

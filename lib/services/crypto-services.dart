@@ -24,6 +24,7 @@ class CryptoServices {
   Future<ResModel> getCryptoAssets({required Map<String, dynamic> data, String? path}) async {
     ResModel result = ResModel();
     var id = MySharedPreference.getQuidaxUserId();
+    print(id);
     try {
       var response = await http.get(Uri.parse("${url}crypto/$id/wallets"), headers: {"Accept": "application/json"}).timeout(const Duration(seconds: 30));
       // printWrapped(response.body);
@@ -34,6 +35,7 @@ class CryptoServices {
         return ResModel(data: jsonResponse, success: true, message: "Success");
       } else {
         var jsonResponse = convert.jsonDecode(response.body);
+        print(response.body);
         result = ResModel(success: false, message: jsonResponse['message'], error: jsonResponse['message'], status: false);
       }
     } on HttpException {
@@ -147,7 +149,6 @@ class CryptoServices {
         uri,
         headers: {"Accept": "application/json"},
       ).timeout(const Duration(seconds: 30));
-      printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
         return ResModel(data: jsonResponse, success: true, message: "Success");
@@ -203,6 +204,38 @@ class CryptoServices {
     print(currency);
     try {
       var response = await http.get(Uri.parse("${url}crypto/tickers/${currency.toLowerCase()}"), headers: {"Accept": "application/json"}).timeout(const Duration(seconds: 30));
+      printWrapped(response.body);
+      var jsonResponse = convert.jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // var loginResponse = LoginResponse.fromJson(jsonResponse);
+        return ResModel(data: jsonResponse, success: true, message: "Success", status: true);
+      } else {
+        var jsonResponse = convert.jsonDecode(response.body);
+        result = ResModel(success: false, message: jsonResponse['message'], error: jsonResponse['message'], status: false);
+      }
+    } on HttpException {
+      result = ResModel(success: false, message: "Error in network connection", error: "Error in network connection", status: false);
+    } on SocketException {
+      result = ResModel(success: false, message: "Error in network connection", error: "Error in network connection", status: false);
+    } on FormatException {
+      result = ResModel(success: false, message: "invalid format", error: "invalid format", status: false);
+    } catch (e) {
+      result = ResModel(success: false, message: "Something went wrong", error: "Something went wrong", status: false);
+    }
+    return result;
+  }
+
+  Future<ResModel> getTransactionFeesUSDValue({required String currency, required String tickerPair, bool isBuy = false}) async {
+    ResModel result = ResModel();
+    try {
+      var response = await http.get(
+        Uri.parse("${url}crypto/network-fee/usd-value/").replace(queryParameters: {
+          'currency': currency,
+          'ticker': tickerPair,
+          'priceType': isBuy ? "buy" : 'sell',
+        }),
+        headers: {"Accept": "application/json"},
+      ).timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -319,12 +352,37 @@ class CryptoServices {
     ResModel result = ResModel();
     print(data.toString());
     try {
-      print('hi');
       var response = await http.post(Uri.parse("${url}crypto/send/withdraw"), headers: {"Accept": "application/json"}, body: data).timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
         // var loginResponse = LoginResponse.fromJson(jsonResponse);
+        return ResModel(data: jsonResponse, success: true, message: "Success");
+      } else {
+        var jsonResponse = convert.jsonDecode(response.body);
+        result = ResModel(success: false, message: jsonResponse['message'], error: jsonResponse['message'], status: false);
+      }
+    } on HttpException {
+      result = ResModel(success: false, message: "Error in network connection", error: "Error in network connection", status: false);
+    } on SocketException {
+      result = ResModel(success: false, message: "Error in network connection", error: "Error in network connection", status: false);
+    } on FormatException {
+      result = ResModel(success: false, message: "invalid format", error: "invalid format", status: false);
+    } catch (e) {
+      print(e.toString());
+      result = ResModel(success: false, message: "Something went wrong", error: "Something went wrong", status: false);
+    }
+    return result;
+  }
+
+  Future<ResModel> getAssetNetworks({required String? currency}) async {
+    ResModel result = ResModel();
+    var id = MySharedPreference.getQuidaxUserId();
+    try {
+      var response = await http.get(Uri.parse("${url}crypto/$id/$currency/addresses"), headers: {"Accept": "application/json"}).timeout(const Duration(seconds: 30));
+      printWrapped(response.body);
+      var jsonResponse = convert.jsonDecode(response.body);
+      if (jsonResponse["code"] == 200 || jsonResponse["status"] == 200) {
         return ResModel(data: jsonResponse, success: true, message: "Success");
       } else {
         var jsonResponse = convert.jsonDecode(response.body);

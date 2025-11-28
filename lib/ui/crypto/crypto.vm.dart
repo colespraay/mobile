@@ -9,10 +9,13 @@ import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/models/crypto-data.dart';
+import 'package:spraay/models/crypto-history.dart' hide Wallet;
+import 'package:spraay/models/crypto-network-model.dart';
 import 'package:spraay/models/graph-model.dart';
 import 'package:spraay/models/loading-states.dart';
 import 'package:spraay/models/quote-currency.dart';
 import 'package:spraay/models/result-model.dart';
+import 'package:spraay/models/transaction-fee-usd-value.dart';
 import 'package:spraay/models/transaction-fees.dart';
 import 'package:spraay/models/user_profile.dart';
 import 'package:spraay/models/wallets-response.dart';
@@ -124,6 +127,7 @@ class CryptoProvider extends ChangeNotifier {
     setloading(true);
     ResModel result = await cryptoServices.getCryptoAssets(data: {});
     if (result.success == true) {
+      print('true');
       setloading(false);
       wallets = [];
       result.data['data'].forEach((e) {
@@ -133,6 +137,7 @@ class CryptoProvider extends ChangeNotifier {
       });
       notifyListeners();
     } else {
+      print('false');
       setloading(false);
       errorCherryToast(context, result.message ?? "Something went wrong");
     }
@@ -150,6 +155,24 @@ class CryptoProvider extends ChangeNotifier {
       notifyListeners();
     } else {
       print('haha');
+      setloading(false);
+      errorCherryToast(context, result.message ?? "Something went wrong");
+    }
+  }
+
+  NetworkFeeData? networkFeeData;
+  getTransactionFeesUSDValue(context, String currency, String ticker, {bool isBuy = true, Function()? onDone}) async {
+    setloading(true);
+    ResModel result = await cryptoServices.getTransactionFeesUSDValue(currency: currency, tickerPair: ticker, isBuy: isBuy);
+    if (result.success == true) {
+      setloading(false);
+      networkFeeData = null;
+      networkFeeData = NetworkFeeData.fromJson(result.data['data']);
+      notifyListeners();
+      if (onDone != null) {
+        onDone();
+      }
+    } else {
       setloading(false);
       errorCherryToast(context, result.message ?? "Something went wrong");
     }
@@ -180,7 +203,7 @@ class CryptoProvider extends ChangeNotifier {
     }
   }
 
-  void buyCrypto(BuildContext context, {required Function() onDone, num? amount, String? currency}) async {
+  void buyCrypto(BuildContext context, {required Function(GeneralTransaction?) onDone, num? amount, String? currency}) async {
     setloading(true);
     ResModel result = await cryptoServices.buyCrypto(data: {
       "amount": amount.toString(),
@@ -191,8 +214,10 @@ class CryptoProvider extends ChangeNotifier {
 
     if (result.success == true) {
       notifyListeners();
+      await getTransactions(context, currency!);
+
+      onDone(transactions[0]);
       setloading(false);
-      onDone();
     } else {
       setloading(false);
       errorCherryToast(context, result.message ?? "Something went wrong");
@@ -206,7 +231,7 @@ class CryptoProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void sellCrypto(BuildContext context, {required Function() onDone, num? amount, String? currency, String? fundId}) async {
+  void sellCrypto(BuildContext context, {required Function(GeneralTransaction?) onDone, num? amount, String? currency, String? fundId}) async {
     setloading(true);
     ResModel result = await cryptoServices.sendCrypto(data: {
       "amount": amount.toString(),
@@ -215,7 +240,9 @@ class CryptoProvider extends ChangeNotifier {
       "fund_uid": fundId,
     });
     if (result.success == true) {
-      onDone();
+      await getTransactions(context, currency!);
+
+      onDone(transactions[0]);
       notifyListeners();
       setloading(false);
     } else {
@@ -224,11 +251,14 @@ class CryptoProvider extends ChangeNotifier {
     }
   }
 
-  List<dynamic> transactions = [];
-  void getTransactions(BuildContext context, String currency) async {
+  List<GeneralTransaction> transactions = [];
+  Future getTransactions(BuildContext context, String currency) async {
     setloading(true);
     ResModel result = await cryptoServices.getTransaction(currency);
     if (result.success == true) {
+      transactions = CryptoTransactionResponse.fromJson(result.data).allTransactions;
+      print(transactions.length);
+
       notifyListeners();
       setloading(false);
     } else {
@@ -309,14 +339,15 @@ class CryptoProvider extends ChangeNotifier {
     }
   }
 
-  Future confirmQuote(BuildContext context, {required Function() onDone}) async {
+  Future confirmQuote(BuildContext context, {required Function(GeneralTransaction?) onDone, String? currency}) async {
     setloading(true);
     ResModel result = await cryptoServices.confirmSwapQuotation(data: {"quidax_userId": MySharedPreference.getQuidaxUserId(), "swapId": swapQuotationData?.id});
     if (result.success == true) {
-      swapQuotationData = SwapQuotationData.fromJson(result.data['data']);
       notifyListeners();
+
+      final generalTx = mapSwapQuotationToGeneralTransaction(result.data['data']);
+      onDone(generalTx);
       setloading(false);
-      onDone();
     } else {
       setloading(false);
       errorCherryToast(context, result.message ?? "Something went wrong");
@@ -324,6 +355,18 @@ class CryptoProvider extends ChangeNotifier {
   }
 
   TransactionFeesData? transactionFeesData;
+  num get sellNetworkFee => (transactionFeesData?.cryptoWithdrawalFee?.value ?? 0) * (networkFeeData?.usdValue ?? 0);
+  num get networkFee => (transactionFeesData?.depositFee?.value ?? 0) * (networkFeeData?.usdValue ?? 0);
+  num get sprayFee => (transactionFeesData?.spraayFee?.value ?? 0);
+  num get coinConversionAmount => displayAmount; //conversionAmount(cryptoData?.ticker?.buyAmount ?? 0, displayAmount);
+  num displayAmount = 0;
+  setDisplayAmount(num v) {
+    displayAmount = v;
+    notifyListeners();
+    print('set $v $displayAmount');
+  }
+
+  num get allTotal => networkFee + sprayFee + coinConversionAmount;
   Future getFees(BuildContext context) async {
     setloading(true);
     ResModel result = await cryptoServices.getTransactionFees();
@@ -350,7 +393,9 @@ class CryptoProvider extends ChangeNotifier {
 
     //swapAssets.contains(item.currency)
 
-    return wallets.where((e) => swapAssets.contains(e.currency?.toLowerCase())).map((item) {
+    return wallets.
+        // where((e) => swapAssets.contains(e.currency?.toLowerCase())).
+        map((item) {
       return CAsset(
         name: item.name,
         nairaPrice: item.balance,
@@ -381,6 +426,31 @@ class CryptoProvider extends ChangeNotifier {
   void resetSwapData() {
     swapQuotationData = null;
     notifyListeners();
+  }
+
+  List<CryptoNetwork> networks = [];
+
+  CryptoNetwork? selectedNetwork;
+  setSelectedNetwork(CryptoNetwork c) {
+    selectedNetwork = c;
+    notifyListeners();
+  }
+
+  Future getReceiveCryptoNetworks(BuildContext context, String? currency) async {
+    setloading(true);
+    ResModel result = await cryptoServices.getAssetNetworks(currency: currency);
+    if (result.success == true) {
+      networks = [];
+      result.data['data'].forEach((e) {
+        networks.add(CryptoNetwork.fromJson(e));
+      });
+      setSelectedNetwork(networks[0]);
+      notifyListeners();
+      setloading(false);
+    } else {
+      setloading(false);
+      errorCherryToast(context, result.message ?? "Something went wrong");
+    }
   }
 }
 

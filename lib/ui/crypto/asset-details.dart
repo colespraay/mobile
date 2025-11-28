@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/models/crypto-history.dart' hide Wallet;
 import 'package:spraay/models/graph-model.dart';
 import 'package:spraay/models/loading-states.dart';
 import 'package:spraay/models/wallets-response.dart';
@@ -14,8 +15,10 @@ import 'package:spraay/ui/crypto/crypto.ui.dart';
 import 'package:spraay/ui/crypto/crypto.vm.dart';
 import 'package:spraay/ui/crypto/receive/receiver-details.dart';
 import 'package:spraay/ui/crypto/sell/sell-amount-page.dart';
+import 'package:spraay/ui/crypto/swap/swap.ui.dart';
 import 'package:spraay/ui/crypto/widgets/asset-header.dart';
 import 'package:spraay/ui/crypto/widgets/graph.dart';
+import 'package:spraay/ui/crypto/widgets/receipt.dart';
 import 'package:spraay/utils/after-layout.dart';
 import 'package:spraay/utils/string-utils.dart';
 
@@ -224,19 +227,22 @@ class TransactionItem extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(color: const Color(0xff1F2224), borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Row(
+        child: Column(
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(amount, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 4),
-                  Text(description, style: TextStyle(color: Colors.grey[400], fontSize: 14)),
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(amount, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+                Text(date, style: TextStyle(color: Colors.grey[400], fontSize: 14)),
+              ],
             ),
-            Text(date, style: TextStyle(color: Colors.grey[400], fontSize: 14)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                Text(description, style: TextStyle(color: Colors.grey[400], fontSize: 14)),
+              ],
+            ),
           ],
         ),
       ),
@@ -262,11 +268,13 @@ class _AssetDetailsState extends State<AssetDetails> with AfterLayoutMixin<Asset
   final List<double> chartData = [45, 52, 48, 61, 55, 67, 58, 72, 65, 78, 73, 69, 75];
 
   CryptoProvider? cryptoProvider;
+  CAsset get asset => CAsset(name: widget.asset.name, nairaPrice: widget.asset.balance, icon: widget.asset.imageUrl, sub: widget.asset.currency);
 
-  String get market => "${widget.asset.currency}${widget.asset.referenceCurrency}";
+  String get market => "${widget.asset.currency}${widget.asset.referenceCurrency ?? ""}";
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) {
     Provider.of<CryptoProvider>(context, listen: false).getTickers(context, interval: selectedInterval, market: market);
+    Provider.of<CryptoProvider>(context, listen: false).getTransactions(context, (widget.asset.currency ?? "").toLowerCase());
   }
 
   @override
@@ -295,7 +303,7 @@ class _AssetDetailsState extends State<AssetDetails> with AfterLayoutMixin<Asset
                   if (cryptoProvider?.assetGraphs.length != 0)
                     Text('₦${(cryptoProvider?.assetGraphs.latestData?.actualPrice).toString().formatAsAmountWithDecimals()}',
                         style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold)),
-                  Text("${(widget.asset.currency ?? "").toUpperCase()}\$${widget.asset.convertedBalance}", style: TextStyle(color: Colors.grey[400], fontSize: 14)),
+                  Text("${(widget.asset.currency ?? "").toUpperCase()} ${widget.asset.balance}", style: TextStyle(color: Colors.grey[400], fontSize: 14)),
                   const SizedBox(height: 32),
 
                   // Chart
@@ -338,8 +346,8 @@ class _AssetDetailsState extends State<AssetDetails> with AfterLayoutMixin<Asset
                   // Balance
                   Text('Your balance', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
                   const SizedBox(height: 4),
-                  Text('₦${widget.asset.balance}', style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
-                  Text("${(widget.asset.currency ?? " ").toUpperCase()} ${widget.asset.convertedBalance}", style: TextStyle(color: Colors.grey[400], fontSize: 14)),
+                  Text('₦${(widget.asset.convertedBalance).formatAsAmountWithDecimals()}', style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
+                  Text("${(widget.asset.currency ?? " ").toUpperCase()} ${widget.asset.balance}", style: TextStyle(color: Colors.grey[400], fontSize: 14)),
                   const SizedBox(height: 32),
 
                   // Action Buttons
@@ -369,7 +377,12 @@ class _AssetDetailsState extends State<AssetDetails> with AfterLayoutMixin<Asset
                                   ),
                                 ));
                           }),
-                      ActionButton(icon: Icons.swap_horiz, label: 'Swap', onTap: () {}),
+                      ActionButton(
+                          icon: Icons.swap_horiz,
+                          label: 'Swap',
+                          onTap: () {
+                            Navigator.push(context, FadeRoute(page: SwapAssetScreen(asset: asset)));
+                          }),
                       if (widget.asset.depositAddress != null)
                         ActionButton(
                             icon: Icons.qr_code,
@@ -398,28 +411,30 @@ class _AssetDetailsState extends State<AssetDetails> with AfterLayoutMixin<Asset
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text('November', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
-                  const SizedBox(height: 8),
 
-                  // Transaction List
-                  TransactionItem(
-                    amount: '10 USDT',
-                    description: 'Sent 100 USDT to mcnhddd*****',
-                    date: '14 Nov 24',
-                    onTap: () => navigate(context: context, page: ReceiptScreen()),
-                  ),
-                  TransactionItem(
-                    amount: '100 USDT',
-                    description: 'Sent 100 USDT to mcnhddd*****',
-                    date: '10 Nov 24',
-                    onTap: () => navigate(context: context, page: ReceiptScreen()),
-                  ),
-                  TransactionItem(
-                    amount: '20 USDT',
-                    description: 'Received 20 USDT for xddnsg*****',
-                    date: '10 Nov 24',
-                    onTap: () => navigate(context: context, page: ReceiptScreen()),
-                  ),
+                  ...safeSublist<GeneralTransaction>(cryptoProvider?.transactions ?? [], 5)
+                      .map((GeneralTransaction e) => TransactionItem(
+                          amount: '${e.amount} ${e.currency?.toUpperCase() ?? ""}',
+                          description: e.description ?? "",
+                          date: e.formattedDate,
+                          onTap: () {
+                            //   Navigator.pushReplacement(
+                            //       context,
+                            //       FadeRoute(
+                            //           page: PaymentReceipt(
+                            //         svg_img: 'spray_anim',
+                            //         type: e.transactionType.name,
+                            //         date: e.createdAt ?? "",
+                            //         amount: e.amount ?? "",
+                            //         meterNumber: '',
+                            //         transactionRef: e.txid ?? "",
+                            //         transStatus: e.status ?? "",
+                            //         transactionId: e.txid ?? "",
+                            //       )));
+                            // }
+                            navigate(context: context, page: ReceiptScreen(item: e));
+                          }))
+                      .toList(),
                 ],
               ),
             ),
@@ -436,41 +451,14 @@ class TransactionsScreen extends StatelessWidget {
 
   TransactionsScreen({this.onNavigate});
 
-  final List<Map<String, String>> transactions = [
-    {'amount': '200 USDT', 'description': 'Sold 200 USDT', 'date': '15 Nov 24'},
-    {'amount': '100 USDT', 'description': 'Sent 100 USDT to mcnhddd*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-    {'amount': '20 USDT', 'description': 'Received 20 USDT for xddnsg*****', 'date': '10 Nov 24'},
-  ];
-
   @override
   Widget build(BuildContext context) {
+    CryptoProvider cryptoProvider = context.watch<CryptoProvider>();
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: buildAppBar(context: context, title: "Transactions"),
       body: Column(
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 16),
-          //   child: Row(
-          //     children: [
-          //       GestureDetector(
-          //         onTap: () => navigate(context: context),
-          //         child: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
-          //       ),
-          //       const SizedBox(width: 16),
-          //       const Text('Tether transactions', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600)),
-          //     ],
-          //   ),
-          // ),
           const SizedBox(height: 24),
           Expanded(
             child: SingleChildScrollView(
@@ -480,166 +468,30 @@ class TransactionsScreen extends StatelessWidget {
                 children: [
                   Text('November', style: TextStyle(color: Colors.grey[400], fontSize: 14)),
                   const SizedBox(height: 16),
-                  ...transactions
-                      .map((transaction) => TransactionItem(
-                            amount: transaction['amount']!,
-                            description: transaction['description']!,
-                            date: transaction['date']!,
-                            onTap: () => navigate(context: context, page: ReceiptScreen()),
+                  ...cryptoProvider.transactions
+                      .map((e) => TransactionItem(
+                            amount: '${e.amount} ${e.currency?.toUpperCase() ?? ""}',
+                            description: e.description ?? "",
+                            date: e.formattedDate,
+                            onTap: () => navigate(
+                                context: context,
+                                page: ReceiptScreen(
+                                  item: e,
+                                )),
                           ))
                       .toList(),
+                  // ...transactions
+                  //     .map((transaction) => TransactionItem(
+                  //           amount: transaction['amount']!,
+                  //           description: transaction['description']!,
+                  //           date: transaction['date']!,
+                  //           onTap: () => navigate(context: context, page: ReceiptScreen()),
+                  //         ))
+                  //     .toList(),
                 ],
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// Receipt Screen
-class ReceiptScreen extends StatelessWidget {
-  final Function(int)? onNavigate;
-
-  ReceiptScreen({this.onNavigate});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: buildAppBar(context: context, title: "Receipt"),
-      body: Column(
-        children: [
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 16),
-          //   child: Row(
-          //     children: [
-          //       GestureDetector(
-          //         onTap: () => navigate(context: context),
-          //         child: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
-          //       ),
-          //       const SizedBox(width: 16),
-          //       const Text('Receipt', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600)),
-          //     ],
-          //   ),
-          // ),
-          const SizedBox(height: 24),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  // Amount Section
-                  Text('-29.45 USDT', style: TextStyle(color: Colors.grey[400], fontSize: 16)),
-                  const SizedBox(height: 8),
-                  const Text('0.017 ETH', style: TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 16),
-                  Container(height: 1, color: Colors.grey[800]),
-                  const SizedBox(height: 24),
-
-                  // Receipt Details
-                  _buildReceiptRow('Order Quantity', '29.45 USDT'),
-                  _buildReceiptRow('Rate:', '1 USDT = ₦1,697.51'),
-                  _buildReceiptRow('Network Fee:', '2.00 USDT'),
-                  _buildReceiptRow('Spraay Fee:', '2.00 USDT'),
-                  _buildReceiptRow('Date & Time:', '17 April, 2:30 PM'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Transaction Status:', style: TextStyle(color: Colors.grey[400], fontSize: 16)),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF10B981),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Text('Successful', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500)),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Container(height: 1, color: Colors.grey[800]),
-                  const SizedBox(height: 32),
-
-                  // Action Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: const BoxDecoration(color: CustomColors.sDarkColor2, shape: BoxShape.circle),
-                            child: SvgPicture.asset(
-                              'images/receipt-2.svg',
-                              color: CustomColors.sPrimaryColor500,
-                              height: 24,
-                              width: 24,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text('Download Receipt', style: TextStyle(color: Colors.grey[400], fontSize: 12)),
-                        ],
-                      ),
-                      const SizedBox(width: 32),
-                      Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: const BoxDecoration(color: CustomColors.sDarkColor2, shape: BoxShape.circle),
-                            child: SvgPicture.asset(
-                              'images/Send.svg',
-                              color: CustomColors.sPrimaryColor500,
-                              height: 24,
-                              width: 24,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text('Share Receipt', style: TextStyle(color: Colors.grey[400], fontSize: 12)),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Support Button
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.headset_mic, color: Colors.white, size: 20),
-                          SizedBox(width: 8),
-                          Text('Speak to Support', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildReceiptRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(color: Colors.grey[400], fontSize: 16)),
-          Text(value, style: const TextStyle(color: Colors.white, fontSize: 16)),
         ],
       ),
     );
@@ -652,4 +504,9 @@ navigate({required BuildContext context, Widget? page, bool isPushReplacement = 
       : isPushReplacement
           ? Navigator.pushReplacement(context, FadeRoute(page: page))
           : Navigator.push(context, FadeRoute(page: page));
+}
+
+List<T> safeSublist<T>(List<T> list, int end) {
+  if (list.isEmpty) return [];
+  return list.sublist(0, min(end, list.length));
 }

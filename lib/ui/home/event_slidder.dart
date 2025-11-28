@@ -3,7 +3,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -15,8 +14,6 @@ import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/navigations/scale_transition.dart';
 import 'package:spraay/ui/events/event_details.dart';
 import 'package:spraay/ui/events/new_event/new_event.dart';
-import 'package:spraay/ui/home/bvn_verification.dart';
-import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/view_model/event_provider.dart';
 
 import '../../components/reusable_widget.dart';
@@ -29,32 +26,32 @@ class EventSlidder extends StatefulWidget {
 }
 
 class _EventSlidderState extends State<EventSlidder> {
-
   EventProvider? eventProvider;
   @override
   void didChangeDependencies() {
-    eventProvider=context.watch<EventProvider>();
+    eventProvider = context.watch<EventProvider>();
     super.didChangeDependencies();
   }
+
   @override
   void initState() {
     super.initState();
     Provider.of<EventProvider>(context, listen: false).fetchCurrentUserApi();
   }
+
   int currentPos = 0;
-  Widget shimmerLoading(){
+  Widget shimmerLoading() {
     return SizedBox(
-      width:double.infinity,
+      width: double.infinity,
       height: 110.h,
       child: Shimmer.fromColors(
         baseColor: CustomColors.sPrimaryColor500,
         highlightColor: Colors.grey,
         child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(24.r)),
-              color: CustomColors.sWhiteColor,
-            ),
-
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(24.r)),
+            color: CustomColors.sWhiteColor,
+          ),
         ),
       ),
     );
@@ -62,49 +59,54 @@ class _EventSlidderState extends State<EventSlidder> {
 
   @override
   Widget build(BuildContext context) {
-    if(eventProvider?.userHorizontalScrool==null){
+    if (eventProvider?.userHorizontalScrool == null) {
       return Center(child: shimmerLoading());
-    }
-    else if(eventProvider!.userHorizontalScrool!.isEmpty)
-    {
-      return Center(child: buildDottedBorder(
+    } else if (eventProvider!.userHorizontalScrool!.isEmpty) {
+      return Center(
+          child: buildDottedBorder(
         child: Container(
             width: double.infinity,
             height: 112.h,
             child: InkWell(
-              onTap:(){
+              onTap: () {
                 Navigator.push(context, ScaleTransition1(page: const NewEvent()));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("No Event", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),),
+                  Text(
+                    "No Event",
+                    style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),
+                  ),
                   height4,
-                  Text("Create one", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sPrimaryColor500),),
+                  Text(
+                    "Create one",
+                    style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: CustomColors.sPrimaryColor500),
+                  ),
                 ],
               ),
             )),
       ));
-    }
-    else{
+    } else {
       return buildEventForYou(eventProvider?.userHorizontalScrool);
     }
-
   }
 
-  Widget buildEventForYou(List<DatumCurrentUser>? userHorizontalScrool){
+  Widget buildEventForYou(List<UserEventModel>? userHorizontalScrool) {
     return Column(
       children: [
-
         carouseSliderWidget(userHorizontalScrool!),
         height8,
         AnimatedSmoothIndicator(
             activeIndex: currentPos,
-            count: userHorizontalScrool.length,  //count: pages.length,
-            effect: ExpandingDotsEffect( dotColor: CustomColors.sDarkColor3,
-              dotHeight: 10.h, dotWidth: 12.w,
-              activeDotColor: CustomColors.sGreenColor500,)),
+            count: userHorizontalScrool.length, //count: pages.length,
+            effect: ExpandingDotsEffect(
+              dotColor: CustomColors.sDarkColor3,
+              dotHeight: 10.h,
+              dotWidth: 12.w,
+              activeDotColor: CustomColors.sGreenColor500,
+            )),
       ],
     );
 
@@ -178,21 +180,30 @@ class _EventSlidderState extends State<EventSlidder> {
     // );
   }
 
-
-
-  Widget carouseSliderWidget(List<DatumCurrentUser> list){
+  Widget carouseSliderWidget(List<UserEventModel> list) {
     return CarouselSlider.builder(
       itemCount: list.length,
       itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) => GestureDetector(
-        onTap:(){
+        onTap: () {
           // Navigator.push(context, FadeRoute(page: EventDetails()));
-          Navigator.push(context, FadeRoute(page: EventDetails(fromPage: "", eventname:list[itemIndex].eventName??"",
-            event_date: DateFormat('yyyy-MM-dd').format(list[itemIndex].eventDate!), eventTime: list[itemIndex].time??"", eventVenue: list[itemIndex].venue??"",
-            eventCategory: list[itemIndex].eventCategory?.name??"", eventdescription: list[itemIndex].eventDescription??"",
-            event_CoverImage: list[itemIndex].eventCoverImage??"", eventId: list[itemIndex].id??"", tag: list[itemIndex].user?.userTag??"", lat: list[itemIndex].eventGeoCoordinates?.latitude.toString()??"", long: list[itemIndex].eventGeoCoordinates?.longitude.toString()??"",
-            eventCode: list[itemIndex].eventCode??"",
-          )));
-
+          Navigator.push(
+              context,
+              FadeRoute(
+                  page: EventDetails(
+                fromPage: "",
+                eventname: list[itemIndex].eventName ?? "",
+                event_date: DateFormat('yyyy-MM-dd').format(list[itemIndex].eventDate!),
+                eventTime: list[itemIndex].time ?? "",
+                eventVenue: list[itemIndex].venue ?? "",
+                eventCategory: list[itemIndex].eventCategory?.name ?? "",
+                eventdescription: list[itemIndex].eventDescription ?? "",
+                event_CoverImage: list[itemIndex].eventCoverImage ?? "",
+                eventId: list[itemIndex].id ?? "",
+                tag: list[itemIndex].user?.userTag ?? "",
+                lat: list[itemIndex].eventGeoCoordinates?.latitude.toString() ?? "",
+                long: list[itemIndex].eventGeoCoordinates?.longitude.toString() ?? "",
+                eventCode: list[itemIndex].eventCode ?? "",
+              )));
         },
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(24.r)),
@@ -204,68 +215,78 @@ class _EventSlidderState extends State<EventSlidder> {
                 Hero(
                   tag: "image1",
                   child: Padding(
-                    padding:  EdgeInsets.only(right:8.r),
+                    padding: EdgeInsets.only(right: 8.r),
                     child: ClipRRect(
                       borderRadius: BorderRadius.only(topLeft: Radius.circular(8.r), bottomLeft: Radius.circular(8.r)),
                       child: CachedNetworkImage(
-                        width: 110.w, height: 140.h,
+                        width: 110.w,
+                        height: 140.h,
                         fit: BoxFit.cover,
-                        imageUrl:list[itemIndex].eventCoverImage??"",
-                        placeholder: (context, url) => Center(child: SpinKitFadingCircle(size: 30,color: Colors.grey,)),
+                        imageUrl: list[itemIndex].eventCoverImage ?? "",
+                        placeholder: (context, url) => Center(
+                            child: SpinKitFadingCircle(
+                          size: 30,
+                          color: Colors.grey,
+                        )),
                         errorWidget: (context, url, error) => Center(child: Icon(Icons.error)),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 6.w,),
+                SizedBox(
+                  width: 6.w,
+                ),
                 Expanded(
                   child: Padding(
-                    padding:  EdgeInsets.only(right: 16.w, top: 8.h, bottom: 0.h),
+                    padding: EdgeInsets.only(right: 16.w, top: 8.h, bottom: 0.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
                           width: 150.w,
-                          child: Text(list[itemIndex].eventName??"", style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 20.sp,
-                              fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),maxLines: 1, overflow: TextOverflow.ellipsis, ),
+                          child: Text(
+                            list[itemIndex].eventName ?? "",
+                            style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor50),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         height4,
                         SizedBox(
                           width: 150.w,
-                          child: Text(list[itemIndex].eventDescription??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),
-                            maxLines: 1, overflow: TextOverflow.ellipsis,),
+                          child: Text(
+                            list[itemIndex].eventDescription ?? "",
+                            style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-
                         height8,
-                        buildStatus(title: "View Details", color:CustomColors.sGreenColor500, )
+                        buildStatus(
+                          title: "View Details",
+                          color: CustomColors.sGreenColor500,
+                        )
                       ],
                     ),
                   ),
                 ),
-
                 Container(
                   width: 56.w,
                   height: 64.h,
                   margin: EdgeInsets.only(right: 12.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(12.r)),
-                    color: CustomColors.sPrimaryColor500
-                  ),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(12.r)), color: CustomColors.sPrimaryColor500),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(monthString(list[itemIndex].eventDate.toString()??""), style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700) ),
-                      Text(dayString(list[itemIndex].eventDate.toString()), style: CustomTextStyle.kTxtBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w700) ),
+                      Text(monthString(list[itemIndex].eventDate.toString() ?? ""), style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700)),
+                      Text(dayString(list[itemIndex].eventDate.toString()), style: CustomTextStyle.kTxtBold.copyWith(fontSize: 18.sp, fontWeight: FontWeight.w700)),
                     ],
                   ),
                 ),
-
               ],
-
             ),
           ),
-
         ),
       ),
       options: CarouselOptions(
@@ -284,23 +305,16 @@ class _EventSlidderState extends State<EventSlidder> {
           autoPlayInterval: const Duration(seconds: 5),
           autoPlayAnimationDuration: const Duration(milliseconds: 700),
           autoPlayCurve: Curves.fastOutSlowIn,
-          scrollDirection: Axis.horizontal
-      ),
+          scrollDirection: Axis.horizontal),
     );
   }
 
-
-  Widget buildStatus({required String title, required Color color}){
-    return   Container(
+  Widget buildStatus({required String title, required Color color}) {
+    return Container(
       width: 100.w,
       height: 28.h,
-      decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.all(Radius.circular(16.r))
-      ),
-      child:Center(child: Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor900) )),
-
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.all(Radius.circular(16.r))),
+      child: Center(child: Text(title, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w500, color: CustomColors.sGreyScaleColor900))),
     );
   }
-
 }

@@ -453,6 +453,7 @@ class BillPaymentProvider extends ChangeNotifier {
   num quantity = 0;
   GCFxRate? giftCardRate;
   final TextEditingController youPayController = TextEditingController();
+  final TextEditingController customPriceController = TextEditingController();
   num? selectedPrice;
   SingleGiftCardModel? giftCardModel;
   getFxRate(String recipientCurrencyCode, num amount) async {
@@ -504,7 +505,7 @@ class BillPaymentProvider extends ChangeNotifier {
 
       if (result.error == true) {
         if (context.mounted) {
-          popupDialogFailedResponse(context);
+          popupDialogFailedResponse(context, error: result.errorMessage);
         }
       } else {
         if (context.mounted) {

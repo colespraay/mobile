@@ -113,12 +113,12 @@ class ReceiveAssetList extends StatelessWidget {
                               SizedBox(
                                 width: 16.w,
                               ),
-                              GestureDetector(
-                                  onTap: () async {
-                                    await copyToClipboardWithFeedback(wallets[position].depositAddress ?? "", successMessage: "Address Copied to Clipboard");
-                                  },
-                                  child: Container(
-                                      padding: EdgeInsets.all(12.r), decoration: BoxDecoration(color: CustomColors.cardBg, shape: BoxShape.circle), child: SvgPicture.asset('images/copy-flat.svg'))),
+                              // GestureDetector(
+                              //     onTap: () async {
+                              //       await copyToClipboardWithFeedback(wallets[position].depositAddress ?? "", successMessage: "Address Copied to Clipboard");
+                              //     },
+                              //     child: Container(
+                              //         padding: EdgeInsets.all(12.r), decoration: BoxDecoration(color: CustomColors.cardBg, shape: BoxShape.circle), child: SvgPicture.asset('images/copy-flat.svg'))),
                             ],
                           )
                         ],

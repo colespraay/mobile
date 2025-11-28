@@ -313,6 +313,7 @@ class _CableSubscriptionscreenState extends State<CableSubscriptionscreen> {
           );
         }).toList(),
         onChanged: (DataPlan? newValue) {
+          print(newValue?.code);
           dataPlan = newValue!;
           setState(() {
             amtController.text = newValue.price.toString() ?? "0.00";

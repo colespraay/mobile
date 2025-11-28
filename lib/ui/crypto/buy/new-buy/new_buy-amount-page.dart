@@ -6,11 +6,13 @@ import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/wallets-response.dart';
 import 'package:spraay/navigations/fade_route.dart';
+import 'package:spraay/ui/crypto/asset-details.dart';
 import 'package:spraay/ui/crypto/crypto.vm.dart';
 import 'package:spraay/ui/crypto/widgets/asset-header.dart';
 import 'package:spraay/ui/crypto/widgets/detail-row.dart';
 import 'package:spraay/ui/crypto/widgets/misc.dart';
 import 'package:spraay/ui/crypto/widgets/number-pad.dart';
+import 'package:spraay/ui/crypto/widgets/receipt.dart';
 import 'package:spraay/utils/after-layout.dart';
 
 // Buy Asset Screen
@@ -287,7 +289,10 @@ class _NewBuyAssetScreenState extends State<NewBuyAssetScreen> with AfterLayoutM
                                   const Spacer(),
                                   buttonWidget(onDone: () {
                                     cryptoProvider?.buyCrypto(context,
-                                        onDone: () => popupSuccessfulDialog(
+                                        onDone: (v) => popupSuccessfulDialog(
+                                            onViewReceipt: () {
+                                              navigate(context: context, page: ReceiptScreen(item: v));
+                                            },
                                             context: context,
                                             title: 'Transaction Successful',
                                             content: "Your asset purchase was successful",
@@ -414,7 +419,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     const Spacer(),
                     buttonWidget(onDone: () {
                       cryptoProvider?.buyCrypto(context,
-                          onDone: () => popupSuccessfulDialog(
+                          onDone: (v) => popupSuccessfulDialog(
+                              onViewReceipt: () {
+                                navigate(context: context, page: ReceiptScreen(item: v));
+                              },
                               context: context,
                               title: 'Transaction Successful',
                               content: "Your asset purchase was successful",

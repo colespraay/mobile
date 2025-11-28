@@ -9,12 +9,15 @@ import 'package:spraay/components/custom-dropdown.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/models/wallets-response.dart';
+import 'package:spraay/ui/crypto/asset-details.dart';
 import 'package:spraay/ui/crypto/crypto.vm.dart';
 import 'package:spraay/ui/crypto/widgets/asset-header.dart';
 import 'package:spraay/ui/crypto/widgets/detail-row.dart';
 import 'package:spraay/ui/crypto/widgets/misc.dart';
 import 'package:spraay/ui/crypto/widgets/number-pad.dart';
+import 'package:spraay/ui/crypto/widgets/receipt.dart';
 import 'package:spraay/utils/after-layout.dart';
+import 'package:spraay/utils/string-utils.dart';
 import 'package:spraay/view_model/bill_payment_provider.dart';
 
 // Buy Asset Screen
@@ -54,6 +57,8 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
         displayAmount = '0.00';
       }
     });
+    print(displayAmount);
+    cryptoProvider?.setDisplayAmount(num.tryParse(displayAmount.replaceAll(",", "").replaceAll(".", "")) ?? 0);
   }
 
   void _onBackspace() {
@@ -69,6 +74,7 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
         displayAmount = '0.00';
       }
     });
+    cryptoProvider?.setDisplayAmount(num.tryParse(displayAmount.replaceAll(",", "").replaceAll(".", "")) ?? 0);
   }
 
   CryptoProvider? cryptoProvider;
@@ -93,6 +99,8 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
   ValueNotifier<num> pageIndex = ValueNotifier(0);
   TextEditingController addressController = TextEditingController();
   num get amount => num.tryParse(displayAmount.toString().replaceAll(",", "")) ?? 0;
+  String get ticker => "${widget.asset.currency ?? " "}${widget.asset.referenceCurrency ?? " "}";
+  String get currency => widget.asset.currency ?? " ";
 
   @override
   Widget build(BuildContext context) {
@@ -170,9 +178,11 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                       height: 24,
                     ),
                     buttonWidget(
-                        onDone: () {
+                        onDone: () async {
                           if (cryptoProvider?.cryptoData != null) {
-                            pageIndex.value = pageIndex.value + 1;
+                            await Provider.of<CryptoProvider>(context, listen: false).getTransactionFeesUSDValue(context, currency, ticker, isBuy: false, onDone: () {
+                              pageIndex.value = pageIndex.value + 1;
+                            });
                           }
                         },
                         isActive: hasValue),
@@ -190,10 +200,10 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Consumer<BillPaymentProvider>(
                         builder: (context, dataProvider, _) {
-                          return GenericDropdown<String>(
-                            items: const ["String", "Object"],
-                            hintText: "Choose Betting Platform",
-                            displayText: (item) => item ?? "",
+                          return GenericDropdown<Network>(
+                            items: (widget.asset.networks ?? []).where((e) => e.withdrawsEnabled == true).toList(),
+                            hintText: "Choose Network",
+                            displayText: (item) => "${item.id?.toUpperCase()} - ${item.name ?? " "}",
                             onSelected: (selected) {
                               //   final provider = Provider.of<BillPaymentProvider>(context, listen: false);
                               //   provider.fetchBettingPlanApiList(selected ?? "");
@@ -209,27 +219,7 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                         textEditingController: addressController,
                         textInputAction: TextInputAction.next,
                         hintTxt: "Enter Address",
-                        // focusNode: _textField1Focus,
                         onChanged: (value) {},
-                        // surffixWidget: GestureDetector(
-                        //   onTap: () async {
-                        //     showScannerSheet(context, controller: addressController, onDone: () {
-                        //       pageIndex.value = pageIndex.value + 1;
-                        //     });
-                        //     // final result = await Navigator.push(context, FadeRoute(page: const QrCodeScanner()));
-                        //     // if (result != null) {
-                        //     //   addressController.text = result.toString();
-                        //     //   pageIndex.value = pageIndex.value + 1;
-                        //     // }
-                        //   },
-                        //   child: Padding(
-                        //     padding: const EdgeInsets.only(right: 16.0, top: 8, bottom: 8),
-                        //     child: SvgPicture.asset(
-                        //       'images/qr-flat.svg',
-                        //       color: Colors.white,
-                        //     ),
-                        //   ),
-                        // ),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -276,14 +266,6 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                               if (addressController.text.isNotEmpty) {
                                 pageIndex.value = pageIndex.value + 1;
                               }
-                              // Navigator.push(
-                              //     context,
-                              //     FadeRoute(
-                              //       page: ReviewScreen(
-                              //         asset: widget.asset,
-                              //         amount: displayAmount,
-                              //       ),
-                              //     ));
                             },
                           ),
                           const SizedBox(
@@ -303,7 +285,7 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                   children: [
                     const SizedBox(height: 16),
                     Text(
-                      'You are about to sell',
+                      'You are about to send',
                       style: TextStyle(
                         color: Colors.grey[400],
                         fontSize: 16,
@@ -339,7 +321,7 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                             DetailRow(
                               label: 'Order Quantity',
                               value:
-                                  "${widget.asset.referenceCurrency?.toUpperCase()}$displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)}${widget.asset.currency?.toUpperCase()}",
+                                  "${widget.asset.referenceCurrency?.toUpperCase()} $displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)} ${widget.asset.currency?.toUpperCase()}",
                             ),
                             DetailRow(
                               label: 'Rate',
@@ -347,12 +329,13 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                             ),
                             DetailRow(
                               label: 'Network Fee',
-                              value: cryptoProvider?.transactionFeesData?.cashWithdrawalFee ?? "",
+                              value:
+                                  "${cryptoProvider?.transactionFeesData?.cryptoWithdrawalFee?.feeAndCurrency ?? " "}  = ${(cryptoProvider?.sellNetworkFee)} ${cryptoProvider?.transactionFeesData?.cryptoWithdrawalFee?.currency ?? " "}",
                             ),
-                            // DetailRow(
-                            //   label: 'Spraay Fee',
-                            //   value: '2 USDT = ₦3,400.00',
-                            // ),
+                            DetailRow(
+                              label: 'Spraay Fee',
+                              value: '${cryptoProvider?.transactionFeesData?.spraayFee?.feeAndCurrency} ',
+                            ),
                             Container(
                               height: 1,
                               color: Colors.grey[800],
@@ -360,23 +343,30 @@ class _SellAssetScreenState extends State<SellAssetScreen> with AfterLayoutMixin
                             ),
                             DetailRow(
                               label: 'Total',
-                              value:
-                                  '${widget.asset.referenceCurrency?.toUpperCase()} $displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)}${widget.asset.currency?.toUpperCase()} + ${cryptoProvider?.transactionFeesData?.cashWithdrawalFee ?? ""}',
+                              value: "${widget.asset.referenceCurrency?.toUpperCase()} ${(cryptoProvider?.allTotal).toString().formatAsAmountWithDecimals()}",
+                              // '${widget.asset.referenceCurrency?.toUpperCase()} $displayAmount = ${conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0)}${widget.asset.currency?.toUpperCase()} + ${cryptoProvider?.transactionFeesData?.cashWithdrawalFee ?? ""}',
                               isTotal: true,
                             ),
                             const Spacer(),
                             buttonWidget(
                               onDone: () {
-                                cryptoProvider?.sellCrypto(context, onDone: () {
+                                cryptoProvider?.sellCrypto(context, onDone: (transaction) {
                                   popupSuccessfulDialog(
+                                      onViewReceipt: () {
+                                        navigate(context: context, page: ReceiptScreen(item: transaction));
+                                      },
                                       context: context,
                                       title: 'Transaction Successful',
                                       content: "Your asset sale was successful",
                                       onTap: () => goHome(context),
                                       buttonTxt: "Okay",
-                                      fromWhere: '',
+                                      fromWhere: widget.asset.currency?.toUpperCase() ?? "",
+                                      type: "Crypto Withdrawal",
                                       amount: amount.toString());
-                                }, fundId: addressController.text, amount: amount, currency: widget.asset.currency);
+                                },
+                                    fundId: addressController.text,
+                                    amount: conversionAmount(cryptoProvider?.cryptoData?.ticker?.buyAmount ?? 0, num.tryParse(displayAmount.replaceAll(",", "")) ?? 0),
+                                    currency: widget.asset.currency);
                               },
                             ),
                             const SizedBox(height: 54),
@@ -432,7 +422,7 @@ class ReviewScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 16),
           Text(
-            'You are about to sell',
+            'You are about to send',
             style: TextStyle(
               color: Colors.grey[400],
               fontSize: 16,

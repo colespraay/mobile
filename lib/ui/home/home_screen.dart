@@ -69,6 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
               height20,
               buildWalletContainer(),
               height26,
+              // GestureDetector(
+              //     onTap: () {
+              //       Navigator.push(context, SlideLeftRoute(page: const PhoneContacts()));
+              //     },
+              //     child: const Icon(
+              //       Icons.add,
+              //       color: Colors.white,
+              //     )),
               GestureDetector(
                   onTap: () {
                     // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const PhoneContacts()));

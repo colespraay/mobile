@@ -1,9 +1,11 @@
+import 'package:intl/intl.dart';
+
 extension StringExtension on String {
   /// Capitalizes the first letter of the string
-  String capitalize() {
-    if (isEmpty) return this;
-    return this[0].toUpperCase() + substring(1);
-  }
+  // String capitalize() {
+  //   if (isEmpty) return this;
+  //   return this[0].toUpperCase() + substring(1);
+  // }
 
   /// Capitalizes the first letter and makes the rest lowercase
   String capitalizeOnly() {
@@ -93,4 +95,19 @@ extension StringFormatExtens on String? {
   // String formatDate() => DateFormat('dd/MM/yyyy').format(DateTime.parse(this!
   //   // "2024-10-17T14:23:22.956Z"
   // ));
+}
+
+extension DateFormatting on String {
+  /// Converts an ISO date string (e.g. "2025-11-12T14:13:12.000Z")
+  /// into a readable local date/time format.
+  String toFormattedDateTime({
+    String dateFormat = 'dd MMM yyyy, h:mm a',
+  }) {
+    try {
+      final dateTime = DateTime.parse(this).toLocal();
+      return DateFormat(dateFormat).format(dateTime);
+    } catch (e) {
+      return this; // fallback if string can't be parsed
+    }
+  }
 }

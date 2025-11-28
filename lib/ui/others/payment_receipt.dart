@@ -16,19 +16,27 @@ import 'package:spraay/navigations/SlideLeftRoute.dart';
 import 'package:spraay/ui/profile/help_and_support.dart';
 import 'package:spraay/view_model/transaction_provider.dart';
 
-
 class PaymentReceipt extends StatefulWidget {
-  String svg_img, amount, type, date, meterNumber, transactionRef, transStatus,transactionId;
-  String?cableSubscriptionId;
-   PaymentReceipt({required this.svg_img, required this.type, required this.date, required this.amount, required this.meterNumber, required this.transactionRef
-  , required this.transStatus, required this.transactionId, this.cableSubscriptionId});
+  String svg_img, amount, type, date, meterNumber, transactionRef, transStatus, transactionId;
+  String? cableSubscriptionId;
+  Map<String, dynamic>? others;
+  PaymentReceipt(
+      {required this.svg_img,
+      required this.type,
+      required this.date,
+      required this.amount,
+      required this.meterNumber,
+      required this.transactionRef,
+      required this.transStatus,
+      required this.transactionId,
+      this.others,
+      this.cableSubscriptionId});
 
   @override
   State<PaymentReceipt> createState() => _PaymentReceiptState();
 }
 
 class _PaymentReceiptState extends State<PaymentReceipt> {
-
   ScreenshotController screenshotController = ScreenshotController();
   TransactionProvider? _transactionProvider;
 
@@ -37,10 +45,11 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
     super.initState();
     FileStorage.getExternalDocumentPath();
   }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _transactionProvider=context.watch<TransactionProvider>();
+    _transactionProvider = context.watch<TransactionProvider>();
   }
 
   @override
@@ -49,11 +58,26 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
       loading: _transactionProvider!.loading,
       child: Scaffold(
           appBar: buildAppBar(context: context, title: "Receipt"),
-          body:  ListView(
+          body: ListView(
             padding: horizontalPadding,
             children: [
               height18,
-              widget.type.contains("Electricity") || widget.cableSubscriptionId !=null ? Image.asset("images/${widget.svg_img}.png", width: 80.w, height: 80.h,):  SvgPicture.asset("images/${widget.svg_img}.svg", width: 80.w, height: 80.h,),
+              SvgPicture.asset(
+                "images/logo.svg",
+                width: 80.w,
+                height: 80.h,
+              ),
+              // widget.type.contains("Electricity") || widget.cableSubscriptionId != null
+              //     ? Image.asset(
+              //         "images/${widget.svg_img}.png",
+              //         width: 80.w,
+              //         height: 80.h,
+              //       )
+              //     : SvgPicture.asset(
+              //         "images/${widget.svg_img}.svg",
+              //         width: 80.w,
+              //         height: 80.h,
+              //       ),
               // height16,
               buildContainer(),
 
@@ -63,7 +87,7 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   InkWell(
-                    onTap:(){
+                    onTap: () {
                       Provider.of<TransactionProvider>(context, listen: false).downloadPdf(context, widget.transactionId);
                     },
                     child: Column(
@@ -72,14 +96,15 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
                       children: [
                         SvgPicture.asset("images/download.svg"),
                         height4,
-                        Text("Download Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
+                        Text("Download Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400)),
                       ],
                     ),
                   ),
-
-                  SizedBox(width: 50.w,),
+                  SizedBox(
+                    width: 50.w,
+                  ),
                   InkWell(
-                    onTap:(){
+                    onTap: () {
                       _takeScreenhot();
                     },
                     child: Column(
@@ -88,32 +113,28 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
                       children: [
                         SvgPicture.asset("images/share_m.svg"),
                         height4,
-                        Text("Share Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400) ),
+                        Text("Share Receipt", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400)),
                       ],
                     ),
                   ),
-
-
                 ],
               ),
               height40,
               buildButton(),
               height22
-
-
             ],
           )),
     );
   }
 
-  Widget buildContainer(){
+  Widget buildContainer() {
     return Screenshot(
       controller: screenshotController,
       child: Container(
         padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 39.h, top: 10.h),
         decoration: const BoxDecoration(
-            color:CustomColors.sBackgroundColor,
-            // borderRadius: BorderRadius.all(Radius.circular(23.r))
+          color: CustomColors.sBackgroundColor,
+          // borderRadius: BorderRadius.all(Radius.circular(23.r))
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,105 +143,118 @@ class _PaymentReceiptState extends State<PaymentReceipt> {
             // height16,
             dividerWidget,
             height26,
-            buildRow(title: "Transaction Amount:", content: "${widget.amount}"),
+            buildRow(title: "Transaction Amount:", content: widget.amount),
             height12,
             buildRow(title: "Transaction Type:", content: widget.type),
             height12,
-            buildRow(title: "Transaction Date:", content:dateTimeFormat(widget.date)),
+            buildRow(title: "Transaction Date:", content: dateTimeFormat(widget.date)),
             height12,
-            buildRow(title: "Meter No:", content: widget.meterNumber),
+            if (widget.meterNumber.isNotEmpty) buildRow(title: "Meter No:", content: widget.meterNumber),
             height12,
             buildRow(title: "Transaction Reference:", content: widget.transactionRef),
             height12,
+            if (widget.others?.isNotEmpty ?? false)
+              ...(widget.others ?? {}).entries.map((entry) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  child: buildRow(
+                    title: "${entry.key}:",
+                    content: entry.value?.toString() ?? "",
+                  ),
+                );
+              }).toList(),
             buildContainerRow(title: "Transaction Status:", content: widget.transStatus),
             height16,
             dividerWidget,
-
           ],
         ),
       ),
     );
   }
 
-  Widget buildRow({required String title, required String content}){
+  Widget buildRow({required String title, required String content}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(width: 140.w, child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 13.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) )),
-       SizedBox(width: 10.w,),
-
-        Expanded(child: Text(content,
-            style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w700, fontFamily: "SemiPlusJakartaSans",),
-        textAlign: TextAlign.end,)),
-      ],
-    );
-  }
-
-  Widget buildContainerRow({required String title, required String content}){
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        SizedBox(width: 130.w,
-            child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500) )),
-        Spacer(),
-
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-          decoration: BoxDecoration(
-            color: CustomColors.sErrorColor,
-            borderRadius: BorderRadius.all(Radius.circular(50.r))
+        SizedBox(width: 140.w, child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 13.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500))),
+        SizedBox(
+          width: 10.w,
+        ),
+        Expanded(
+            child: Text(
+          content,
+          style: CustomTextStyle.kTxtSemiBold.copyWith(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w700,
+            fontFamily: "SemiPlusJakartaSans",
           ),
-            child: Text(content, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w700) )),
+          textAlign: TextAlign.end,
+        )),
       ],
     );
   }
 
+  Widget buildContainerRow({required String title, required String content}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(width: 130.w, child: Text(title, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 12.sp, fontWeight: FontWeight.w400, color: CustomColors.sGreyScaleColor500))),
+        Spacer(),
+        Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+            decoration: BoxDecoration(color: CustomColors.sErrorColor, borderRadius: BorderRadius.all(Radius.circular(50.r))),
+            child: Text(content, style: CustomTextStyle.kTxtSemiBold.copyWith(fontSize: 14.sp, fontWeight: FontWeight.w700))),
+      ],
+    );
+  }
 
-  Widget buildButton(){
-
+  Widget buildButton() {
     return Container(
-      width:double.infinity,
+      width: double.infinity,
       height: 58.h,
-      decoration: BoxDecoration(
-          color:CustomColors.sPrimaryColor500,
-          borderRadius: BorderRadius.circular(100.r)),
+      decoration: BoxDecoration(color: CustomColors.sPrimaryColor500, borderRadius: BorderRadius.circular(100.r)),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: (){
+          onTap: () {
             Navigator.push(context, SlideLeftRoute(page: HelpAndSupportScreen()));
-
-
           },
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Speak to Support", style: TextStyle(color: CustomColors.sWhiteColor, fontWeight: FontWeight.w700, fontSize:16.sp, fontFamily: 'Bold',),),
-              SizedBox(width: 10.w,),
+              Text(
+                "Speak to Support",
+                style: TextStyle(
+                  color: CustomColors.sWhiteColor,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16.sp,
+                  fontFamily: 'Bold',
+                ),
+              ),
+              SizedBox(
+                width: 10.w,
+              ),
               SvgPicture.asset("images/headphone.svg")
             ],
           ),
-
         ),
-
       ),
-
     );
   }
 
-  void _takeScreenhot() async{
+  void _takeScreenhot() async {
     final box = context.findRenderObject() as RenderBox?;
-    await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List ?image) async {
+    await screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List? image) async {
       if (image != null) {
         final directory = await getApplicationDocumentsDirectory();
         final imagePath = await File('${directory.path}/image.png').create();
         await imagePath.writeAsBytes(image);
-        await Share.shareFiles([imagePath.path],
+        await Share.shareFiles(
+          [imagePath.path],
           sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
         );
       }
     });
   }
-
 }

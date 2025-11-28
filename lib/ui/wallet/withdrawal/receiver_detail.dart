@@ -15,15 +15,14 @@ import 'package:spraay/utils/my_sharedpref.dart';
 class ReceiverDetailScreen extends StatefulWidget {
   DatumBankModel? bankDetail;
   String amount;
-   ReceiverDetailScreen(this.bankDetail, this.amount) ;
+  ReceiverDetailScreen(this.bankDetail, this.amount);
 
   @override
   State<ReceiverDetailScreen> createState() => _ReceiverDetailScreenState();
 }
 
 class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
-
-  TextEditingController accNumberController=TextEditingController();
+  TextEditingController accNumberController = TextEditingController();
   bool _isObscure = true;
 
   FocusNode? _textField1Focus;
@@ -34,33 +33,34 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
     });
   }
 
-  String accountNumber="";
-  String secondBtn="";
+  String accountNumber = "";
+  String secondBtn = "";
 
+  bool _isLoading = false;
+  String accountName = "";
 
-
-
-  bool _isLoading=false;
-  String accountName="";
-
-  fetchTransactionPinApi(BuildContext context ,String accountNo,) async{
-    setState(() {_isLoading=true;});
-    var result=await ApiServices().userSaveBankApi(MySharedPreference.getToken(), widget.bankDetail?.bankCode??"", accountNo);
-    if(result['error'] == true){
+  fetchTransactionPinApi(
+    BuildContext context,
+    String accountNo,
+  ) async {
+    setState(() {
+      _isLoading = true;
+    });
+    var result = await ApiServices().userSaveBankApi(MySharedPreference.getToken(), widget.bankDetail?.bankCode ?? "", accountNo);
+    if (result['error'] == true) {
       setState(() {
-        accountName=result["message"];
+        accountName = result["message"];
       });
-
-    }else{
-
+    } else {
       setState(() {
-        accountName=result["accountName"];
-        accountNumber=result["accountNumber"];
+        accountName = result["accountName"];
+        accountNumber = result["accountNumber"];
       });
     }
 
-    setState(() {_isLoading=false;});
-
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -73,7 +73,7 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: buildAppBar(context: context, title: "Receiver Details"),
-        body:  Padding(
+        body: Padding(
           padding: horizontalPadding,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,51 +81,58 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
               height26,
               buildContainer(),
               height18,
-              CustomizedTextField(textEditingController:accNumberController, keyboardType: TextInputType.phone,
-                textInputAction: TextInputAction.next,hintTxt: "1234567890",focusNode: _textField1Focus,
+              CustomizedTextField(
+                textEditingController: accNumberController, keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.next, hintTxt: "1234567890", focusNode: _textField1Focus,
                 // maxLength: 10,
-                inputFormat: [
-                  FilteringTextInputFormatter.digitsOnly
-                ],
-                onChanged:(value){
-                if(value.length==10){
-                  fetchTransactionPinApi(context, value);
-                }
-
+                inputFormat: [FilteringTextInputFormatter.digitsOnly],
+                onChanged: (value) {
+                  if (value.length == 10) {
+                    fetchTransactionPinApi(context, value);
+                  }
                 },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  _isLoading? Padding(
-                    padding:  EdgeInsets.only(right: 12.w),
-                    child: SpinKitFadingCircle(size: 25.r,color: Colors.grey,),
-                  ):SizedBox.shrink(),
-
-                  Text(accountName, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: Color(0xffFAFAFA))),
+                  _isLoading
+                      ? Padding(
+                          padding: EdgeInsets.only(right: 12.w),
+                          child: SpinKitFadingCircle(
+                            size: 25.r,
+                            color: Colors.grey,
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                  Expanded(child: Text(accountName, style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400, color: Color(0xffFAFAFA)))),
                 ],
               ),
-
-
-              Spacer(),
+              const Spacer(),
               buildInfo(),
               height8,
-
               CustomButton(
                   onTap: () {
-                    if( accountNumber.isNotEmpty){
-                      Navigator.push(context, SlideLeftRoute(page: WithdrawalOtp(fromWhere: 'new_bank_screen',
-                        bankCode: widget.bankDetail?.bankCode??"", bankName: widget.bankDetail?.bankName??"", amount:widget.amount, accountNumber: accountNumber,
-                        accountName: accountName,)));
+                    if (accountNumber.isNotEmpty) {
+                      Navigator.push(
+                          context,
+                          SlideLeftRoute(
+                              page: WithdrawalOtp(
+                            fromWhere: 'new_bank_screen',
+                            bankCode: widget.bankDetail?.bankCode ?? "",
+                            bankName: widget.bankDetail?.bankName ?? "",
+                            amount: widget.amount,
+                            accountNumber: accountNumber,
+                            accountName: accountName,
+                          )));
                       // MySharedPreference.setVisitingFlag();
                       // Navigator.pushAndRemoveUntil(context, FadeRoute(page: DasboardScreen()),(Route<dynamic> route) => false);
-
                     }
                   },
-                  buttonText: 'Next', borderRadius: 30.r,width: 380.w,
-                  buttonColor: accountNumber.isNotEmpty ? CustomColors.sPrimaryColor500:
-                  CustomColors.sDisableButtonColor),
+                  buttonText: 'Next',
+                  borderRadius: 30.r,
+                  width: 380.w,
+                  buttonColor: accountNumber.isNotEmpty ? CustomColors.sPrimaryColor500 : CustomColors.sDisableButtonColor),
               height12,
               CustomButton(
                   onTap: () {
@@ -133,52 +140,59 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
-                  buttonText: 'Edit Details', borderRadius: 30.r,width: 380.w,
+                  buttonText: 'Edit Details',
+                  borderRadius: 30.r,
+                  width: 380.w,
                   buttonColor: CustomColors.sDarkColor3),
               height12,
-
-
-
-
             ],
           ),
         ));
   }
 
-  Widget buildContainer(){
+  Widget buildContainer() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
             width: 40.w,
             height: 40.h,
-            decoration: BoxDecoration(
-                color: CustomColors.sTransparentPurplecolor,
-                shape: BoxShape.circle
-            ),
-            child: Center(child: Text(getInitials(widget.bankDetail?.bankName??""), style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400)))),
-        SizedBox(width: 16.w,),
-        Expanded(child: Text(widget.bankDetail?.bankName??"", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400))),
-
+            decoration: BoxDecoration(color: CustomColors.sTransparentPurplecolor, shape: BoxShape.circle),
+            child: Center(child: Text(getInitials(widget.bankDetail?.bankName ?? ""), style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400)))),
+        SizedBox(
+          width: 16.w,
+        ),
+        Expanded(child: Text(widget.bankDetail?.bankName ?? "", style: CustomTextStyle.kTxtRegular.copyWith(fontSize: 16.sp, fontWeight: FontWeight.w400))),
         GestureDetector(
-          onTap:(){
-            Navigator.pop(context);
-          },
-            child: SvgPicture.asset("images/edit.svg", width: 30.w, height: 30.h,)),
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: SvgPicture.asset(
+              "images/edit.svg",
+              width: 30.w,
+              height: 30.h,
+            )),
       ],
     );
   }
 
-  Widget buildInfo(){
+  Widget buildInfo() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding:  EdgeInsets.only(top: 4.h),
-          child: SvgPicture.asset("images/warning_triangle.svg", width: 25.w, height: 25.h,),
+          padding: EdgeInsets.only(top: 4.h),
+          child: SvgPicture.asset(
+            "images/warning_triangle.svg",
+            width: 25.w,
+            height: 25.h,
+          ),
         ),
-        SizedBox(width: 16.w,),
-        Expanded(child: Column(
+        SizedBox(
+          width: 16.w,
+        ),
+        Expanded(
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Providing incorrect information can cause delays with your withdrawal or withdrawal to a wrong person.",
@@ -188,7 +202,6 @@ class _ReceiverDetailScreenState extends State<ReceiverDetailScreen> {
             height8,
           ],
         )),
-
       ],
     );
   }
