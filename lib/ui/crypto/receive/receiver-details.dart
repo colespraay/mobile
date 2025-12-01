@@ -184,14 +184,6 @@ class _ReceiverDetailsState extends State<ReceiverDetails> with AfterLayoutMixin
                   width: 200,
                   child: networkDropDown(context),
                 ),
-                // Text(
-                //   "${widget.cAsset.defaultNetworkObject?.name} (${widget.cAsset.defaultNetworkObject?.id?.toUpperCase()})",
-                //   style: CustomTextStyle.kTxtRegular.copyWith(
-                //     color: CustomColors.sWhiteColor,
-                //     fontSize: 16.sp,
-                //     fontWeight: FontWeight.w400,
-                //   ),
-                // ),
               ]),
             ),
             const SizedBox(

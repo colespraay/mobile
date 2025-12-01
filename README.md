@@ -20,3 +20,4 @@ samples, guidance on mobile development, and a full API reference.
 [//]: # ("${url}crypto/$id/wallets")
 
 [//]: # (8100232216)
+./en_check_elf_alignment.sh build/app/outputs/apk/release/app-release.apk

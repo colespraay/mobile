@@ -55,10 +55,10 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBfLRwrtOHm_jg7cUkOdZr2ubfNkFTbR1E',
-    appId: '1:45187346066:android:deb8c57478735fc3a1804b',
+    appId: '1:45187346066:android:2d89ceb4df8cc88ea1804b',
     messagingSenderId: '45187346066',
     projectId: 'spraay-app',
-    storageBucket: 'spraay-app.appspot.com',
+    storageBucket: 'spraay-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
