@@ -98,7 +98,7 @@ class _BuyAssetScreenState extends State<BuyAssetScreen> with AfterLayoutMixin<B
         body: Column(
           children: [
             const SizedBox(
-              height: 24,
+              height: 20,
             ),
             Center(
               child: AssetHeader(
@@ -109,7 +109,7 @@ class _BuyAssetScreenState extends State<BuyAssetScreen> with AfterLayoutMixin<B
               ),
             ),
 
-            const SizedBox(height: 28),
+            const SizedBox(height: 18),
 
             // Amount Display
             Padding(
@@ -159,7 +159,7 @@ class _BuyAssetScreenState extends State<BuyAssetScreen> with AfterLayoutMixin<B
               style: const TextStyle(color: CustomColors.sWhiteColor, fontSize: 14, fontWeight: FontWeight.w700),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
 
             // Number Pad
             NumberPad(
@@ -167,7 +167,7 @@ class _BuyAssetScreenState extends State<BuyAssetScreen> with AfterLayoutMixin<B
               onBackspace: _onBackspace,
             ),
             const SizedBox(
-              height: 24,
+              height: 12,
             ),
             buttonWidget(
                 onDone: () async {

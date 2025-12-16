@@ -85,7 +85,9 @@ dependencies:
 #  3.4.9
   socket_io_client: ^2.0.3+1
   logger: ^2.5.0
-  mobile_scanner: ^6.0.11
+  mobile_scanner: ^4.0.1
+#  6.0.11
+  device_preview: ^1.2.0
 #  mobile_scanner: ^6.0.11
 #  animate_do: ^3.1.2
 #  flutter_media_downloader: ^0.0.1

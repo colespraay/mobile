@@ -26,7 +26,7 @@ class CryptoServices {
     var id = MySharedPreference.getQuidaxUserId();
     print(id);
     try {
-      var response = await http.get(Uri.parse("${url}crypto/$id/wallets"), headers: {"Accept": "application/json"}).timeout(const Duration(seconds: 30));
+      var response = await http.get(Uri.parse("${url}crypto/$id/wallets"), headers: getHeaders()).timeout(const Duration(seconds: 30));
       // printWrapped(response.body);
 
       var jsonResponse = convert.jsonDecode(response.body);
@@ -54,7 +54,7 @@ class CryptoServices {
     ResModel result = ResModel();
     var id = MySharedPreference.getQuidaxUserId();
     try {
-      var response = await http.get(Uri.parse("${url}crypto/quidax/detailed/market-summary/$id"), headers: {"Accept": "application/json"}).timeout(const Duration(seconds: 30));
+      var response = await http.get(Uri.parse("${url}crypto/quidax/detailed/market-summary/$id"), headers: getHeaders()).timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
@@ -79,13 +79,14 @@ class CryptoServices {
     ResModel result = ResModel();
     print(data.toString());
     try {
-      var response = await http.post(
-        Uri.parse(
-          "${url}crypto/swap/swap-quotation",
-        ),
-        body: data,
-        headers: {"Accept": "application/json"},
-      ).timeout(const Duration(seconds: 30));
+      var response = await http
+          .post(
+              Uri.parse(
+                "${url}crypto/swap/swap-quotation",
+              ),
+              body: data,
+              headers: getHeaders())
+          .timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
@@ -109,10 +110,7 @@ class CryptoServices {
   Future<ResModel> getTransactionFees() async {
     ResModel result = ResModel();
     try {
-      var response = await http.get(
-        Uri.parse("${url}crypto/transaction-fees/get-all-transaction-fees"),
-        headers: {"Accept": "application/json"},
-      ).timeout(const Duration(seconds: 30));
+      var response = await http.get(Uri.parse("${url}crypto/transaction-fees/get-all-transaction-fees"), headers: getHeaders()).timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
@@ -145,10 +143,12 @@ class CryptoServices {
           "userId": id,
         },
       );
-      var response = await http.get(
-        uri,
-        headers: {"Accept": "application/json"},
-      ).timeout(const Duration(seconds: 30));
+      var response = await http
+          .get(
+            uri,
+            headers: getHeaders(),
+          )
+          .timeout(const Duration(seconds: 30));
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
         return ResModel(data: jsonResponse, success: true, message: "Success");
@@ -172,13 +172,15 @@ class CryptoServices {
     ResModel result = ResModel();
     print(data.toString());
     try {
-      var response = await http.post(
-        Uri.parse(
-          "${url}crypto/swap-quotation/confirm",
-        ),
-        body: data,
-        headers: {"Accept": "application/json"},
-      ).timeout(const Duration(seconds: 30));
+      var response = await http
+          .post(
+            Uri.parse(
+              "${url}crypto/swap-quotation/confirm",
+            ),
+            body: data,
+            headers: getHeaders(),
+          )
+          .timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
@@ -203,7 +205,12 @@ class CryptoServices {
     ResModel result = ResModel();
     print(currency);
     try {
-      var response = await http.get(Uri.parse("${url}crypto/tickers/${currency.toLowerCase()}"), headers: {"Accept": "application/json"}).timeout(const Duration(seconds: 30));
+      var response = await http
+          .get(
+            Uri.parse("${url}crypto/tickers/${currency.toLowerCase()}"),
+            headers: getHeaders(),
+          )
+          .timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -228,14 +235,16 @@ class CryptoServices {
   Future<ResModel> getTransactionFeesUSDValue({required String currency, required String tickerPair, bool isBuy = false}) async {
     ResModel result = ResModel();
     try {
-      var response = await http.get(
-        Uri.parse("${url}crypto/network-fee/usd-value/").replace(queryParameters: {
-          'currency': currency,
-          'ticker': tickerPair,
-          'priceType': isBuy ? "buy" : 'sell',
-        }),
-        headers: {"Accept": "application/json"},
-      ).timeout(const Duration(seconds: 30));
+      var response = await http
+          .get(
+            Uri.parse("${url}crypto/network-fee/usd-value/").replace(queryParameters: {
+              'currency': currency,
+              'ticker': tickerPair,
+              'priceType': isBuy ? "buy" : 'sell',
+            }),
+            headers: getHeaders(),
+          )
+          .timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -266,12 +275,14 @@ class CryptoServices {
     );
 
     try {
-      var response = await http.get(
-        uri,
-        headers: {"Accept": "application/json"},
-      ).timeout(
-        const Duration(seconds: 30),
-      );
+      var response = await http
+          .get(
+            uri,
+            headers: getHeaders(),
+          )
+          .timeout(
+            const Duration(seconds: 30),
+          );
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
@@ -298,7 +309,7 @@ class CryptoServices {
     print(data.toString());
     try {
       print('12a');
-      var response = await http.post(Uri.parse("${url}crypto/buy/user-buy-crypto"), headers: {"Accept": "application/json"}, body: data).timeout(const Duration(seconds: 30));
+      var response = await http.post(Uri.parse("${url}crypto/buy/user-buy-crypto"), headers: getHeaders(), body: data).timeout(const Duration(seconds: 30));
       print('12b');
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
@@ -326,7 +337,7 @@ class CryptoServices {
     ResModel result = ResModel();
     print(data.toString());
     try {
-      var response = await http.post(Uri.parse("${url}crypto/buy/sell-crypto/user-sell-crypto"), headers: {"Accept": "application/json"}, body: data).timeout(const Duration(seconds: 30));
+      var response = await http.post(Uri.parse("${url}crypto/buy/sell-crypto/user-sell-crypto"), headers: getHeaders(), body: data).timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
@@ -352,7 +363,7 @@ class CryptoServices {
     ResModel result = ResModel();
     print(data.toString());
     try {
-      var response = await http.post(Uri.parse("${url}crypto/send/withdraw"), headers: {"Accept": "application/json"}, body: data).timeout(const Duration(seconds: 30));
+      var response = await http.post(Uri.parse("${url}crypto/send/withdraw"), headers: getHeaders(), body: data).timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
@@ -379,7 +390,7 @@ class CryptoServices {
     ResModel result = ResModel();
     var id = MySharedPreference.getQuidaxUserId();
     try {
-      var response = await http.get(Uri.parse("${url}crypto/$id/$currency/addresses"), headers: {"Accept": "application/json"}).timeout(const Duration(seconds: 30));
+      var response = await http.get(Uri.parse("${url}crypto/$id/$currency/addresses"), headers: getHeaders()).timeout(const Duration(seconds: 30));
       printWrapped(response.body);
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200 || jsonResponse["status"] == 200) {
@@ -400,4 +411,9 @@ class CryptoServices {
     }
     return result;
   }
+}
+
+getHeaders() {
+  String? mytoken = MySharedPreference.getToken();
+  return {'accept': 'application/json', if (mytoken != null && mytoken.isEmpty) 'Authorization': 'Bearer $mytoken'};
 }

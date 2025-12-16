@@ -87,7 +87,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ],
           ),
           Positioned(
-              top: 550.h,
+              top: 500.h,
               left: 0,
               right: 0,
               child: Column(
@@ -104,36 +104,36 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   pageIndicator(),
                 ],
               )),
-          currentIndex == 2
-              ? Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 40.h),
-                    child: CustomButton(
-                        onTap: () {
-                          Navigator.push(context, FadeRoute(page: const WelcomePage()));
-                        },
-                        buttonText: 'Let’s Go!',
-                        borderRadius: 30.r,
-                        width: 380.w,
-                        buttonColor: CustomColors.sPrimaryColor500),
-                  ),
-                )
-              : GestureDetector(
-                  onTap: () {
-                    _pageController!.nextPage(duration: _kDuration, curve: _kCurve);
-                  },
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      width: 64.w,
-                      height: 64.h,
-                      margin: EdgeInsets.only(bottom: 40.h),
-                      decoration: const BoxDecoration(color: CustomColors.sPrimaryColor500, shape: BoxShape.circle),
-                      child: Center(child: SvgPicture.asset("images/arrow_right.svg")),
-                    ),
-                  ),
-                )
+          // currentIndex == 2
+          //     ? Align(
+          //         alignment: Alignment.bottomCenter,
+          //         child: Padding(
+          //           padding: EdgeInsets.only(bottom: 40.h),
+          //           child: CustomButton(
+          //               onTap: () {
+          //                 Navigator.push(context, FadeRoute(page: const WelcomePage()));
+          //               },
+          //               buttonText: 'Let’s Go!',
+          //               borderRadius: 30.r,
+          //               width: 380.w,
+          //               buttonColor: CustomColors.sPrimaryColor500),
+          //         ),
+          //       )
+          //     : GestureDetector(
+          //         onTap: () {
+          //           _pageController!.nextPage(duration: _kDuration, curve: _kCurve);
+          //         },
+          //         child: Align(
+          //           alignment: Alignment.bottomCenter,
+          //           child: Container(
+          //             width: 64.w,
+          //             height: 64.h,
+          //             margin: EdgeInsets.only(bottom: 40.h),
+          //             decoration: const BoxDecoration(color: CustomColors.sPrimaryColor500, shape: BoxShape.circle),
+          //             child: Center(child: SvgPicture.asset("images/arrow_right.svg")),
+          //           ),
+          //         ),
+          //       )
         ],
       ),
     );
@@ -179,6 +179,36 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               style: CustomTextStyle.kTxtBold.copyWith(fontWeight: FontWeight.bold, fontSize: 18.sp),
               textAlign: TextAlign.center,
             ),
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          currentIndex == 2
+              ? Padding(
+                  padding: EdgeInsets.only(bottom: 40.h),
+                  child: CustomButton(
+                      onTap: () {
+                        Navigator.push(context, FadeRoute(page: const WelcomePage()));
+                      },
+                      buttonText: 'Let’s Go!',
+                      borderRadius: 30.r,
+                      width: 380.w,
+                      buttonColor: CustomColors.sPrimaryColor500),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    _pageController!.nextPage(duration: _kDuration, curve: _kCurve);
+                  },
+                  child: Container(
+                    width: 64.w,
+                    height: 64.h,
+                    margin: EdgeInsets.only(bottom: 40.h),
+                    decoration: const BoxDecoration(color: CustomColors.sPrimaryColor500, shape: BoxShape.circle),
+                    child: Center(child: SvgPicture.asset("images/arrow_right.svg")),
+                  ),
+                ),
+          SizedBox(
+            height: 40,
           ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:local_session_timeout/local_session_timeout.dart';
@@ -36,14 +37,17 @@ Future main() async {
     return true;
   };
 
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
-    ChangeNotifierProvider<CryptoProvider>(create: (_) => CryptoProvider()),
-    ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
-    ChangeNotifierProvider<EventProvider>(create: (_) => EventProvider()),
-    ChangeNotifierProvider<TransactionProvider>(create: (_) => TransactionProvider()),
-    ChangeNotifierProvider<BillPaymentProvider>(create: (_) => BillPaymentProvider()),
-  ], child: MyApp()));
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+      ChangeNotifierProvider<CryptoProvider>(create: (_) => CryptoProvider()),
+      ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
+      ChangeNotifierProvider<EventProvider>(create: (_) => EventProvider()),
+      ChangeNotifierProvider<TransactionProvider>(create: (_) => TransactionProvider()),
+      ChangeNotifierProvider<BillPaymentProvider>(create: (_) => BillPaymentProvider()),
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -84,6 +88,8 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         useInheritedMediaQuery: true,
         builder: (context, child) => MaterialApp(
+          // locale: DevicePreview.locale(context),
+          // builder: DevicePreview.appBuilder,
           title: 'Spraay',
           navigatorKey: _navigatorKey,
           debugShowCheckedModeBanner: false,

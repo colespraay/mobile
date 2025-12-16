@@ -17,7 +17,7 @@ class NumberPad extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            height: 16,
+            height: 12,
           ), // Row 1: 1, 2, 3
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -27,7 +27,7 @@ class NumberPad extends StatelessWidget {
               _buildNumberButton('3'),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
 
           // Row 2: 4, 5, 6
           Row(
@@ -38,7 +38,7 @@ class NumberPad extends StatelessWidget {
               _buildNumberButton('6'),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
 
           // Row 3: 7, 8, 9
           Row(
@@ -49,7 +49,7 @@ class NumberPad extends StatelessWidget {
               _buildNumberButton('9'),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

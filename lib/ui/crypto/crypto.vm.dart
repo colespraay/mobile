@@ -127,17 +127,17 @@ class CryptoProvider extends ChangeNotifier {
     setloading(true);
     ResModel result = await cryptoServices.getCryptoAssets(data: {});
     if (result.success == true) {
-      print('true');
       setloading(false);
       wallets = [];
       result.data['data'].forEach((e) {
-        if (e['currency'] != "ngn" && e['currency'] != "usd") {
+        if (
+            // e['currency'] != "ngn" &&
+            e['currency'] != "usd") {
           wallets.add(Wallet.fromJson(e));
         }
       });
       notifyListeners();
     } else {
-      print('false');
       setloading(false);
       errorCherryToast(context, result.message ?? "Something went wrong");
     }
@@ -290,15 +290,13 @@ class CryptoProvider extends ChangeNotifier {
     setloading(true);
     ResModel result = await cryptoServices.getMarketSummaryWithWatchlist();
     if (result.success == true) {
-      print('that that that');
       marketData = [];
       result.data['data'].forEach((e) {
         if (e != null) {
           marketData.add(MarketData.fromJson(e));
         }
       });
-      print('this this this');
-      print(toWallets.length);
+
       notifyListeners();
       setloading(false);
     } else {
@@ -339,9 +337,10 @@ class CryptoProvider extends ChangeNotifier {
     }
   }
 
-  Future confirmQuote(BuildContext context, {required Function(GeneralTransaction?) onDone, String? currency}) async {
+  Future confirmQuote(BuildContext context, {required Function(GeneralTransaction?) onDone, String? currency, num? amount, String? to, String? from}) async {
     setloading(true);
-    ResModel result = await cryptoServices.confirmSwapQuotation(data: {"quidax_userId": MySharedPreference.getQuidaxUserId(), "swapId": swapQuotationData?.id});
+    ResModel result = await cryptoServices
+        .confirmSwapQuotation(data: {"quidax_userId": MySharedPreference.getQuidaxUserId(), "swapId": swapQuotationData?.id, "amount": amount, "toCurrency": to, "fromCurrency": from});
     if (result.success == true) {
       notifyListeners();
 
