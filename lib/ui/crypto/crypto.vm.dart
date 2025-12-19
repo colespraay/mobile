@@ -337,13 +337,12 @@ class CryptoProvider extends ChangeNotifier {
     }
   }
 
-  Future confirmQuote(BuildContext context, {required Function(GeneralTransaction?) onDone, String? currency, num? amount, String? to, String? from}) async {
+  Future confirmQuote(BuildContext context, {required Function(GeneralTransaction?) onDone, String? currency, String? amount, String? to, String? from}) async {
     setloading(true);
     ResModel result = await cryptoServices
         .confirmSwapQuotation(data: {"quidax_userId": MySharedPreference.getQuidaxUserId(), "swapId": swapQuotationData?.id, "amount": amount, "toCurrency": to, "fromCurrency": from});
     if (result.success == true) {
       notifyListeners();
-
       final generalTx = mapSwapQuotationToGeneralTransaction(result.data['data']);
       onDone(generalTx);
       setloading(false);

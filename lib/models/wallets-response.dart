@@ -78,7 +78,7 @@ class Wallet {
 
   factory Wallet.fromJson(Map<String, dynamic> json) => Wallet(
         id: json['id'] as String?,
-        name: json['name'] as String?,
+        name: (json['name'] as String?)?.replaceAll("Wallet", ""),
         currency: json['currency'] as String?,
         balance: json['balance'] as String?,
         locked: json['locked'] as String?,

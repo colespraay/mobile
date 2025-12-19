@@ -673,7 +673,7 @@ class _SwapAssetScreenState extends State<SwapAssetScreen> with AfterLayoutMixin
                                                             buttonTxt: "Okay",
                                                             fromWhere: '',
                                                             amount: numAmount.toString());
-                                                      }, currency: widget.asset?.sub, amount: numAmount, from: fromAsset?.sub, to: toAsset?.sub);
+                                                      }, currency: widget.asset?.sub, amount: numAmount.toString(), from: fromAsset?.sub, to: toAsset?.sub);
                                                     },
                                               isActive: !(cryptoProvider?.isFetchingSwap ?? false)),
 

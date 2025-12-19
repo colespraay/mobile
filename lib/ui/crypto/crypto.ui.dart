@@ -394,6 +394,7 @@ class AssetsList extends StatelessWidget {
                     : 5
                 : wallets.length,
             itemBuilder: (context, int position) {
+              print(wallets[position].name ?? "");
               return SlideListAnimationWidget(
                 position: position,
                 child: InkWell(
