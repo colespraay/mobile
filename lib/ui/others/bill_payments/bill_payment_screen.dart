@@ -10,6 +10,7 @@ import 'package:spraay/ui/others/bill_payments/betting_screen/betting_screens.da
 import 'package:spraay/ui/others/bill_payments/cable_sub/cable_subscription.dart';
 import 'package:spraay/ui/others/bill_payments/data/data_top_up.dart';
 import 'package:spraay/ui/others/bill_payments/giftcard/giftcard.dart';
+import 'package:spraay/ui/others/bill_payments/virtual-numbers/virtual-numbers-page.dart';
 import 'package:spraay/view_model/bill_payment_provider.dart';
 
 import '../../../navigations/scale_transition.dart';
@@ -66,6 +67,7 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
     ImageTitleModel(image: "tv", title: "Television"),
     ImageTitleModel(image: "game", title: "BET"),
     ImageTitleModel(image: "gift-card", title: "Gift Card"),
+    ImageTitleModel(image: "virtual-numbers", title: "Virtual Numbers"),
   ];
   //
   Widget buildHorizontalTicket() {
@@ -116,6 +118,13 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
                               page: GiftCardPage(
                             title: e.value.title,
                           )));
+                    } else if (e.value.title == "Virtual Numbers") {
+                      Navigator.push(
+                          context,
+                          ScaleTransition1(
+                              page: VirtualNumber(
+                            title: e.value.title,
+                          )));
                     } else {
                       Navigator.push(
                           context,
@@ -128,6 +137,7 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
                   child: Container(
                     width: 105.w,
                     // height: 200.h,
+                    // alignment: Alignment.center,
                     margin: EdgeInsets.only(right: 14.w, bottom: 40.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -138,7 +148,12 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
                           height: 80.h,
                         ),
                         height12,
-                        Text(e.value.title, style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sWhiteColor)),
+                        Center(
+                            child: Text(
+                          e.value.title,
+                          style: CustomTextStyle.kTxtRegular.copyWith(fontWeight: FontWeight.w400, fontSize: 14.sp, color: CustomColors.sWhiteColor),
+                          textAlign: TextAlign.center,
+                        )),
                       ],
                     ),
                   ),

@@ -6,18 +6,16 @@ import 'package:spraay/components/constant.dart';
 import 'package:spraay/components/modal_buttom.dart';
 import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
+import 'package:spraay/components/wallet_card.dart';
 import 'package:spraay/navigations/fade_route.dart';
 import 'package:spraay/ui/home/event_slidder.dart';
-import 'package:spraay/ui/home/fund_wallet.dart';
 import 'package:spraay/ui/home/mini_transaction_history.dart';
 import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/ui/profile/user_profile/edit_profile.dart';
-import 'package:spraay/utils/my_sharedpref.dart';
 import 'package:spraay/utils/secure_storage.dart';
 import 'package:spraay/view_model/auth_provider.dart';
 import 'package:spraay/view_model/event_provider.dart';
-import 'package:spraay/view_model/home_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -27,12 +25,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isObscure = false;
-
   @override
   void initState() {
     super.initState();
-    _isObscure = Provider.of<HomeProvider>(context, listen: false).hideWalletvalue ?? false;
     Provider.of<AuthProvider>(context, listen: false).fetchUserDetailApi();
     Provider.of<EventProvider>(context, listen: false).fetchTransactionListApi();
     Provider.of<EventProvider>(context, listen: false).fetchNotificationApi();
@@ -67,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               buildTopRow(),
               height20,
-              buildWalletContainer(),
+              const WalletCard(),
               height26,
               // GestureDetector(
               //     onTap: () {
@@ -118,72 +113,6 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: SvgPicture.asset("images/note_bell.svg"))
       ],
-    );
-  }
-
-  Widget buildWalletContainer() {
-    // pattern.png
-    return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(40.r)),
-      child: Container(
-        width: double.infinity,
-        height: 200.h,
-        padding: EdgeInsets.only(left: 18.w, right: 56.w),
-        margin: EdgeInsets.zero,
-        decoration: const BoxDecoration(
-          color: CustomColors.sPrimaryColor500,
-          image: DecorationImage(
-            image: AssetImage('images/pattern_endd.png'),
-            fit: BoxFit.fill,
-          ),
-        ),
-        child: Center(
-          child: SizedBox(
-            // width: 275.w,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Wallet Balance", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 10.sp, fontWeight: FontWeight.w700)),
-                height16,
-                // Text("N200,000.00", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 32.sp, fontWeight: FontWeight.w700) ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        _isObscure ? '${MySharedPreference.getWalletBalance().replaceAll(RegExp(r"."), "*")}' : "₦${currrency.format(double.parse(MySharedPreference.getWalletBalance()))}",
-                        style: CustomTextStyle.kTxtBold.copyWith(fontSize: 24.sp, fontWeight: FontWeight.bold, fontFamily: "PlusJakartaSans"),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _isObscure = !_isObscure;
-                          });
-                        },
-                        child: Icon(
-                          _isObscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                          color: CustomColors.sWhiteColor,
-                        )),
-                  ],
-                ),
-
-                height18,
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, FadeRoute(page: const FundWallet()));
-                  },
-                  child: Align(alignment: Alignment.bottomRight, child: SvgPicture.asset("images/top_up.svg")),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 

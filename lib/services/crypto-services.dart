@@ -22,12 +22,14 @@ class CryptoServices {
         _client = client ?? HttpLogger().createLoggingClient();
 
   Future<ResModel> getCryptoAssets({required Map<String, dynamic> data, String? path}) async {
+    String? token = MySharedPreference.getToken();
     ResModel result = ResModel();
     var id = MySharedPreference.getQuidaxUserId();
+
     print(id);
     try {
       var response = await http.get(Uri.parse("${url}crypto/$id/wallets"), headers: getHeaders()).timeout(const Duration(seconds: 30));
-      // printWrapped(response.body);
+      printWrapped(response.headers.toString());
 
       var jsonResponse = convert.jsonDecode(response.body);
       if (jsonResponse["code"] == 200) {
@@ -415,5 +417,5 @@ class CryptoServices {
 
 getHeaders() {
   String? mytoken = MySharedPreference.getToken();
-  return {'accept': 'application/json', if (mytoken != null && mytoken.isEmpty) 'Authorization': 'Bearer $mytoken'};
+  return {'Accept': 'application/json', if (mytoken != null && mytoken.isNotEmpty) 'Authorization': 'Bearer $mytoken'};
 }

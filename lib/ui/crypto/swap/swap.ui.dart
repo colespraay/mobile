@@ -290,7 +290,7 @@ class _SwapAssetScreenState extends State<SwapAssetScreen> with AfterLayoutMixin
                             context: context,
                             title: "Swap Asset",
                             onBackAction: () {
-                              if (page.value != 1) {
+                              if (page.value != 0) {
                                 page.value = page.value - 1;
                               } else {
                                 Navigator.pop(context);
