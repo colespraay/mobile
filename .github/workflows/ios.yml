@@ -1,0 +1,99 @@
+name: iOS Build & Release
+on:
+  pull_request:
+    branches:
+      - development
+    types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+jobs:
+  ios:
+    runs-on: macos-latest
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+      - name: Determine environment
+        id: env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "ENV=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          else
+            echo "ENV=staging" >> $GITHUB_OUTPUT
+          fi
+      - name: Install Apple certificate and provisioning profile
+        run: |
+          CERT_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          echo "${{ secrets.IOS_P12_BASE64 }}" | base64 --decode > $CERT_PATH
+          echo "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}" | base64 --decode > $PP_PATH
+          security create-keychain -p "${{ secrets.IOS_KEYCHAIN_PASSWORD }}" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "${{ secrets.IOS_KEYCHAIN_PASSWORD }}" $KEYCHAIN_PATH
+          security import $CERT_PATH -P "${{ secrets.IOS_P12_PASSWORD }}" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: -k "${{ secrets.IOS_KEYCHAIN_PASSWORD }}" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+      - name: Build IPA (staging)
+        if: steps.env.outputs.ENV == 'staging'
+        run: |
+          flutter build ipa --release \
+            --obfuscate \
+            --split-debug-info=build/symbols \
+            --dart-define=API_BASE_URL=${{ secrets.STAGING_API_BASE_URL }} \
+            --dart-define=USE_FAKE_API=false \
+            --export-options-plist=ios/ExportOptions.plist
+      - name: Build IPA (production)
+        if: steps.env.outputs.ENV == 'production'
+        run: |
+          flutter build ipa --release \
+            --obfuscate \
+            --split-debug-info=build/symbols \
+            --dart-define=API_BASE_URL=${{ secrets.PROD_API_BASE_URL }} \
+            --dart-define=USE_FAKE_API=false \
+            --export-options-plist=ios/ExportOptions.plist
+      - name: Install Fastlane
+        run: gem install fastlane
+      - name: Upload to TestFlight
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          fastlane pilot upload \
+            --ipa "$(find build/ios/ipa -name '*.ipa')" \
+            --username $APPLE_ID \
+            --dev_portal_team_id $APPLE_TEAM_ID \
+            --team_id $APPLE_TEAM_ID \
+            --skip_waiting_for_build_processing true
+      - name: Clean up keychain and provisioning profile
+        if: always()
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
+          rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
+      - name: Summary
+        if: success()
+        run: |
+          echo "### iOS Build Successful ✅" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ steps.env.outputs.ENV }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployed to:** TestFlight 🍎" >> $GITHUB_STEP_SUMMARY

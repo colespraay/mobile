@@ -46,7 +46,9 @@ class _SprayScreenState extends State<SprayScreen>{
   IO.Socket ? socket;
   var isTyping;
   sockectIOconnect(){
-    socket = IO.io('ws://admin-test-app-527853a95e08.herokuapp.com',<String, dynamic>{'transports': ['websocket'],
+    socket = IO.io('ws://spraay-app-112ede567f1a.herokuapp.com'
+        // 'admin-test-app-527853a95e08.herokuapp.com'
+        ,<String, dynamic>{'transports': ['websocket'],
       'query': {
       'userId': MySharedPreference.getUId(),
       },

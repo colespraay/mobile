@@ -30,6 +30,8 @@ dependencies:
   cached_network_image: ^3.2.3
   flutter_spinkit: ^5.2.0
   cherry_toast: ^1.0.5
+#  9.1.0
+#  1.0.5
   barcode_widget: ^2.0.4
   screenshot: ^3.0.0
   path_provider: ^2.1.0
@@ -40,12 +42,13 @@ dependencies:
   image_picker: ^1.1.1
   fl_chart: ^0.66.2
   qr_flutter: ^4.1.0
-  fluttertoast: ^8.2.2
-  contacts_service:
-#  ^0.6.3
-    git:
-      url: https://github.com/sajanIocod/flutter_contacts.git
-      ref: master
+  fluttertoast: ^8.2.10
+  #  8.2.2
+#  contacts_service:
+##  ^0.6.3
+#    git:
+#      url: https://github.com/sajanIocod/flutter_contacts.git
+#      ref: master
 
   permission_handler: ^11.3.1
   lottie: ^3.1.0
@@ -56,7 +59,8 @@ dependencies:
   loading_overlay: ^0.3.0
   http: ^1.1.0
   flutter_udid: ^3.0.0
-  flutter_contacts: ^1.1.9+2
+  flutter_contacts: ^2.0.0
+#  1.1.9+2
   circular_profile_avatar: ^2.0.5
   google_maps_flutter: ^2.5.0
   uuid: ^4.1.0
@@ -88,6 +92,8 @@ dependencies:
   mobile_scanner: ^4.0.1
 #  6.0.11
   device_preview: ^1.2.0
+  contacts_service_plus: ^0.0.3
+  toast: ^0.3.0
 #  mobile_scanner: ^6.0.11
 #  animate_do: ^3.1.2
 #  flutter_media_downloader: ^0.0.1

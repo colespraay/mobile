@@ -1,15 +1,17 @@
 // import 'package:contacts_service/contacts_service.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:flutter_contacts/flutter_contacts.dart' hide PermissionStatus;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 
 Future<void> _askPermissions(BuildContext context, Function(String)? function) async {
   PermissionStatus permissionStatus = await _getContactPermission();
   print(permissionStatus.name);
   if (permissionStatus == PermissionStatus.granted) {
-    final Contact? contact = await FlutterContacts.openExternalPick();
+    final Contact? contact = await 	FlutterContacts.native.showPicker();
+    // FlutterContacts.openExternalPick();
 
     if (contact != null) {
       function!(contact.phones[0].number.toString().stripInternationalNumbers()!.replaceAll(" ", "").toString());
