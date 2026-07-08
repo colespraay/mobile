@@ -67,7 +67,7 @@ class _BillPaymentScreenState extends State<BillPaymentScreen> {
     ImageTitleModel(image: "tv", title: "Television"),
     ImageTitleModel(image: "game", title: "BET"),
     ImageTitleModel(image: "gift-card", title: "Gift Card"),
-    // ImageTitleModel(image: "virtual-numbers", title: "Virtual Numbers"),
+    ImageTitleModel(image: "virtual-numbers", title: "Virtual Numbers"),
   ];
   //
   Widget buildHorizontalTicket() {

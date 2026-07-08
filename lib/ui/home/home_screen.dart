@@ -72,13 +72,16 @@ class _HomeScreenState extends State<HomeScreen> {
               //       Icons.add,
               //       color: Colors.white,
               //     )),
-              GestureDetector(
-                  onTap: () {
-                    // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const PhoneContacts()));
-                  },
-                  child: Text("Events for you", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700))),
-              height10,
-              const EventSlidder(),
+
+
+
+              // GestureDetector(
+              //     onTap: () {
+              //       // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const PhoneContacts()));
+              //     },
+              //     child: Text("Events for you", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700))),
+              // height10,
+              // const EventSlidder(),
               height26,
               Expanded(child: buildTransactionList())
             ],

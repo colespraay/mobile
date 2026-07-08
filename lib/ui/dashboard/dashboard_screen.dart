@@ -166,6 +166,7 @@ class _DasboardScreenState extends State<DasboardScreen> {
 
   Future<void> _choseFABModal() {
     double heigth = MediaQuery.of(context).size.height;
+
     return showModalBottomSheet(
         context: context,
         backgroundColor: CustomColors.sDarkColor2,
