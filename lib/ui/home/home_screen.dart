@@ -8,8 +8,8 @@ import 'package:spraay/components/reusable_widget.dart';
 import 'package:spraay/components/themes.dart';
 import 'package:spraay/components/wallet_card.dart';
 import 'package:spraay/navigations/fade_route.dart';
-import 'package:spraay/ui/home/event_slidder.dart';
 import 'package:spraay/ui/home/mini_transaction_history.dart';
+import 'package:spraay/ui/home/quick_actions.dart';
 import 'package:spraay/ui/home/notification_screen.dart';
 import 'package:spraay/ui/home/transaction_history.dart';
 import 'package:spraay/ui/profile/user_profile/edit_profile.dart';
@@ -64,24 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height20,
               const WalletCard(),
               height26,
-              // GestureDetector(
-              //     onTap: () {
-              //       Navigator.push(context, SlideLeftRoute(page: const PhoneContacts()));
-              //     },
-              //     child: const Icon(
-              //       Icons.add,
-              //       color: Colors.white,
-              //     )),
-
-
-
-              // GestureDetector(
-              //     onTap: () {
-              //       // Navigator.of(context).push(MaterialPageRoute(builder: (_)=>const PhoneContacts()));
-              //     },
-              //     child: Text("Events for you", style: CustomTextStyle.kTxtBold.copyWith(fontSize: 20.sp, fontWeight: FontWeight.w700))),
-              // height10,
-              // const EventSlidder(),
+              const QuickActions(),
               height26,
               Expanded(child: buildTransactionList())
             ],
