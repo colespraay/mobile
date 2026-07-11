@@ -34,7 +34,7 @@ class QuickActions extends StatelessWidget {
     ),
     const _QuickAction(
       icon: 'images/a-giftcard.svg',
-      label: 'Giftcard',
+      label: 'Gift a Friend',
       transition: _QuickActionTransition.fade,
       destination: SprayGifting(),
     ),
